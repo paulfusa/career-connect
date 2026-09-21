@@ -1,4 +1,18 @@
-### Sprint 1 Rubric 
+# Sprint 1
+## Work Plan
+
+
+
+
+
+
+
+
+
+
+
+
+## Rubric 
 
 | Done | Category | Weight (/15) |
 | :---: | :--- | :--- |
@@ -9,8 +23,11 @@
 | [ ] | Sprint Planning | 3.0 |
 | [ ] | Task Breakdown | 1.5 |
 | [ ] | AI Usage Log and Validation Evidence | 2.0 |
-| [ ] | Detailed Log of Each Team Member Contribution | 0.5 |
+| [x] | Detailed Log of Each Team Member Contribution | 0.5 |
 | [ ] | Meeting Minutes | 1.0 |
 | [ ] | Organization and Presentation | 1.0 |
 | [ ] | Project Demo (Two Basic Features) | 1.0 |
 | **Total** | | **15 (equivalent to 3% course weight)** |
+
+### Notes
+- Team Member Contribution can be done through assigning issues in PRs in GitHub
