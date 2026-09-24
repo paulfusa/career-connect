@@ -1,7 +1,7 @@
 # Career Connect
 Project for **SOEN 341 LAB FM** - *Fall 2026*  
-**Authors** 
 
+**Authors** 
 | Name | ID | 
 |---|---|
 | Paul Fourment | 40306274 |
@@ -10,6 +10,7 @@ Project for **SOEN 341 LAB FM** - *Fall 2026*
 | Kimia Karimiyeganeh | 40068588  |
 | Andrew Rowe|  xxxxxxxx |
 | Maher Waez | 40248191 |
+
 
 # Setup
 ## Dependencies
