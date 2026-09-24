@@ -145,7 +145,7 @@ As a job seeker, I want to search jobs by keyword and filter by location, job ty
 - [ ] An empty state is shown when there are no results.
 
 **Tasks**
-- **Task 6.1:** Implement the search query with filters and pagination.
+- **Task 6.1:** Implement the search xquery with filters and pagination.
 - **Task 6.2:** Build the search page with filter controls and URL query parameters.
 - **Task 6.3:** Build the job detail page.
 
