@@ -1,6 +1,16 @@
 # Career Connect
 Project for **SOEN 341 LAB FM** - *Fall 2026*  
-**Authors** - Paul Fourment, Mohamad Alosta, Michael Derocher, Kimia Karimiyeganeh, Andrew Rowe, Maher Waez
+
+**Authors** 
+| Name | ID | 
+|---|---|
+| Paul Fourment | 40306274 |
+| Mohamad Alosta | 40312377 |
+| Michael Derocher | xxxxxxxx |
+| Kimia Karimiyeganeh | 40068588  |
+| Andrew Rowe|  xxxxxxxx |
+| Maher Waez | 40248191 |
+
 
 # Setup
 ## Dependencies
