@@ -14,16 +14,12 @@ Project for **SOEN 341 LAB FM** - *Fall 2026*
 ## Project description 
 CareerConnect is a web application designed to connect job seekers and recruiters. It allows both to manage the hiring process in a single place. Job seekers will have the ability to create their own profile, manage their resumes, browse for job postings, save their favorite opportunities to dive into later, submit applications, follow the application's status, and more.... Recruiters, on the other hand, will be able to publish openings, review applications, and update decision status and communicate outcomes with applicants.
 
-The project aims to ease the application process organizing it and making it more transparent. Its proposed outcome-message feature tries to diminish the ghosting phenomenon usually practice by some companies towards applications. This provides clear and precise explanations to either move onto the next step of the process or to ameliorate their applications. The team will also implement generative AI features that will define and document the developmental procedure.
+The project aims to ease the application process organizing it and making it more transparent. Its proposed outcome-message feature tries to diminish the "ghosting" phenomenon that is practiced by many companies, and allows the applicants to receive genuine feedback and a way to improve. This provides clear and precise explanations to either move onto the next step of the process or to ameliorate their applications. The team will also implement generative AI features, and will define and document it's usage throughout the developmental procedure.
+
 ## Problem and Proposed Solution
 Job seekers often try to get opportunities throughout websites, emails, and personal documents. This poses some difficulty in terms of organizing and remembering the status of each application. Recruiters also need a way to post openings and respond to applications.
 
 CareerConnect aims to gather all this into one platform that tries to satisfy both user ends. In doing so, the hiring process will get easier as more features will be addressed in later stages.
-
-## Project Description
-CareerConnect is web platform that connects job seekers and recruiters aiding in ameliorating the hiring process for both and managing it in a single space. Job seekers will have the ability to create their own profile, browse job postings, save opportunities to check out later, build and submit applications, and track each application's status. Recruiters, on the other hand, will be able to publish openings, review applications, and communicate clearly the decisions taken towards applicants by including the reasoning behind them. This prevents the "ghosting" phenomenon that is practiced by many companies, and allows the applicants to receive genuine feedback and a way to improve.
-
-This project aims to ease the application process and offer a more organized and transparent approach. The outcome-message feature will let recruiters to give clear explanations and details on how to proceed or improve the applications. The team plans to use AI generated features, and will define and document it's usage throughout development.
 
 # Planned Features
 
