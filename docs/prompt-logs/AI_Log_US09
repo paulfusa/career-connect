@@ -1,0 +1,47 @@
+### Task ID/Title
+AI-assisted generation of a unique CareerConnect user story
+
+### Purpose of AI Use
+Brainstorming and user story generation.
+
+### Prompt Used
+Suggest a unique but manageable user story for CareerConnect that is not one of the main required features. The feature should be useful to job seekers or recruiters. Please include a suggested priority, sprint, acceptance criteria, and implementation tasks.
+
+### AI-Suggested Content
+The AI suggested a Company Reviews feature where CareerConnect users can read and submit reviews about companies based on previous work experiences.
+
+**Priority:** Low  
+**Sprint:** TBD
+
+**User Story:**  
+As a CareerConnect user, I want to read and submit reviews about companies so that I can learn from the experiences of people who have worked there before applying.
+
+### Acceptance Criteria
+- A signed-in user can view reviews for a company.
+- A signed-in user can submit a review with a rating and written feedback.
+- Reviews are linked to the correct company.
+- The user can edit or delete their own review.
+- The average company rating is displayed.
+- The platform states that reviews are user-submitted and are not independently verified.
+
+### Implementation Tasks
+- Task 1.1: Create a company reviews table in the database.
+- Task 1.2: Create a form for submitting reviews.
+- Task 1.3: Display reviews on the company page.
+- Task 1.4: Calculate and display the average rating.
+- Task 1.5: Allow users to edit or delete their own reviews.
+- Task 1.6: Test review submission, ownership, and validation.
+
+### Validation
+The suggestion was reviewed against the CareerConnect project scope and considered technically manageable because it mainly requires a review form, database storage, company-linked reviews, and basic validation.
+
+### Decision
+Modified before use.
+
+The priority was set to **Low** because company reviews are useful but are not part of the core CareerConnect workflow required for the main platform functionality.
+
+### Reflection
+The AI helped transform a general idea into a structured user story with acceptance criteria and implementation tasks. The final priority and inclusion of the feature were still decided by the team.
+
+### Responsible Person
+Maher Waez
