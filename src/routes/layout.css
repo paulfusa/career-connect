@@ -1,3 +1,20 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
+
+@theme {
+	--font-sans: 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif;
+	--font-display: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
+
+	--color-mist: #eef2f7;
+	--color-ink: #1b2638;
+	--color-tide: #1f7a8c;
+	--color-tide-deep: #165e6c;
+	--color-peach: #f7c8a6;
+	--color-lilac: #c7c1f0;
+	--color-sky: #a6d6ec;
+}
+
+body {
+	@apply bg-mist font-sans text-ink antialiased;
+}
