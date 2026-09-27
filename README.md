@@ -44,7 +44,7 @@ This project aims to ease the application process and offer a more organized and
 **The generative AI feature being considered by the team:** AI-assisted resume feedback that provides suggestion on how to improve resume's clarity and relevance. The team still has to review and confirm the chosen AI feature.
 
 # Technologies
-The repository is set up with SvelteKit, 
+The repository is set up with SvelteKit, Svelte, TypeScript, PostgreSQL, Drizzle ORM, Better Auth, and pnpm.
 
 # Setup
 ## Dependencies
