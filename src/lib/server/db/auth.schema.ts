@@ -8,6 +8,11 @@ export const user = pgTable("user", {
   emailVerified: boolean("email_verified").default(false).notNull(),
   image: text("image"),
   role: text("role", { enum: ["job_seeker", "recruiter"] }).notNull(),
+  headline: text("headline"),
+  location: text("location"),
+  company: text("company"),
+  jobTitle: text("job_title"),
+  onboardedAt: timestamp("onboarded_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()

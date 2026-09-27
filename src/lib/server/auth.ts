@@ -13,7 +13,13 @@ export const auth = betterAuth({
 	user: {
 		additionalFields: {
 			// allowed values enforced by the user_role_check constraint in the DB
-			role: { type: ['job_seeker', 'recruiter'], required: true, input: true }
+			role: { type: ['job_seeker', 'recruiter'], required: true, input: true },
+			// US-11 onboarding answers, written by the home page actions only (input: false)
+			headline: { type: 'string', required: false, input: false },
+			location: { type: 'string', required: false, input: false },
+			company: { type: 'string', required: false, input: false },
+			jobTitle: { type: 'string', required: false, input: false },
+			onboardedAt: { type: 'date', required: false, input: false }
 		}
 	},
 	plugins: [
