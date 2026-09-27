@@ -8,7 +8,7 @@ Project for **SOEN 341 LAB FM** - *Fall 2026*
 | Mohamad Alosta | 40312377 |
 | Michael Derocher | 40308662 |
 | Kimia Karimiyeganeh | 40068588  |
-| Andrew Rowe|  xxxxxxxx |
+| Andrew Rowe|  40276263 |
 | Maher Waez | 40248191 |
 
 ## Problem and Proposed Solution
