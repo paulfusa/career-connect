@@ -21,6 +21,25 @@ Job seekers often try to get opportunities throughout websites, emails, and pers
 
 CareerConnect aims to gather all this into one platform that tries to satisfy both user ends. In doing so, the hiring process will get easier as more features will be addressed in later stages.
 
+
+
+# Setup
+## Dependencies
+- **Node.js**: v22 or higher
+- **pnpm**: v9 or higher
+1. In Project Terminal, run `pnpm install` to install the Node dependencies,
+2. Duplicate the `.env.example` and rename to `.env`, and paste the required keys
+
+## Run Dev
+### VS Code
+- Go to **Run and Debug** and choose `Web`
+
+### Individual
+- Start the Web Server `pnpm run dev`
+
+
+
+
 # Planned Features
 
 ## Job-seeker and account features:
@@ -45,19 +64,6 @@ CareerConnect aims to gather all this into one platform that tries to satisfy bo
 
 # Technologies
 The repository is set up with SvelteKit, Svelte, TypeScript, PostgreSQL, Drizzle ORM, Better Auth, and pnpm.
-
-# Setup
-## Dependencies
-- **Node.js**: v22 or higher
-- **pnpm**: v9 or higher 
-
-
-## Run Dev
-### VS Code
-- Go to **Run and Debug** and choose `Web`
-
-### Individual
-- Start the Web Server `pnpm run dev`
 
 # Project documentation
 - GitHub Issues contain user stories and their task breakdown.
