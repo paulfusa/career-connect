@@ -1,20 +1,19 @@
 # Prompt 1 - Define User Stories
-- **Purpose of AI Use**: Brainstorming and requirements to start project.
+- **Purpose of AI Use**: Brainstorming and requirements to start the project.
 - **Date**: September 25, 2026
-- **Validation**: Read through and found some User Stories are too broad in the feature, and more detail is needed to be added and priorities to be moved around.
+- **Validation**: I read through and found some User Stories were too broad, so I made adjustments to clarify with extra details.
 - **Decision**: Partially Accepted.
 - **Reflection**: AI helped give a starting point for the project.
 - **Responsible Person**: Mohamad Alosta
 
 # Prompt
-Suppose you are a software engineer and a member of a team, I want you to help us define requirements for a career platform. Generate user stories for an application called CareerConnect other than but in the same format as those already present in:
-https://github.com/paulfusa/career-connect/tree/main.
+Suppose you are a software engineer and a member of a team. I want you to help us define requirements for a career platform. Generate user stories for an application called CareerConnect, other than those already present, but in the same format as those already present in: https://github.com/paulfusa/career-connect/tree/main.
 
 # Response
-Here are 8 user stories covering the core CareerConnect features. Each follows the Appendix B format, with acceptance criteria and a starting task breakdown you can turn into GitHub Issues in the same manner of the two previous prompts.
+Here are 8 user stories covering the core CareerConnect features. Each follows the Appendix B format, with acceptance criteria and a starting task breakdown you can turn into GitHub Issues in the same manner as the two previous prompts.
 ---
 
-## US-01: Application Outcome Feedback
+## US-01: Managing User Profile
 
 As a job seeker, I want to create and manage my profile, so that I can present my personal information, skills, and experience to potential employers.
 
@@ -36,13 +35,13 @@ As a job seeker, I want to create and manage my profile, so that I can present m
 Accepted and added as a GitHub Issue.
 
 **Validation**
-The team reviewed the AI-generated story against the CareerConnect project requirements and determined that profile management is a core feature for the platform.
+The team reviewed the AI-generated story against the CareerConnect project requirements and determined that it is a core feature to implement.
 The story was reviewed for:
 - Alignment with job seeker needs.
 - Compatibility with other planned features such as resume management and applications.
 - Clarity of acceptance criteria.
 - Agile user story format.
-The wording was refined before being added to GitHub Issues.
+We refined the wording before adding it to GitHub Issues.
 
 ## US-02: Job Availability Status
 
