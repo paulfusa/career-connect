@@ -11,14 +11,14 @@ export const auth = betterAuth({
 	database: drizzleAdapter(db, { provider: 'pg' }),
 	emailAndPassword: { enabled: true },
 	user: {
+		// US-04: no email sending set up yet, so unverified users can change email directly
+		changeEmail: { enabled: true, updateEmailWithoutVerification: true },
+		// the profile page always sends the password, so no email confirmation is needed
+		deleteUser: { enabled: true },
 		additionalFields: {
 			// allowed values enforced by the user_role_check constraint in the DB
 			role: { type: ['job_seeker', 'recruiter'], required: true, input: true },
-			// US-11 onboarding answers, written by the home page actions only (input: false)
-			headline: { type: 'string', required: false, input: false },
-			location: { type: 'string', required: false, input: false },
-			company: { type: 'string', required: false, input: false },
-			jobTitle: { type: 'string', required: false, input: false },
+			// US-11: set by the onboarding actions only (input: false)
 			onboardedAt: { type: 'date', required: false, input: false }
 		}
 	},

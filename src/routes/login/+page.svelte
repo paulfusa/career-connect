@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import AuthShell, { field, primaryButton } from '$lib/components/AuthShell.svelte';
+	import AuthShell from '$lib/components/AuthShell.svelte';
+	import { errorBox, field, primaryButton } from '$lib/ui';
 	import PasswordField from '$lib/components/PasswordField.svelte';
 	import type { ActionData } from './$types';
 
@@ -39,7 +40,7 @@
 		<PasswordField autocomplete="current-password" />
 
 		{#if form?.message}
-			<p role="alert" class="rounded-xl bg-rose-50/80 px-3.5 py-2.5 text-sm text-rose-700 ring-1 ring-rose-200">
+			<p role="alert" class={errorBox}>
 				{form.message}
 			</p>
 		{/if}
