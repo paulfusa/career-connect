@@ -39,7 +39,7 @@ The owner of a user story is responsible for its tasks unless a task lists someo
 | 1.1 | Choose the database/auth approach and design the `users` schema | Paul | Completed |
 | 1.2 | Implement the signup form action with server-side validation and password hashing | Paul | Completed |
 | 1.3 | Build the registration page UI | Paul | Completed |
-| 1.4 | Write tests for valid signup, duplicate email, and weak password | Paul | completed |
+| 1.4 | Write tests for valid signup, duplicate email, and weak password | Paul | Completed |
 
 ### US-02: Login and logout (#6) · High · Paul · Sprint 1
 | Task | Description | Owner | Status |
@@ -57,10 +57,10 @@ The owner of a user story is responsible for its tasks unless a task lists someo
 | 16.3 | Add the save and skip form actions | Paul | Completed |
 | 16.4 | Show saved answers on the home page and test that the modal only appears once | Paul | Completed |
 
-### US-04: First-login onboarding (#9) · Medium · Paul · Sprint 1
+### US-04: Profile Management (#9) · High · Paul · Sprint 1
 | Task | Description | Owner | Status |
 |---|---|---|---|
 | 4.1 | Design a profile database table linked to the user account | Paul | Completed |
-| 4.2 | Implement two loading and updating the signed-in user's profile | Paul | Completed |
+| 4.2 | Implement loading and updating the signed-in user's profile | Paul | Completed |
 | 4.3 | Build the profile view and edit form | Paul | Completed |
 | 4.4 | Test saving, validation, and access control | Paul | Completed |
