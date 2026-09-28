@@ -1,22 +1,11 @@
-import { fail, redirect } from '@sveltejs/kit';
+import { fail } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
-import { auth } from '$lib/server/auth';
 import { db } from '$lib/server/db';
-import { user } from '$lib/server/db/schema';
+import { profile, user } from '$lib/server/db/schema';
 import { MAX_ANSWER_LENGTH, QUESTIONS } from '$lib/onboarding';
-import type { Actions, PageServerLoad } from './$types';
-
-export const load: PageServerLoad = ({ locals }) => {
-	// hooks.server.ts already redirects guests, so user is set here
-	return { user: locals.user! };
-};
+import type { Actions } from './$types';
 
 export const actions: Actions = {
-	logout: async ({ request }) => {
-		await auth.api.signOut({ headers: request.headers });
-		redirect(303, '/login');
-	},
-
 	onboard: async ({ request, locals }) => {
 		const data = await request.formData();
 		const answers: Record<string, string> = {};
@@ -31,10 +20,18 @@ export const actions: Actions = {
 			answers[name] = value;
 		}
 
-		await db
-			.update(user)
-			.set({ ...answers, onboardedAt: new Date() })
-			.where(eq(user.id, locals.user!.id));
+		// company autocomplete adds the company's domain (for its logo); ignored if malformed
+		const domain = data.get('companyDomain')?.toString().toLowerCase() ?? '';
+		if (answers.company && /^[a-z0-9-]+(\.[a-z0-9-]+)*\.[a-z]{2,}$/.test(domain)) answers.companyDomain = domain;
+
+		const userId = locals.user!.id;
+		await db.transaction(async (tx) => {
+			await tx
+				.insert(profile)
+				.values({ userId, ...answers })
+				.onConflictDoUpdate({ target: profile.userId, set: { ...answers, updatedAt: new Date() } });
+			await tx.update(user).set({ onboardedAt: new Date() }).where(eq(user.id, userId));
+		});
 	},
 
 	skipOnboarding: async ({ locals }) => {
