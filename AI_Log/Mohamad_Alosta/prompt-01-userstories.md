@@ -1,8 +1,10 @@
 # Prompt 1 - Define User Stories
 - **Purpose of AI Use**: Brainstorming and requirements to start the project.
 - **Date**: September 25, 2026
+- **Chat Link or Prompt/Response**: Full prompt and response included below.
+- **AI-Suggested Content**: 8 user stories for job seekers and recruiters, each with acceptance criteria and a task breakdown.
 - **Validation**: I read through and found some User Stories were too broad, so I made adjustments to clarify with extra details.
-- **Decision**: Partially Accepted.
+- **Decision**: Modified before use (partially accepted).
 - **Reflection**: AI helped give a starting point for the project.
 - **Responsible Person**: Mohamad Alosta
 

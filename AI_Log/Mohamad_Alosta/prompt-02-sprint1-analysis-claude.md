@@ -5,7 +5,7 @@
 - **Chat Link or Prompt/Response**: Link not available (the app wasn't used). My prompts are listed in the appendix below.
 - **AI-Suggested Content**: The AI compared the Sprint 1 requirements with our repository and GitHub issues to show what was complete and what was still missing. It then suggested how to organize each folder.
 - **Validation**: I went through every file on GitHub and examined the validity and marked down each completion, leaving out the incomplete sections.
-- **Decision**: I recreated the documents in my own understanding and completed the remaining files.
+- **Decision**: Modified before use. I recreated the documents in my own understanding and completed the remaining files.
 - **Reflection**: AI helped in speeding up the process of developing the planning, README, task monitoring, and task breakdown phases in an organized manner.
 - **Responsible Person**: Mohamad Alosta
 
