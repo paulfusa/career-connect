@@ -68,11 +68,11 @@ Stories for later sprints will be chosen from this backlog at each sprint planni
 | #63 | README: setup instructions and repo link | Task | Paul and Mohamad | Sep 28 | High | Completed |
 | #64 | Sprint 1 work plan, backlog, risks | Task | Mohamad | Sep 28 | High | Completed |
 | #65 | Task breakdown | Task | Mohamad | Sep 27 | High | Completed |
-| #66 | Contribution log | Task | Mohamad | Sep 28 | High | In Progress |
+| #66 | Contribution log | Task | Mohamad | Sep 28 | High | Completed |
 | #67 | Team process (workflow, branching, PRs, DoR, DoD) | Task | Mohamad | Sep 27 | High | Completed |
-| #68 | Team-generated user stories and features | Task | Everyone | Sep 28 | High | In Progress |
-| #69 | AI usage log PDF | Task | Everyone | Sep 28 | High | In Progress |
-| #71 | Sprint 1 submission document | Task | Mohamad | Sep 28 | High | In Progress |
+| #68 | Team-generated user stories and features | Task | Everyone | Sep 28 | High | Completed |
+| #69 | AI usage log PDF | Task | Everyone | Sep 28 | High | Completed |
+| #71 | Sprint 1 submission document | Task | Mohamad | Sep 28 | High | Completed |
 
 
 ## Rubric 
