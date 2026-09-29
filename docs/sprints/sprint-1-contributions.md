@@ -6,10 +6,10 @@ This log is based on our GitHub history (commits, pull requests and issues) and 
 
 | Member | GitHub | Commits | Merged PRs | PRs merged for others | Issues created | Sept 24 meeting |
 |---|---|---|---|---|---|---|
-| Mohamad Alosta | @MAlos616 | 19 | 17 (#22, #24, #26, #30, #36, #38 to #45, #47, #48, #52, #58) | 6 | 7 (#1, #2, #7, #8, #9, #10, #11) | Present |
+| Mohamad Alosta | @MAlos616 | 27 | 24 (#22, #24, #26, #30, #36, #38 to #45, #47, #48, #52, #58 to #60, #72 to #76) | 6 | 18 (#1, #2, #7 to #11, #61 to #71) | Present |
 | Paul Fourment | @paulfusa | 12 | 7 (#4, #28, #31, #46, #51, #53, #55) | 8 | 4 (#3, #5, #29, #54) | Present |
-| Kimia Karimiyeganeh | @kimiakarimiy | 4 | 4 (#32, #35, #37, #49) | 8 | 1 (#6) | Present |
-| Maher Waez | @Maherwaez01 | 4 | 3 (#27, #33, #57) | 7 | 3 (#12, #13, #14) | Present |
+| Kimia Karimiyeganeh | @kimiakarimiy | 4 | 4 (#32, #35, #37, #49) | 10 | 1 (#6) | Present |
+| Maher Waez | @Maherwaez01 | 4 | 3 (#27, #33, #57) | 12 | 3 (#12, #13, #14) | Present |
 | Michael Derocher | @MichaelDerocher1551 | 2 | 2 (#21, #34) | 0 | 6 (#15 to #20) | Absent |
 | Andrew Rowe | @an-rowe54 | 1 | 1 (#25) | 0 | 0 | Absent |
 
@@ -19,10 +19,12 @@ Note: Commit counts don't include merge commits. "PRs merged for others" counts 
 - Took the meeting minutes for the Sept 24 planning meeting (issue #7) and added them to `docs/meeting-minutes/` (PR #39).
 - Wrote user stories **US-03, US-04, US-05 and US-06** (issues #8 to #11), and the team-generated user stories section (PRs #41, #47).
 - Wrote the README project description, problem and proposed solution, planned features and technologies (PRs #22, #24, #30), and added the GitHub link and setup details.
-- Wrote the Sprint 1 work plan, the task breakdown (PRs #36, #38, #45, #52), the team process (PR #42) and this contribution log.
+- Wrote the Sprint 1 work plan (PRs #72, #75), the task breakdown (PRs #36, #38, #45, #52, #59, #73), the team process (PR #42) and this contribution log (PR #60).
 - Wrote an AI usage log for Sprint 1 (PRs #26, #40, #43, #44, #48).
 - Removed an outdated AI log file from the repository (PR #58).
-- Prepared the Sprint 1 submission document.
+- Updated the README with the setup steps, testing, Sprint 1 scope and documentation links (PR #72).
+- Created tracking issues for the Sprint 1 documentation tasks (issues #61 to #71).
+- Prepared the Sprint 1 submission document (PRs #74, #76).
 - Reviewed and merged 6 teammates' pull requests.
 
 ## Paul Fourment
@@ -43,7 +45,7 @@ Note: Commit counts don't include merge commits. "PRs merged for others" counts 
 - Worked on the database setup with Paul.
 - Created US-02 (issue #6) and helped write the first user stories.
 - Added an AI usage log (PRs #32, #35, #37, #49).
-- Reviewed and merged 8 teammates' pull requests.
+- Reviewed and merged 10 teammates' pull requests.
 
 ## Maher Waez
 - Updated the README (Sept 23).
@@ -51,7 +53,7 @@ Note: Commit counts don't include merge commits. "PRs merged for others" counts 
 - Added the project description and an AI log for the company reviews feature (PRs #27, #33).
 - Updated the task breakdown (PR #57).
 - Attended the Sept 24 meeting and helped review the work and discuss the database.
-- Reviewed and merged 7 teammates' pull requests.
+- Reviewed and merged 12 teammates' pull requests.
 
 ## Michael Derocher
 - Wrote user stories **US-10 to US-15** (issues #15 to #20), covering resumes, job postings, search and applying.
