@@ -12,9 +12,9 @@ The owner of a user story is responsible for its tasks unless a task lists someo
 | Member | GitHub | User Stories | Sprint 1 Tasks |
 |---|---|---|---|
 | Paul Fourment | @paulfusa | US-01, US-02, US-16, US-04 (done) | T4, T5 |
-| Mohamad Alosta | @MAlos616 | US-03, US-06 | T1, T2, T3, T4, T5, T7, T8 |
+| Mohamad Alosta | @MAlos616 | US-03, US-06 | T1, T2, T3, T4, T5, T6, T7, T8 |
 | Kimia Karimiyeganeh | @kimiakarimiy | US-10, US-11, US-15 | T5 |
-| Maher Waez | @Maherwaez01 | US-07, US-08, US-09 | T5, T6 |
+| Maher Waez | @Maherwaez01 | US-07, US-08, US-09 | T5 |
 | Andrew Rowe | @an-rowe54 | US-12, US-13 | T5 |
 | Michael Derocher | @MichaelDerocher1551 | US-05, US-14 | T5 |
 
@@ -27,7 +27,7 @@ The owner of a user story is responsible for its tasks unless a task lists someo
 | T3 | Team process definition (workflow, branching, PR process, code review, Definition of Ready, Definition of Done) | Task | Mohamad | High | Sep 27 | Completed |
 | T4 | README setup instructions and GitHub repo link | Task | Mohamad and Paul | High | Sep 28 | In Progress |
 | T5 | AI Usage Log PDF in `AI_Log/<Name>/` | Task | Everyone | High | Sep 27 | In Progress |
-| T6 | "Team-Generated User Stories and Features" section | Task | Everyone | High | Sep 28 | In Progress |
+| T6 | "Team-Generated-stories" section | Task | Mohamad | High | Sep 28 | In Progress |
 | T7 | Meeting minutes folder and cleanup of empty issues #2 | Task | Mohamad | Low | Sep 27 | Completed |
 | T8 | Sprint 1 submission document (cover page, README, repo link) | Task | Mohamad | High | Sep 27 | Completed |
 
