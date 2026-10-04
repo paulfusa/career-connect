@@ -4,12 +4,29 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { sveltekitCookies } from 'better-auth/svelte-kit';
 import { getRequestEvent } from '$app/server';
 import { db } from '$lib/server/db';
+import { sendVerificationEmail } from '$lib/server/email';
 
 export const auth = betterAuth({
 	baseURL: env.ORIGIN,
 	secret: env.BETTER_AUTH_SECRET,
 	database: drizzleAdapter(db, { provider: 'pg' }),
-	emailAndPassword: { enabled: true },
+	emailAndPassword: { enabled: true,
+		requireEmailVerification: true,
+		autoSignIn: false
+	 },
+
+	 emailVerification: {
+		sendOnsignUp: true,
+		autoSignInAfterVerification: false,
+		expiresIn: 60 * 60,
+
+		sendVerificationEmail: async ({ user, url }) => {
+			await sendVerificationEmail({
+				to: user.email,
+				verificationUrl: url
+			});
+		}
+	},
 	user: {
 		// US-04: no email sending set up yet, so unverified users can change email directly
 		changeEmail: { enabled: true, updateEmailWithoutVerification: true },
