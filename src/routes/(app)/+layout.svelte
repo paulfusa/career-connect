@@ -10,6 +10,7 @@
 	const roleLabel = { job_seeker: 'Job seeker', recruiter: 'Recruiter' };
 	const nav = [
 		{ href: '/', label: 'Home' },
+		{ href: '/jobs', label: 'Jobs' },
 		{ href: '/profile', label: 'Profile' }
 	];
 
@@ -44,7 +45,12 @@
 				{#each nav as item (item.href)}
 					<a
 						href={item.href}
-						aria-current={page.url.pathname === item.href ? 'page' : undefined}
+						aria-current={
+							page.url.pathname === item.href ||
+							(item.href === '/jobs' && page.url.pathname.startsWith('/jobs'))
+								? 'page'
+								: undefined
+						}
 						class="flex-1 rounded-xl px-3 py-2 text-sm font-medium text-ink/70 transition hover:bg-white/60 hover:text-ink aria-[current=page]:bg-white/75 aria-[current=page]:text-ink md:flex-none"
 					>
 						{item.label}

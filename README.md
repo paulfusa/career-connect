@@ -32,6 +32,8 @@ CareerConnect aims to gather all this into one platform that tries to satisfy bo
 3. Duplicate the `.env.example` and rename to `.env`, and paste the required keys.
 
 ## Run Dev
+Sync schema changes to your development database with `pnpm db:push`.
+
 ### VS Code
 - Go to **Run and Debug** and choose `Web`
 
