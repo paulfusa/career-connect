@@ -4,7 +4,8 @@ import { auth } from '$lib/server/auth';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = ({ locals, url }) => {
-	if (locals.user) {
+	// unverified users would bounce / -> /verify-email -> /login forever
+	if (locals.user?.emailVerified) {
 		redirect(302, '/');
 	}
 
