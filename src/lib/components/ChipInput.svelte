@@ -125,6 +125,7 @@
 		id="{name}-input"
 		bind:value={text}
 		options={suggestions}
+		status={suggester?.loading ? 'Searching…' : undefined}
 		{placeholder}
 		aria-describedby="{name}-hint {name}-notice"
 		class={field}

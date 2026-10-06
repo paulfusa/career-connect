@@ -72,8 +72,29 @@ export const education = pgTable(
 	(t) => [index('education_user_id_idx').on(t.userId)]
 );
 
+export const jobPosting = pgTable(
+	'job_posting',
+	{
+		id: uuid('id').primaryKey().defaultRandom(),
+		createdBy: text('created_by')
+			.notNull()
+			.references(() => user.id, { onDelete: 'cascade' }),
+		title: text('title').notNull(),
+		company: text('company').notNull(),
+		companyDomain: text('company_domain'), // from the company autocomplete, used for the logo
+		location: text('location').notNull(),
+		employmentType: text('employment_type').notNull(),
+		workMode: text('work_mode').notNull(),
+		description: text('description').notNull(),
+		createdAt: timestamp('created_at').defaultNow().notNull(),
+		updatedAt: timestamp('updated_at').defaultNow().notNull()
+	},
+	(t) => [index('job_posting_created_by_idx').on(t.createdBy), index('job_posting_created_at_idx').on(t.createdAt)]
+);
+
 export type Profile = typeof profile.$inferSelect;
 export type Experience = typeof experience.$inferSelect;
 export type Education = typeof education.$inferSelect;
+export type JobPosting = typeof jobPosting.$inferSelect;
 
 export * from './auth.schema';
