@@ -43,3 +43,15 @@ test('job posting: enforces field length limits', () => {
 	assert.ok(!parsed.ok);
 	assert.match(parsed.errors.description ?? '', /5000 characters or fewer/);
 });
+
+test('job posting: keeps a valid company domain and drops a malformed one', () => {
+	const ok = parseJobPosting(form({ ...valid, companyDomain: 'Shopify.com' }));
+	assert.ok(ok.ok);
+	assert.equal(ok.values.companyDomain, 'shopify.com');
+
+	const bad = parseJobPosting(form({ ...valid, companyDomain: 'javascript:alert(1)' }));
+	assert.ok(bad.ok);
+	assert.equal(bad.values.companyDomain, null);
+
+	assert.equal(parseJobPosting(form(valid)).values.companyDomain, null);
+});

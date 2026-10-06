@@ -45,6 +45,6 @@ export const actions: Actions = {
 			.where(and(eq(jobPosting.id, params.id), eq(jobPosting.createdBy, locals.user!.id)))
 			.returning({ id: jobPosting.id });
 		if (!posting) return fail(404, { message: 'Job posting not found.' });
-		redirect(303, '/jobs');
+		redirect(303, '/jobs?mine');
 	}
 };

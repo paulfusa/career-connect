@@ -33,7 +33,10 @@
 			{data.user.role === 'recruiter' ? 'Create a job posting' : 'Browse job postings'}
 		</a>
 		{#if data.user.role === 'recruiter'}
-			<a href="/jobs" class="mt-3 block text-sm font-medium text-tide-deep hover:underline">Browse all postings</a>
+			<p class="mt-3 flex justify-center gap-4 text-sm font-medium text-tide-deep">
+				<a href="/jobs?mine" class="hover:underline">Your postings</a>
+				<a href="/jobs" class="hover:underline">All postings</a>
+			</p>
 		{/if}
 	</div>
 </section>

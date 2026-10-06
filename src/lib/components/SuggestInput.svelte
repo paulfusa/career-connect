@@ -40,6 +40,7 @@
 	bind:value={current}
 	options={suggester.options.filter((o) => o.label !== current)}
 	onsearch={(text) => suggester.run(text)}
+	status={suggester.loading ? 'Searching…' : undefined}
 	onpick={(option) => (current = option.label)}
 />
 {#if domainName}

@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import FieldError from '$lib/components/FieldError.svelte';
+	import SuggestInput from '$lib/components/SuggestInput.svelte';
+	import { searchCities, searchCompanies } from '$lib/suggest.svelte';
 	import { EMPLOYMENT_TYPES, LIMITS, WORK_MODES } from '$lib/profile-options';
 	import { withPending } from '$lib/forms';
 	import type { JobPostingInput } from '$lib/server/job-posting';
@@ -31,12 +33,35 @@
 	<div class="grid gap-5 sm:grid-cols-2">
 		<label class="block">
 			<span class={label}>Company</span>
-			<input name="company" required maxlength={LIMITS.short} value={values.company ?? ''} placeholder="Company name" aria-invalid={!!errors?.company} aria-describedby="company-error" class={field} />
+			<SuggestInput
+				name="company"
+				search={searchCompanies}
+				domainName="companyDomain"
+				value={values.company}
+				domain={values.companyDomain}
+				required
+				maxlength={LIMITS.short}
+				placeholder="Start typing a company"
+				aria-invalid={!!errors?.company}
+				aria-describedby="company-error"
+				class={field}
+			/>
 			<FieldError id="company-error" message={errors?.company} />
 		</label>
 		<label class="block">
 			<span class={label}>Location</span>
-			<input name="location" required maxlength={LIMITS.short} value={values.location ?? ''} placeholder="Montreal, QC or Remote" aria-invalid={!!errors?.location} aria-describedby="location-error" class={field} />
+			<SuggestInput
+				name="location"
+				search={searchCities}
+				fixed={['Remote']}
+				value={values.location}
+				required
+				maxlength={LIMITS.short}
+				placeholder="Start typing a city, or Remote"
+				aria-invalid={!!errors?.location}
+				aria-describedby="location-error"
+				class={field}
+			/>
 			<FieldError id="location-error" message={errors?.location} />
 		</label>
 	</div>

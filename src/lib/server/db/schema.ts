@@ -81,6 +81,7 @@ export const jobPosting = pgTable(
 			.references(() => user.id, { onDelete: 'cascade' }),
 		title: text('title').notNull(),
 		company: text('company').notNull(),
+		companyDomain: text('company_domain'), // from the company autocomplete, used for the logo
 		location: text('location').notNull(),
 		employmentType: text('employment_type').notNull(),
 		workMode: text('work_mode').notNull(),

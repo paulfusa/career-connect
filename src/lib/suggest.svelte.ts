@@ -59,6 +59,7 @@ export const logoUrl = (domain: string) =>
 // so a picked suggestion can be matched back to its domain.
 export class Suggester {
 	options = $state<Suggestion[]>([]);
+	loading = $state(false);
 	#seen = new Map<string, Suggestion>();
 	#timer: ReturnType<typeof setTimeout> | undefined;
 	#request: AbortController | undefined;
@@ -77,23 +78,33 @@ export class Suggester {
 	run(query: string) {
 		clearTimeout(this.#timer);
 		this.#request?.abort();
-		// fixed options (e.g. "Remote") only while they match what's typed
 		const q = query.trim().toLowerCase();
-		const fixed = this.fixed.filter((f) => f.label.toLowerCase().includes(q));
+		// fixed options (e.g. "Remote") only while what's typed could be the start of them
+		const fixed = this.fixed.filter((f) => f.label.toLowerCase().startsWith(q));
+		// until new results arrive, keep the earlier ones that still match instead of a stale list
+		const kept = this.options.filter(
+			(o) => q && o.label.toLowerCase().includes(q) && !this.fixed.some((f) => f.label === o.label)
+		);
+		this.options = [...fixed, ...kept];
+
 		// picking an option fires input too; don't search again for it
 		if (q.length < 2 || this.#seen.has(query)) {
-			this.options = fixed;
+			this.loading = false;
 			return;
 		}
 
+		this.loading = true;
 		this.#timer = setTimeout(async () => {
-			this.#request = new AbortController();
+			const request = (this.#request = new AbortController());
 			try {
-				const results = await this.search(query.trim(), this.#request.signal);
+				const results = await this.search(query.trim(), request.signal);
 				for (const r of results) this.#seen.set(r.label, r);
 				this.options = [...fixed, ...results.filter((r) => !fixed.some((f) => f.label === r.label))];
+				this.loading = false;
 			} catch {
-				// aborted or offline: keep the last suggestions, typing still works
+				// offline or the service failed: typing still works. A newer keystroke aborting this
+				// request keeps loading on, because its own search is now the one in flight.
+				if (!request.signal.aborted) this.loading = false;
 			}
 		}, 250);
 	}

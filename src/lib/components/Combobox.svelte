@@ -9,6 +9,7 @@
 		value = $bindable(''),
 		options,
 		onpick,
+		status,
 		onsearch,
 		onenter,
 		...rest
@@ -16,6 +17,8 @@
 		value?: string;
 		options: Suggestion[];
 		onpick: (option: Suggestion) => void;
+		// shown as a non-selectable last row, e.g. "Searching…"
+		status?: string;
 		onsearch?: (text: string) => void;
 		// Enter with no highlighted option; return true if handled (e.g. add a chip)
 		onenter?: (text: string) => boolean;
@@ -28,7 +31,7 @@
 	let dismissed = $state(false);
 	let active = $state(-1);
 
-	let open = $derived(focused && !dismissed && options.length > 0);
+	let open = $derived(focused && !dismissed && (options.length > 0 || !!status));
 
 	// a new set of options resets the highlight
 	$effect(() => {
@@ -53,6 +56,7 @@
 			return;
 		}
 		void options.length;
+		void status;
 		if (!list.matches(':popover-open')) list.showPopover();
 		place();
 		const update = () => place();
@@ -147,4 +151,7 @@
 			</span>
 		</li>
 	{/each}
+	{#if status}
+		<li role="presentation" aria-live="polite" class="px-2.5 py-2 text-sm text-ink/55">{status}</li>
+	{/if}
 </ul>

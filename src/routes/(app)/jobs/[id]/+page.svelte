@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import OrgLogo from '$lib/components/OrgLogo.svelte';
 	import { EMPLOYMENT_TYPES, WORK_MODES } from '$lib/profile-options';
 	import { glassPanel, primaryButton, successBox } from '$lib/ui';
 	import type { PageProps } from './$types';
@@ -18,13 +19,16 @@
 
 	<article class="{glassPanel} mt-5 p-6 sm:p-9">
 		<div class="flex flex-wrap items-start justify-between gap-4">
-			<div>
-				<p class="text-sm font-medium uppercase tracking-widest text-tide-deep">{posting.company}</p>
-				<h1 class="mt-2 font-display text-3xl font-semibold tracking-tight">{posting.title}</h1>
-				<p class="mt-2 text-ink/65">{posting.location} <span aria-hidden="true">·</span> Posted by {data.creatorName}</p>
+			<div class="flex min-w-0 items-start gap-4">
+				<OrgLogo name={posting.company} domain={posting.companyDomain} />
+				<div class="min-w-0">
+					<p class="text-sm font-medium uppercase tracking-widest text-tide-deep">{posting.company}</p>
+					<h1 class="mt-2 font-display text-3xl font-semibold tracking-tight">{posting.title}</h1>
+					<p class="mt-2 text-ink/65">{posting.location} <span aria-hidden="true">·</span> Posted by {data.creatorName}</p>
+				</div>
 			</div>
 			{#if data.isOwner}
-				<a href="/jobs/{posting.id}/edit" class={primaryButton + ' w-auto px-5 text-center'}>Edit posting</a>
+				<a href="/jobs/{posting.id}/edit" class={primaryButton + ' px-5 text-center sm:w-auto'}>Edit posting</a>
 			{/if}
 		</div>
 

@@ -3,6 +3,7 @@ import { EMPLOYMENT_TYPES, LIMITS, WORK_MODES } from '../profile-options.ts';
 export type JobPostingInput = {
 	title: string;
 	company: string;
+	companyDomain: string | null;
 	location: string;
 	employmentType: string;
 	workMode: string;
@@ -15,12 +16,16 @@ export type JobPostingParse =
 	| { ok: false; errors: JobPostingErrors; values: JobPostingInput };
 
 const DESCRIPTION_LIMIT = 5000;
+const DOMAIN = /^[a-z0-9-]+(\.[a-z0-9-]+)*\.[a-z]{2,}$/;
 
 export function parseJobPosting(data: FormData): JobPostingParse {
 	const errors: JobPostingErrors = {};
+	// hidden field filled by the company autocomplete; silently dropped if malformed
+	const domain = data.get('companyDomain')?.toString().trim().toLowerCase() ?? '';
 	const values: JobPostingInput = {
 		title: data.get('title')?.toString().trim() ?? '',
 		company: data.get('company')?.toString().trim() ?? '',
+		companyDomain: DOMAIN.test(domain) ? domain : null,
 		location: data.get('location')?.toString().trim() ?? '',
 		employmentType: data.get('employmentType')?.toString() ?? '',
 		workMode: data.get('workMode')?.toString() ?? '',
