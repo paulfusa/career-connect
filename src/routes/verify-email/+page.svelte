@@ -1,54 +1,56 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
+	import AuthShell from '$lib/components/AuthShell.svelte';
+	import { errorBox, primaryButton, successBox } from '$lib/ui';
+
 	let { data, form } = $props();
+
+	let pending = $state(false);
 </script>
 
-<div class="mx-auto mt-20 max-w-md rounded-lg border p-6 shadow-sm">
-	<h1 class="mb-3 text-2xl font-semibold">
-		Check your email
-	</h1>
+<svelte:head><title>Verify your email · CareerConnect</title></svelte:head>
 
-	<p class="mb-4 text-gray-600">
-		We sent a verification link to your email address.
-		Please verify your email before signing in.
-	</p>
-
-	{#if data.email}
-		<p class="mb-6 font-medium">
-			{data.email}
+<AuthShell title="Check your email" subtitle="Verify your email before logging in.">
+	<div class="mt-8 space-y-6">
+		<p class="text-sm">
+			We sent a verification link to
+			{#if data.email}
+				<strong>{data.email}</strong>.
+			{:else}
+				your email address.
+			{/if}
 		</p>
-	{/if}
 
-	{#if form?.message}
-		<p class="mb-4 text-green-600">
-			{form.message}
-		</p>
-	{/if}
+		{#if form?.message}
+			<p role="status" class={successBox}>{form.message}</p>
+		{/if}
 
-	{#if form?.error}
-		<p class="mb-4 text-red-600">
-			{form.error}
-		</p>
-	{/if}
+		{#if form?.error}
+			<p role="alert" class={errorBox}>{form.error}</p>
+		{/if}
 
-	<form method="POST" action="?/resend">
-		<input
-			type="hidden"
-			name="email"
-			value={data.email}
-		/>
+		<form
+			method="POST"
+			action="?/resend"
+			use:enhance={() => {
+				pending = true;
 
-		<button
-			type="submit"
-			class="w-full rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+				return async ({ update }) => {
+					await update();
+					pending = false;
+				};
+			}}
 		>
-			Resend verification email
-		</button>
-	</form>
+			<input type="hidden" name="email" value={data.email} />
 
-	<a
-		href="/login"
-		class="mt-4 block text-center text-sm text-blue-600 hover:underline"
-	>
-		Back to login
-	</a>
-</div>
+			<button type="submit" disabled={pending} class={primaryButton}>
+				{pending ? 'Sending…' : 'Resend verification email'}
+			</button>
+		</form>
+	</div>
+
+	{#snippet footer()}
+		Already verified?
+		<a href="/login" class="font-semibold text-tide underline-offset-4 hover:underline">Log in</a>
+	{/snippet}
+</AuthShell>
