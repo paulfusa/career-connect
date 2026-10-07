@@ -1,9 +1,9 @@
 import { fail, redirect } from '@sveltejs/kit';
 import { APIError } from 'better-auth/api';
-import { and, eq } from 'drizzle-orm';
+import { and, desc, eq } from 'drizzle-orm';
 import { auth } from '$lib/server/auth';
 import { db } from '$lib/server/db';
-import { education, experience, profile, user } from '$lib/server/db/schema';
+import { education, experience, profile, resume, user } from '$lib/server/db/schema';
 import { loadEntries } from '$lib/server/profile-data';
 import {
 	parseAbout,
@@ -15,7 +15,7 @@ import {
 	type Errors,
 	type Parsed
 } from '$lib/server/profile';
-import { AVATAR_MAX_BYTES, AVATAR_TYPES, deleteAvatar, uploadAvatar } from '$lib/server/storage';
+import { AVATAR_MAX_BYTES, AVATAR_TYPES, deleteAvatar, deleteResume, uploadAvatar } from '$lib/server/storage';
 import type { Actions, PageServerLoad } from './$types';
 
 // Access control: every query and action is scoped to locals.user.id (never an id from the form alone),
@@ -24,7 +24,17 @@ import type { Actions, PageServerLoad } from './$types';
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const DONE = '/profile?saved';
 
-export const load: PageServerLoad = ({ locals }) => loadEntries(locals.user!.id);
+const ownResumes = (userId: string) =>
+	db
+		.select({ id: resume.id, fileName: resume.fileName, storagePath: resume.storagePath })
+		.from(resume)
+		.where(eq(resume.userId, userId))
+		.orderBy(desc(resume.updatedAt));
+
+export const load: PageServerLoad = async ({ locals }) => {
+	const [entries, resumes] = await Promise.all([loadEntries(locals.user!.id), ownResumes(locals.user!.id)]);
+	return { ...entries, resumes: resumes.map(({ id, fileName }) => ({ id, fileName })) };
+};
 
 type ProfileFields = Partial<Omit<typeof profile.$inferInsert, 'userId' | 'updatedAt'>>;
 
@@ -178,8 +188,11 @@ export const actions: Actions = {
 		if (data.get('confirm')?.toString().trim() !== 'DELETE') return failWith('Type DELETE to confirm.');
 		if (!password) return failWith('Enter your password to confirm.');
 
+		// read the file paths first: the resume rows disappear with the user
+		const files = await ownResumes(locals.user!.id);
+
 		try {
-			// removes the user; profile, experience, education and sessions cascade in the DB
+			// removes the user; profile, experience, education, resumes and sessions cascade in the DB
 			await auth.api.deleteUser({ body: { password }, headers: request.headers });
 		} catch (error) {
 			if (error instanceof APIError && error.body?.code === 'INVALID_PASSWORD') {
@@ -189,6 +202,7 @@ export const actions: Actions = {
 		}
 
 		if (locals.user!.image) await deleteAvatar(locals.user!.id).catch((e) => console.error(e));
+		await Promise.all(files.map((f) => deleteResume(f.storagePath).catch((e) => console.error(e))));
 		redirect(303, '/login');
 	}
 };

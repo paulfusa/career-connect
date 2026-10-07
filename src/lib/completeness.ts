@@ -5,7 +5,7 @@ export function completeness(
 	role: 'job_seeker' | 'recruiter',
 	image: string | null | undefined,
 	p: Profile | null,
-	counts: { experience: number; education: number }
+	counts: { experience: number; education: number; resumes: number }
 ) {
 	const checks: [done: boolean, todo: string][] =
 		role === 'job_seeker'
@@ -15,6 +15,7 @@ export function completeness(
 					[counts.education > 0, 'Add your education'],
 					[counts.experience > 0, 'Add an experience'],
 					[(p?.skills.length ?? 0) >= 3, 'Add at least 3 skills'],
+					[counts.resumes > 0, 'Upload a resume'],
 					[!!p?.about, 'Write a short about section'],
 					[(p?.jobTypes.length ?? 0) + (p?.desiredRoles.length ?? 0) > 0, 'Set your job preferences'],
 					[!!image, 'Add a profile picture']
