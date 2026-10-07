@@ -1,5 +1,6 @@
 import { error, fail } from '@sveltejs/kit';
 import { and, count, desc, eq } from 'drizzle-orm';
+import { aiConfigured } from '$lib/server/ai';
 import { db } from '$lib/server/db';
 import { resume } from '$lib/server/db/schema';
 import { cleanFileName, RESUME_MAX_COUNT, validateResume } from '$lib/resume';
@@ -13,11 +14,18 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 export const load: PageServerLoad = async ({ locals }) => {
 	if (locals.user!.role !== 'job_seeker') error(404, 'Not found');
 	const resumes = await db
-		.select()
+		.select({
+			id: resume.id,
+			fileName: resume.fileName,
+			sizeBytes: resume.sizeBytes,
+			createdAt: resume.createdAt,
+			updatedAt: resume.updatedAt,
+			reviewedAt: resume.reviewedAt
+		})
 		.from(resume)
 		.where(eq(resume.userId, locals.user!.id))
 		.orderBy(desc(resume.updatedAt));
-	return { resumes };
+	return { resumes, ai: aiConfigured() };
 };
 
 // the uploaded file, or an error message
@@ -87,7 +95,8 @@ export const actions: Actions = {
 		}
 		await db
 			.update(resume)
-			.set({ fileName, sizeBytes: file.size, updatedAt: new Date() })
+			// the saved AI results described the old file
+			.set({ fileName, sizeBytes: file.size, updatedAt: new Date(), parsed: null, parsedAt: null, review: null, reviewedAt: null })
 			.where(eq(resume.id, row.id));
 		return { success: `${row.fileName} replaced with ${fileName}.` };
 	},
