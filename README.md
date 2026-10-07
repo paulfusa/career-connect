@@ -30,6 +30,7 @@ CareerConnect aims to gather all this into one platform that tries to satisfy bo
 1. Clone the repository: `git clone https://github.com/paulfusa/career-connect.git`
 2. In Project Terminal, run `pnpm install` to install the Node dependencies,
 3. Duplicate the `.env.example` and rename to `.env`, and paste the required keys.
+4. Optional: to use the AI features (resume review and profile autofill), follow [docs/ai-setup.md](docs/ai-setup.md). It works with a free local model (Ollama) or a free hosted tier (Gemini, Groq).
 
 ## Run Dev
 Sync schema changes to your development database with `pnpm db:push`.

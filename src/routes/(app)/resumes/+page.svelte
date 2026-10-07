@@ -2,7 +2,6 @@
 	import { enhance } from '$app/forms';
 	import ConfirmDialog from '$lib/components/ConfirmDialog.svelte';
 	import { formatBytes, RESUME_MAX_COUNT, RESUME_MAX_MB } from '$lib/resume';
-	import type { Resume } from '$lib/server/db/schema';
 	import { errorBox, glassPanel, primaryButton, successBox } from '$lib/ui';
 	import type { PageProps } from './$types';
 
@@ -10,7 +9,7 @@
 
 	// which request is in flight: 'upload', or the id of the resume being replaced/deleted
 	let busy = $state<string | null>(null);
-	let confirming = $state<Resume | null>(null);
+	let confirming = $state<(typeof data.resumes)[number] | null>(null);
 
 	const track = (key: string) => () => {
 		busy = key;
@@ -91,7 +90,13 @@
 								{dateFmt.format(r.updatedAt)}
 							</p>
 						</div>
-						<div class="flex items-center gap-1">
+						<div class="flex flex-wrap items-center gap-1">
+							{#if data.ai}
+								<a href="/resumes/{r.id}/review" class={actionLink} aria-label="{r.reviewedAt ? 'See the AI review of' : 'Get an AI review of'} {r.fileName}">
+									{r.reviewedAt ? 'See review' : 'Review'}
+								</a>
+								<a href="/resumes/{r.id}/import" class={actionLink} aria-label="Fill your profile from {r.fileName}">Fill profile</a>
+							{/if}
 							<a href="/resumes/{r.id}" target="_blank" rel="noopener" class={actionLink} aria-label="View {r.fileName}">View</a>
 
 							<!-- picking a file submits straight away -->

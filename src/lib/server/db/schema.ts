@@ -1,4 +1,5 @@
-import { pgTable, serial, integer, text, timestamp, boolean, date, uuid, index } from 'drizzle-orm/pg-core';
+import { pgTable, serial, integer, text, timestamp, boolean, date, uuid, index, jsonb } from 'drizzle-orm/pg-core';
+import type { ParsedResume, ResumeReview } from '../resume-ai';
 import { user } from './auth.schema';
 
 export const task = pgTable('task', {
@@ -101,11 +102,19 @@ export const resume = pgTable(
 		fileName: text('file_name').notNull(),
 		sizeBytes: integer('size_bytes').notNull(),
 		storagePath: text('storage_path').notNull().unique(),
+		// AI results are saved so they aren't recomputed on every visit; both are cleared when the file is replaced
+		parsed: jsonb('parsed').$type<ParsedResume>(),
+		parsedAt: timestamp('parsed_at'),
+		review: jsonb('review').$type<StoredReview>(),
+		reviewedAt: timestamp('reviewed_at'),
 		createdAt: timestamp('created_at').defaultNow().notNull(),
 		updatedAt: timestamp('updated_at').defaultNow().notNull()
 	},
 	(t) => [index('resume_user_id_idx').on(t.userId)]
 );
+
+// a review plus what it was run against and by which model
+export type StoredReview = ResumeReview & { job: { id: string; title: string; company: string } | null; model: string };
 
 export type Profile = typeof profile.$inferSelect;
 export type Resume = typeof resume.$inferSelect;
