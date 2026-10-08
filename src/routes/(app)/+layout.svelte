@@ -8,11 +8,12 @@
 	let { data, children }: LayoutProps = $props();
 
 	const roleLabel = { job_seeker: 'Job seeker', recruiter: 'Recruiter' };
-	const nav = [
+	let nav = $derived([
 		{ href: '/', label: 'Home' },
 		{ href: '/jobs', label: 'Jobs' },
-		{ href: '/profile', label: 'Profile' }
-	];
+		{ href: '/profile', label: 'Profile' },
+		...(data.user.role === 'job_seeker' ? [{ href: '/resumes', label: 'Resumes' }] : [])
+	]);
 
 	let tagline = $derived(
 		data.user.role === 'recruiter'

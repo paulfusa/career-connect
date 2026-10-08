@@ -92,7 +92,23 @@ export const jobPosting = pgTable(
 	(t) => [index('job_posting_created_by_idx').on(t.createdBy), index('job_posting_created_at_idx').on(t.createdAt)]
 );
 
+// Resume PDFs live in the private `resumes` storage bucket at storagePath; this row is the record of each file
+export const resume = pgTable(
+	'resume',
+	{
+		id: uuid('id').primaryKey().defaultRandom(),
+		userId: userId(),
+		fileName: text('file_name').notNull(),
+		sizeBytes: integer('size_bytes').notNull(),
+		storagePath: text('storage_path').notNull().unique(),
+		createdAt: timestamp('created_at').defaultNow().notNull(),
+		updatedAt: timestamp('updated_at').defaultNow().notNull()
+	},
+	(t) => [index('resume_user_id_idx').on(t.userId)]
+);
+
 export type Profile = typeof profile.$inferSelect;
+export type Resume = typeof resume.$inferSelect;
 export type Experience = typeof experience.$inferSelect;
 export type Education = typeof education.$inferSelect;
 export type JobPosting = typeof jobPosting.$inferSelect;

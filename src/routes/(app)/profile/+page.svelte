@@ -35,7 +35,8 @@
 	let score = $derived(
 		completeness(data.user.role, data.user.image, p, {
 			experience: data.experience.length,
-			education: data.education.length
+			education: data.education.length,
+			resumes: data.resumes.length
 		})
 	);
 
@@ -64,7 +65,7 @@
 		<p role="status" class={successBox}>Profile saved.</p>
 	{/if}
 
-	<ProfileView user={data.user} profile={p} experience={data.experience} education={data.education} editable {below} />
+	<ProfileView user={data.user} profile={p} experience={data.experience} education={data.education} resumes={data.resumes} editable {below} />
 
 	<h2 class="pt-4 font-display text-xl font-semibold">Account</h2>
 	<div class="grid gap-5 lg:grid-cols-2">

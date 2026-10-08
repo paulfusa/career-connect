@@ -13,6 +13,7 @@
 		experience,
 		education,
 		editable = false,
+		resumes,
 		below
 	}: {
 		user: { name: string; email: string; image?: string | null; role: 'job_seeker' | 'recruiter' };
@@ -20,6 +21,7 @@
 		experience: Experience[];
 		education: Education[];
 		editable?: boolean;
+		resumes?: { id: string; fileName: string }[];
 		below?: Snippet; // rendered under the header card (e.g. completeness)
 	} = $props();
 
@@ -225,10 +227,22 @@
 		{/snippet}
 		{@render section('Job preferences', { href: '?edit=preferences', label: hasPreferences ? 'Edit' : 'Add' }, preferencesBody)}
 
-		{#snippet resumeBody()}
-			<p class="text-ink/45">Resume upload is coming soon.</p>
-		{/snippet}
-		<!-- ponytail: placeholder until the resume upload story -->
-		{@render section('Resume', null, resumeBody)}
+		<!-- only on your own profile: recruiters get resumes through job applications, not here -->
+		{#if resumes}
+			{#snippet resumeBody()}
+				{#if resumes.length}
+					<ul class="space-y-2">
+						{#each resumes as r (r.id)}
+							<li>
+								<a href="/resumes/{r.id}" target="_blank" rel="noopener" class="font-medium text-tide hover:underline">{r.fileName}</a>
+							</li>
+						{/each}
+					</ul>
+				{:else}
+					{@render empty('Upload a PDF resume so it’s ready when you apply.')}
+				{/if}
+			{/snippet}
+			{@render section('Resumes', { href: '/resumes', label: resumes.length ? 'Manage' : 'Upload' }, resumeBody)}
+		{/if}
 	{/if}
 </div>
