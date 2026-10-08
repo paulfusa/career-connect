@@ -7,7 +7,7 @@
 
 ## Attendance
 | Team Member | Attendance |
-| --- | --- | --- |
+| --- | --- |
 | Andrew Rowe | present |
 | Kimia Karimiyeganeh | Present |
 | Maher Waez | Present |
@@ -18,7 +18,7 @@
 ## Topics Discussed and Decisions Taken
 1. Discussed sprint 2 and decided to complete all the mandatory requirements marked by P0 (Have other features depending on them) by next week's in-Lab meeting.
 2. Divided some of the remaining user stories among ourselves and made sure everyone can contribute to sprint 2's requirements.
-4. Discussed adding more user stories and decided to allow anyone from the group to add user stories so that we could decide which to consider.
+3. Discussed adding more user stories and decided to allow anyone from the group to add user stories so that we could decide which to consider.
 
 ## Action Items
 1. Start creating features for the user stories already present. 
