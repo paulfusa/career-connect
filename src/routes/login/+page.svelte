@@ -3,6 +3,7 @@
 	import AuthShell from '$lib/components/AuthShell.svelte';
 	import { errorBox, field, primaryButton } from '$lib/ui';
 	import PasswordField from '$lib/components/PasswordField.svelte';
+	import { page } from '$app/state';
 
 	let { data, form } = $props();
 
@@ -18,6 +19,15 @@
 		</p>
 	{/if}
 
+	
+	{#if page.url.searchParams.get('passwordReset') === '1'}
+		<div
+			role="status"
+			class="mt-6 rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-800"
+		>
+			Password reset successfully. Please sign in.
+		</div>
+{/if}
 	<form
 		method="post"
 		class="mt-8 space-y-5"
@@ -45,6 +55,15 @@
 		</label>
 
 		<PasswordField autocomplete="current-password" />
+
+		<div class="text-right">
+	<a
+		href="/forgot-password"
+		class="text-sm font-semibold text-tide underline-offset-4 hover:underline"
+	>
+		Forgot password?
+	</a>
+</div>
 
 		{#if form?.message}
 			<p role="alert" class={errorBox}>

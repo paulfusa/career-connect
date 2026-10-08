@@ -4,7 +4,11 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { sveltekitCookies } from 'better-auth/svelte-kit';
 import { getRequestEvent } from '$app/server';
 import { db } from '$lib/server/db';
-import { sendVerificationEmail } from '$lib/server/email';
+import {
+	sendVerificationEmail,
+	sendPasswordResetCode
+} from '$lib/server/email';
+import { emailOTP } from 'better-auth/plugins';
 
 export const auth = betterAuth({
 	baseURL: env.ORIGIN,
@@ -16,7 +20,7 @@ export const auth = betterAuth({
 	 },
 
 	 emailVerification: {
-		sendOnsignUp: true,
+		sendOnSignUp: true,
 		autoSignInAfterVerification: false,
 		expiresIn: 60 * 60,
 
@@ -40,6 +44,19 @@ export const auth = betterAuth({
 		}
 	},
 	plugins: [
-		sveltekitCookies(getRequestEvent) // make sure this is the last plugin in the array
-	]
+	emailOTP({
+		otpLength: 6,
+		expiresIn: 600,
+		allowedAttempts: 5,
+		resendStrategy: 'rotate',
+
+		async sendVerificationOTP({ email, otp, type }) {
+			if (type === 'forget-password') {
+				await sendPasswordResetCode(email, otp);
+			}
+		}
+	}),
+
+	sveltekitCookies(getRequestEvent)
+]
 });
