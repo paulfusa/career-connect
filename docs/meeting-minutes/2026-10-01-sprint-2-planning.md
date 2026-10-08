@@ -1,4 +1,4 @@
-# Meeting: Sprint 2 - Planning
+# Meeting: Sprint 2 - Planning (I)
 
 **Date:** October 01, 2026
 **Time:** 18:30 - 19:30
