@@ -86,6 +86,12 @@ export const jobPosting = pgTable(
 		employmentType: text('employment_type').notNull(),
 		workMode: text('work_mode').notNull(),
 		description: text('description').notNull(),
+		status: text('status').default('open').notNull(),
+		published: boolean('published').default(true).notNull(),
+		requirements: text('requirements'),
+		applicationDeadline: date('application_deadline'),
+		salaryMin: integer('salary_min'),
+		salaryMax: integer('salary_max'),
 		createdAt: timestamp('created_at').defaultNow().notNull(),
 		updatedAt: timestamp('updated_at').defaultNow().notNull()
 	},
