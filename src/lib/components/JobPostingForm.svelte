@@ -95,6 +95,45 @@
 		<FieldError id="description-error" message={errors?.description} />
 	</label>
 
+	<label class="block">
+		<span class={label}>Requirements</span>
+		<textarea name="requirements" required rows="5" maxlength="5000" placeholder="List the skills, experience, and qualifications." aria-invalid={!!errors?.requirements} aria-describedby="requirements-error" class={field}>{values.requirements ?? ''}</textarea>
+		<FieldError id="requirements-error" message={errors?.requirements} />
+	</label>
+
+	<label class="block">
+		<span class={label}>Application deadline</span>
+		<input name="applicationDeadline" type="date" required value={values.applicationDeadline ?? ''} aria-invalid={!!errors?.applicationDeadline} aria-describedby="applicationDeadline-error" class={field} />
+		<FieldError id="applicationDeadline-error" message={errors?.applicationDeadline} />
+	</label>
+
+	<label class="block">
+		<span class={label}>Status</span>
+		<select name="status" required aria-invalid={!!errors?.status} aria-describedby="status-error" class={field}>
+			<option value="open" selected={(values.status ?? 'open') === 'open'}>Open</option>
+			<option value="closed" selected={(values.status ?? 'open') === 'closed'}>Not receiving applications</option>
+		</select>
+		<FieldError id="status-error" message={errors?.status} />
+	</label>
+
+	<label class="flex items-center gap-3">
+		<input type="checkbox" name="published" checked={values.published ?? true} class="size-4" />
+		<span>Published (visible to job seekers)</span>
+	</label>
+
+	<div class="grid gap-5 sm:grid-cols-2">
+		<label class="block">
+			<span class={label}>Minimum salary</span>
+			<input name="salaryMin" type="number" min="0" step="1" value={values.salaryMin ?? ''} placeholder="e.g. 50000" aria-invalid={!!errors?.salaryMin} aria-describedby="salaryMin-error" class={field} />
+			<FieldError id="salaryMin-error" message={errors?.salaryMin} />
+		</label>
+		<label class="block">
+			<span class={label}>Maximum salary</span>
+			<input name="salaryMax" type="number" min="0" step="1" value={values.salaryMax ?? ''} placeholder="e.g. 70000" aria-invalid={!!errors?.salaryMax} aria-describedby="salaryMax-error" class={field} />
+			<FieldError id="salaryMax-error" message={errors?.salaryMax} />
+		</label>
+	</div>
+
 	{#if errors && Object.keys(errors).length}
 		<p role="alert" class={errorBox}>Some fields need fixing before this posting can be saved.</p>
 	{/if}
