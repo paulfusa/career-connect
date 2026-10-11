@@ -1,4 +1,4 @@
-import { desc, eq } from 'drizzle-orm';
+import { desc, eq, or } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import { jobPosting } from '$lib/server/db/schema';
 import type { PageServerLoad } from './$types';
@@ -9,7 +9,7 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 	const postings = await db
 		.select()
 		.from(jobPosting)
-		.where(mine ? eq(jobPosting.createdBy, locals.user!.id) : undefined)
+		.where(mine ? eq(jobPosting.createdBy, locals.user!.id) : or(eq(jobPosting.published, true), eq(jobPosting.createdBy, locals.user!.id)))
 		.orderBy(desc(jobPosting.createdAt));
 	return { postings, mine };
 };
