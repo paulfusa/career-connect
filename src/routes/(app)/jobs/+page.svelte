@@ -1,10 +1,11 @@
 <script lang="ts">
 	import OrgLogo from '$lib/components/OrgLogo.svelte';
 	import { EMPLOYMENT_TYPES, WORK_MODES } from '$lib/profile-options';
-	import { glassPanel, primaryButton } from '$lib/ui';
+	import { field, glassPanel, label, primaryButton } from '$lib/ui';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
+	let searching = $derived(Object.values(data.search).some((value) => value !== ''));
 </script>
 
 <svelte:head><title>Jobs · CareerConnect</title></svelte:head>
@@ -32,6 +33,52 @@
 		{/each}
 	</nav>
 {/if}
+
+<form method="get" class="{glassPanel} mt-6 grid gap-4 p-5 sm:grid-cols-2 lg:grid-cols-3">
+	
+	{#if data.mine}
+		<input type="hidden" name="mine" />
+	{/if}
+
+	<label class="block">
+		<span class={label}>Keyword</span>
+		<input name="keyword" value={data.search.keyword} placeholder="Job title or description" class={field} />
+	</label>
+
+	<label class="block">
+		<span class={label}>Company</span>
+		<input name="company" value={data.search.company} placeholder="e.g. Shopify" class={field} />
+	</label>
+
+	<label class="block">
+		<span class={label}>Location</span>
+		<input name="location" value={data.search.location} placeholder="City or Remote" class={field} />
+	</label>
+
+	<label class="block">
+		<span class={label}>Employment type</span>
+		<select name="employmentType" class={field}>
+			<option value="">Any type</option>
+			{#each Object.entries(EMPLOYMENT_TYPES) as [value, text] (value)}
+				<option {value} selected={data.search.employmentType === value}>{text}</option>
+			{/each}
+		</select>
+	</label>
+
+	<label class="block">
+		<span class={label}>Work mode</span>
+		<select name="workMode" class={field}>
+			<option value="">Any work mode</option>
+			{#each Object.entries(WORK_MODES) as [value, text] (value)}
+				<option {value} selected={data.search.workMode === value}>{text}</option>
+			{/each}
+		</select>
+	</label>
+
+	<div class="flex items-end">
+		<button type="submit" class={primaryButton}>Search</button>
+	</div>
+</form>
 
 {#if data.postings.length}
 	<section class="mt-6 grid gap-4">
@@ -74,7 +121,11 @@
 {:else}
 	<section class="{glassPanel} mt-6 grid min-h-64 place-items-center p-8 text-center">
 		<div>
-			{#if data.mine}
+			{#if searching}
+				<h2 class="font-display text-xl font-semibold">No jobs match your search</h2>
+				<p class="mt-2 text-ink/60">Try different words or fewer filters.</p>
+				<a href={data.mine ? '/jobs?mine' : '/jobs'} class="mt-5 inline-block font-semibold text-tide-deep underline underline-offset-4">Clear search</a>
+			{:else if data.mine}
 				<h2 class="font-display text-xl font-semibold">You haven’t posted any jobs yet</h2>
 				<p class="mt-2 text-ink/60">Postings you create will be listed here.</p>
 				<a href="/jobs/new" class="mt-5 inline-block font-semibold text-tide-deep underline underline-offset-4">Create your first posting</a>
