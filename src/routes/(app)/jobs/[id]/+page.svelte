@@ -7,10 +7,9 @@
 
 	let { data }: PageProps = $props();
 	let posting = $derived(data.posting);
-	// 'YYYY-MM-DD' => 'Oct 23, 2026'. The T00:00 makes it local midnight; without it,
-	// the date is read as UTC and shows a day EARLIER in Montreal.
+	// turns '2026-10-23' into 'Oct 23, 2026'; the T00:00 keeps it in local time, otherwise it shows a day early
 	const formatDate = (value: string) => new Date(`${value}T00:00`).toLocaleDateString('en-CA', { dateStyle: 'medium' });
-	// 50000 → '$50,000'
+	// formats 50000 as $50,000
 	const formatMoney = (amount: number) => `$${amount.toLocaleString('en-CA')}`;
 
 </script>
@@ -52,7 +51,7 @@
 		</div>
 
 		{#if posting.status === 'closed'}
-			<p role="status" class="mt-5 rounded-2xl bg-rose-50 px-4 py-3 font-medium text-rose-800">This Job is no longer receiving applications.</p>
+			<p role="status" class="mt-5 rounded-2xl bg-rose-50 px-4 py-3 font-medium text-rose-800">This job is no longer receiving applications.</p>
 		{/if}
 
 		{#if posting.applicationDeadline}
