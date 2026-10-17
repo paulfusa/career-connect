@@ -37,6 +37,25 @@ export const profile = pgTable('profile', {
 	updatedAt: timestamp('updated_at').defaultNow().notNull()
 });
 
+// US- 07
+export const companyProfile = pgTable('company_profile', {
+    id: uuid('id').primaryKey().defaultRandom(),
+
+    recruiterId: text('recruiter_id')
+        .notNull()
+        .unique()
+        .references(() => user.id, { onDelete: 'cascade' }),
+
+    name: text('name').notNull(),
+    description: text('description').notNull(),
+    location: text('location').notNull(),
+    website: text('website'),
+
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull()
+});
+
+
 export const experience = pgTable(
 	'experience',
 	{
@@ -114,3 +133,4 @@ export type Education = typeof education.$inferSelect;
 export type JobPosting = typeof jobPosting.$inferSelect;
 
 export * from './auth.schema';
+export type CompanyProfile = typeof companyProfile.$inferSelect;
