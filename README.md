@@ -43,13 +43,36 @@ Sync schema changes to your development database with `pnpm db:push`.
 Then open http://localhost:5173 in your browser.
 
 # Testing
-Run the automated tests with `pnpm test`.
+Run the type check with `pnpm check` and the automated tests with `pnpm test`.
 
-# Current Sprint 1 Scope
-- US-01: Account registration
-- US-02: Login and logout
-- US-16: First-login onboarding
-- US-04: Profile management
+Every pull request is also checked automatically by our CI pipeline on GitHub Actions ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)), which runs both commands and marks the pull request as passed or failed.
+
+Acceptance tests are GitHub Issues with the `Acceptance Test` label, linked to their user story.
+
+# Current Sprint 2 Scope
+Sprint 2 runs from September 29 to October 26, 2026. The status of each story is in the [Sprint 2 plan](docs/sprints/sprint-2.md).
+- US-08: Account email verification
+- US-17: Forgot password
+- US-10: Resume upload
+- US-11: Resume management
+- US-12: Recruiter job posting creation
+- US-13: Recruiter job posting management
+- US-05: Browse and view job offers
+- US-14: Job search filters
+- US-15: Apply for a job
+- US-20: Application status tracking
+- US-07: Recruiter company profile
+- US-03: Clear application outcome message
+- Generative AI feature: resume AI autofill and review
+
+Completed in Sprint 1: US-01 (account registration), US-02 (login and logout), US-16 (first-login onboarding) and US-04 (profile management).
+
+# Implemented So Far
+- Account registration, email verification, login/logout, forgot password and first-login onboarding.
+- Job seeker profile management.
+- Resume upload, replacement, deletion and viewing.
+- Job posting creation, editing and deletion for recruiters, with company and city autofill.
+- Browsing job postings, with open/closed and draft status, requirements, deadline and salary on the job details page.
 
 # Planned Features
 
@@ -71,17 +94,19 @@ Run the automated tests with `pnpm test`.
 - **Clear application outcomes:** Recruiters can send an offer with details on how to proceed or a rejection with a recruiter-made feedback on how to improve applications.
 - **Feature suggestions:** Users can send feature suggestions to improve the workflow and provide benefits to explain to the team the reason for implementing them.
 
-**The generative AI feature being considered by the team:** AI-assisted resume feedback that provides suggestion on how to improve resume's clarity and relevance. The team still has to review and confirm the chosen AI feature.
+**Generative AI feature:** AI-assisted resume autofill and review, which suggests how to improve a resume's clarity and relevance (issue #91, in progress).
 
 # Technologies
-The repository is set up with SvelteKit, Svelte, TypeScript, PostgreSQL, Drizzle ORM, Better Auth, and pnpm.
+The repository is set up with SvelteKit, Svelte, TypeScript, Tailwind CSS, PostgreSQL on Supabase, Drizzle ORM, Better Auth, and pnpm. GitHub Actions runs our CI pipeline.
 
 # Project documentation
 - [Sprint 1 plan](docs/sprints/sprint-1.md)
+- [Sprint 2 plan](docs/sprints/sprint-2.md)
 - [Task breakdown](docs/sprints/task-breakdown.md)
-- [Contribution log](docs/sprints/sprint-1-contributions.md)
+- [Sprint 1 contribution log](docs/sprints/sprint-1-contributions.md)
+- [Sprint 2 contribution log](docs/sprints/sprint-2-contributions.md)
 - [Team process](docs/process/team-process.md)
 - [Team-generated user stories](docs/user-stories/team-generated-stories.md)
 - [Meeting minutes](docs/meeting-minutes/)
 - [AI usage logs](AI_Log/)
-- User stories: GitHub Issues
+- User stories and acceptance tests: GitHub Issues
