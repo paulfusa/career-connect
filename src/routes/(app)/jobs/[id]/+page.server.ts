@@ -15,7 +15,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 		.innerJoin(user, eq(jobPosting.createdBy, user.id))
 		.where(eq(jobPosting.id, params.id));
 
-	if (!result) error(404, 'Job posting not found.');
+	if (!result || (!result.posting.published && result.posting.createdBy !== locals.user!.id)) error(404, 'Job posting not found.');
 	return {
 		...result,
 		isOwner: result.posting.createdBy === locals.user!.id

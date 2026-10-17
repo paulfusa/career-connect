@@ -7,6 +7,12 @@
 
 	let { data }: PageProps = $props();
 	let posting = $derived(data.posting);
+	// 'YYYY-MM-DD' => 'Oct 23, 2026'. The T00:00 makes it local midnight; without it,
+	// the date is read as UTC and shows a day EARLIER in Montreal.
+	const formatDate = (value: string) => new Date(`${value}T00:00`).toLocaleDateString('en-CA', { dateStyle: 'medium' });
+	// 50000 → '$50,000'
+	const formatMoney = (amount: number) => `$${amount.toLocaleString('en-CA')}`;
+
 </script>
 
 <svelte:head><title>{posting.title} · CareerConnect</title></svelte:head>
@@ -35,12 +41,46 @@
 		<div class="mt-5 flex flex-wrap gap-2 text-sm">
 			<span class="rounded-full bg-white/65 px-3 py-1">{EMPLOYMENT_TYPES[posting.employmentType as keyof typeof EMPLOYMENT_TYPES] ?? posting.employmentType}</span>
 			<span class="rounded-full bg-white/65 px-3 py-1">{WORK_MODES[posting.workMode as keyof typeof WORK_MODES] ?? posting.workMode}</span>
+			{#if posting.status === 'open'}
+				<span class="rounded-full bg-emerald-100 px-3 py-1 font-medium text-emerald-800">Open</span>
+			{:else}
+				<span class="rounded-full bg-rose-100 px-3 py-1 font-medium text-rose-800">Closed</span>
+			{/if}
+			{#if !posting.published}
+				<span class="rounded-full bg-amber-100 px-3 py-1 font-medium text-amber-800">Draft</span>
+			{/if}
 		</div>
+
+		{#if posting.status === 'closed'}
+			<p role="status" class="mt-5 rounded-2xl bg-rose-50 px-4 py-3 font-medium text-rose-800">This Job is no longer receiving applications.</p>
+		{/if}
+
+		{#if posting.applicationDeadline}
+			<p class="mt-5 text-ink/75">
+				<span class="font-medium">Application deadline:</span> {formatDate(posting.applicationDeadline)}
+			</p>
+		{/if}
+
+		{#if posting.salaryMin !== null && posting.salaryMax !== null}
+			<p class="mt-2 text-ink/75"><span class="font-medium">Salary:</span> {formatMoney(posting.salaryMin)} – {formatMoney(posting.salaryMax)}</p>
+		{:else if posting.salaryMin !== null}
+			<p class="mt-2 text-ink/75"><span class="font-medium">Salary:</span> From {formatMoney(posting.salaryMin)}</p>
+		{:else if posting.salaryMax !== null}
+			<p class="mt-2 text-ink/75"><span class="font-medium">Salary:</span> Up to {formatMoney(posting.salaryMax)}</p>
+		{/if}
 
 		<section class="mt-8 border-t border-white/60 pt-6">
 			<h2 class="font-display text-xl font-semibold">About the role</h2>
 			<p class="mt-3 whitespace-pre-line leading-7 text-ink/75">{posting.description}</p>
 		</section>
+		
+		{#if posting.requirements}
+		<section class="mt-8 border-t border-white/60 pt-6">
+			<h2 class="font-display text-xl font-semibold">Requirements</h2>
+			<p class="mt-3 whitespace-pre-line leading-7 text-ink/75">{posting.requirements}</p>
+		</section>
+		{/if}
+
 		<p class="mt-8 text-xs text-ink/50">Posted {posting.createdAt.toLocaleDateString()}</p>
 	</article>
 </div>

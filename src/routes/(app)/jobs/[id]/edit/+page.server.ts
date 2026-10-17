@@ -16,7 +16,26 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 		.from(jobPosting)
 		.where(and(eq(jobPosting.id, params.id), eq(jobPosting.createdBy, locals.user!.id)));
 	if (!posting) error(404, 'Job posting not found.');
-	return { posting };
+	return {posting: {
+					id: posting.id,
+					createdBy: posting.createdBy,
+					title: posting.title,
+					company: posting.company,
+					companyDomain: posting.companyDomain,
+					location: posting.location,
+					employmentType: posting.employmentType,
+					workMode: posting.workMode,
+					description: posting.description,
+					status: posting.status,
+					published: posting.published,
+					requirements: posting.requirements ?? '',
+					applicationDeadline: posting.applicationDeadline ?? '',
+					salaryMin: posting.salaryMin,
+					salaryMax: posting.salaryMax,
+					createdAt: posting.createdAt,
+					updatedAt: posting.updatedAt
+		}
+	};
 };
 
 export const actions: Actions = {
