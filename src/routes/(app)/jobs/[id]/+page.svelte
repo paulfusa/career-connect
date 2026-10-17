@@ -73,6 +73,15 @@
 			<h2 class="font-display text-xl font-semibold">About the role</h2>
 			<p class="mt-3 whitespace-pre-line leading-7 text-ink/75">{posting.description}</p>
 		</section>
+
+		{#if posting.requirements}
+			<section class="mt-8 border-t border-white/60 pt-6">
+				<h2 class="font-display text-xl font-semibold">Requirements</h2>
+				<p class="mt-3 whitespace-pre-line leading-7 text-ink/75">
+					{posting.requirements}
+				</p>
+			</section>
+		{/if}
 		
 		{#if data.companyProfile}
 			<section class="mt-8 border-t border-white/60 pt-6">
