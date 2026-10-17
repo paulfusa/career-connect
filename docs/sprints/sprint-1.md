@@ -40,15 +40,15 @@ We estimated how many hours each user story will take, based on the number of ta
 Stories for later sprints will be chosen from this backlog at each sprint planning. Each story's tasks are listed in its GitHub issue, and who owns each story is in [task-breakdown.md](task-breakdown.md).
 
 ## Risks
-| Risk | Likelihood | Impact | Mitigation |
-|---|---|---|---|
-| **Team availability:** members are absent from meetings or can't work due to particular reasons | Medium | High | Hold weekly meetings online (Discord) so it's easier to attend, and share meeting minutes with everyone. |
-| **Uneven workload:** work depends on one or two people | High | High | Give every user story an owner and review progress at each weekly meeting. |
-| **Unfamiliar technology:** the team is new to the tech stack | High | Medium | Share knowledge within the team and pair up on first features. |
-| **Schedule pressure:** work is left until close to the deadline | High | Medium | Set internal deadlines a few days before each sprint deadline. |
-| **Data loss or corruption:** shared database changes can break things for everyone | Low | High | Review database changes in a PR before merging. |
-| **Unreliable AI output:** AI-generated content may be wrong | Medium | Medium | Review all AI output before use, and log every use in `AI_Log/`. |
-| **Software quality:** bugs go unnoticed without tests | High | Medium | Add automated tests for completed features. |
+| Risk | Impact | Mitigation |
+|---|---|---|
+| **Team availability:** members are absent from meetings or can't work due to particular reasons | High | Hold weekly meetings online (Discord) so it's easier to attend, and share meeting minutes with everyone. |
+| **Uneven workload:** work depends on one or two people | High | Give every user story an owner and review progress at each weekly meeting. |
+| **Unfamiliar technology:** the team is new to the tech stack | Medium | Share knowledge within the team and pair up on first features. |
+| **Schedule pressure:** work is left until close to the deadline | Medium | Set internal deadlines a few days before each sprint deadline. |
+| **Data loss or corruption:** shared database changes can break things for everyone | High | Review database changes in a PR before merging. |
+| **Unreliable AI output:** AI-generated content may be wrong | Medium | Review all AI output before use, and log every use in `AI_Log/`. |
+| **Software quality:** bugs go unnoticed without tests | Medium | Add automated tests for completed features. |
 
 ## Work Plan (Appendix A)
 | Issue | Title | Type | Responsible | Target Date | Priority | Status |
