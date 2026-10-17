@@ -1,4 +1,4 @@
-import { pgTable, serial, integer, text, timestamp, boolean, date, uuid, index } from 'drizzle-orm/pg-core';
+import { pgTable, serial, integer, text, timestamp, boolean, date, uuid, unique, index } from 'drizzle-orm/pg-core';
 import { user } from './auth.schema';
 
 export const task = pgTable('task', {
@@ -132,11 +132,28 @@ export const resume = pgTable(
 	(t) => [index('resume_user_id_idx').on(t.userId)]
 );
 
+// US-15: a job seeker's application to a posting, with the resume they picked
+export const application = pgTable(
+	'application',
+	{
+		id: uuid('id').primaryKey().defaultRandom(),
+		jobPostingId: uuid('job_posting_id')
+			.notNull()
+			.references(() => jobPosting.id, { onDelete: 'cascade' }),
+		userId: userId(),
+		resumeId: uuid('resume_id').references(() => resume.id, { onDelete: 'set null' }),
+		createdAt: timestamp('created_at').defaultNow().notNull(),
+		updatedAt: timestamp('updated_at').defaultNow().notNull()
+	},
+	(t) => [index('application_user_id_idx').on(t.userId), index('application_job_posting_id_idx').on(t.jobPostingId), unique('application_job_user_unique').on(t.jobPostingId, t.userId)]
+);
+
 export type Profile = typeof profile.$inferSelect;
 export type Resume = typeof resume.$inferSelect;
 export type Experience = typeof experience.$inferSelect;
 export type Education = typeof education.$inferSelect;
 export type JobPosting = typeof jobPosting.$inferSelect;
+export type Application = typeof application.$inferSelect;
 
 export * from './auth.schema';
 export type CompanyProfile = typeof companyProfile.$inferSelect;
