@@ -73,12 +73,41 @@
 			<h2 class="font-display text-xl font-semibold">About the role</h2>
 			<p class="mt-3 whitespace-pre-line leading-7 text-ink/75">{posting.description}</p>
 		</section>
-		
+
 		{#if posting.requirements}
-		<section class="mt-8 border-t border-white/60 pt-6">
-			<h2 class="font-display text-xl font-semibold">Requirements</h2>
-			<p class="mt-3 whitespace-pre-line leading-7 text-ink/75">{posting.requirements}</p>
-		</section>
+			<section class="mt-8 border-t border-white/60 pt-6">
+				<h2 class="font-display text-xl font-semibold">Requirements</h2>
+				<p class="mt-3 whitespace-pre-line leading-7 text-ink/75">
+					{posting.requirements}
+				</p>
+			</section>
+		{/if}
+		
+		{#if data.companyProfile}
+			<section class="mt-8 border-t border-white/60 pt-6">
+				<h2 class="font-display text-xl font-semibold">
+					About {data.companyProfile.name}
+				</h2>
+
+				<p class="mt-3 whitespace-pre-line leading-7 text-ink/75">
+					{data.companyProfile.description}
+				</p>
+
+				<p class="mt-4 text-sm text-ink/65">
+					Location: {data.companyProfile.location}
+				</p>
+
+				{#if data.companyProfile.website}
+					<a
+						href={data.companyProfile.website}
+						target="_blank"
+						rel="noopener noreferrer"
+						class="mt-3 inline-block font-medium text-tide-deep hover:underline"
+					>
+						Visit company website →
+					</a>
+				{/if}
+			</section>
 		{/if}
 
 		<p class="mt-8 text-xs text-ink/50">Posted {posting.createdAt.toLocaleDateString()}</p>
