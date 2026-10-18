@@ -150,9 +150,9 @@ Status: In Progress. PR #100 was merged on October 17; the acceptance rate (5.4)
 | 14.1 | Implement search API | Mohamad | Completed |
 | 14.2 | Add filter UI components | Mohamad | Completed |
 | 14.3 | Create database queries | Mohamad | Completed |
-| 14.4 | Write integration tests | Mohamad | In Progress (unit and acceptance tests done) |
+| 14.4 | Write integration tests | Mohamad | Completed (unit tests and acceptance tests #110, #111) |
 
-Status: In Review. Acceptance tests: #110, #111.
+Status: Completed (PR #116, merged October 17). Acceptance tests: #110, #111.
 
 ### US-15: Apply for a Job (#20) - High - Mohamad, Michael, Maher - Sprint 2
 | Task | Description | Owner | Status |
@@ -175,11 +175,11 @@ Status: In Review. Acceptance tests: #110, #111.
 ### US-07: Recruiter company profile (#12) - High - Maher - Sprint 2
 | Task | Description | Owner | Status |
 |---|---|---|---|
-| 7.1 | Create a company profile table | Maher | In Review (PR #114) |
-| 7.2 | build a company profile form | Maher | In Review (PR #114) |
-| 7.3 | Add edit functionality | Maher | In Review (PR #114) |
-| 7.4 | Display company details on job postings | Maher | In Review (PR #114) |
-| 7.5 | Test recruiter permissions | Maher | In Review (PR #114) |
+| 7.1 | Create a company profile table | Maher | Completed |
+| 7.2 | build a company profile form | Maher | Completed |
+| 7.3 | Add edit functionality | Maher | Completed |
+| 7.4 | Display company details on job postings | Maher | Completed |
+| 7.5 | Test recruiter permissions | Maher | Completed |
 
 ### US-03: Clear Application Outcome Message (#8) - High - Mohamad - Sprint 2
 | Task | Description | Owner | Status |

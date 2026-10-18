@@ -73,6 +73,8 @@ Completed in Sprint 1: US-01 (account registration), US-02 (login and logout), U
 - Resume upload, replacement, deletion and viewing.
 - Job posting creation, editing and deletion for recruiters, with company and city autofill.
 - Browsing job postings, with open/closed and draft status, requirements, deadline and salary on the job details page.
+- Job search by keyword, company and location, with employment type and work mode filters.
+- Company profiles for recruiters, shown on their job postings.
 
 # Planned Features
 
