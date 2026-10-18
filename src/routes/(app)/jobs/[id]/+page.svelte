@@ -1,10 +1,16 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import { enhance } from '$app/forms';
+	import { invalidateAll } from '$app/navigation';
 	import OrgLogo from '$lib/components/OrgLogo.svelte';
 	import { EMPLOYMENT_TYPES, WORK_MODES } from '$lib/profile-options';
 	import { glassPanel, primaryButton, successBox } from '$lib/ui';
 	import type { PageProps } from './$types';
 
+	let selectedResumeId = $state('');
+	let applicationMessage = $state('');
+	let applicationError = $state('');
+	let submitting = $state(false);
 	let { data }: PageProps = $props();
 	let posting = $derived(data.posting);
 	// turns '2026-10-23' into 'Oct 23, 2026'; the T00:00 keeps it in local time, otherwise it shows a day early
@@ -108,6 +114,87 @@
 				{/if}
 			</section>
 		{/if}
+
+		{#if data.isJobSeeker}
+			<section class="mt-8 border-t border-white/60 pt-6">
+				<h2 class="font-display text-xl font-semibold">Apply for this job</h2>
+
+				{#if data.alreadyApplied || applicationMessage}
+					<p role="status" class="mt-4 rounded-xl bg-emerald-100 p-4 text-emerald-800">
+						{applicationMessage || 'You have already applied to this job.'}
+					</p>
+				{:else if posting.status !== 'open' || !posting.published}
+					<p class="mt-4 text-ink/65">This job is not accepting applications.</p>
+				{:else if data.resumes.length === 0}
+					<p class="mt-4 text-ink/65">
+						You need to upload a resume before applying.
+						<a href="/resumes" class="font-medium text-tide-deep hover:underline">
+							Upload a resume
+						</a>
+					</p>
+				{:else}
+					<form
+						method="POST"
+						action="?/apply"
+						class="mt-4 space-y-4"
+						use:enhance={() => {
+							submitting = true;
+							applicationError = '';
+							applicationMessage = '';
+
+							return async ({ result, update }) => {
+								submitting = false;
+
+								if (result.type === 'success') {
+									applicationMessage =
+										(result.data?.success as string) ??
+										'Application submitted successfully.';
+									await invalidateAll();
+								} else if (result.type === 'failure') {
+									applicationError =
+										(result.data?.error as string) ??
+										'Unable to submit your application.';
+								} else {
+									await update();
+								}
+							};
+						}}
+					>
+						<label for="resumeId" class="block text-sm font-medium">
+							Choose your resume
+						</label>
+
+						<select
+							id="resumeId"
+							name="resumeId"
+							bind:value={selectedResumeId}
+							required
+							class="w-full rounded-xl border border-white/60 bg-white/70 px-4 py-3"
+						>
+							<option value="" disabled>Select a resume</option>
+							{#each data.resumes as resume}
+								<option value={resume.id}>{resume.fileName}</option>
+							{/each}
+						</select>
+
+						{#if applicationError}
+							<p role="alert" class="text-sm text-rose-700">
+								{applicationError}
+							</p>
+						{/if}
+
+						<button
+							type="submit"
+							disabled={submitting || !selectedResumeId}
+							class={primaryButton + ' px-6'}
+						>
+							{submitting ? 'Submitting...' : 'Submit application'}
+						</button>
+					</form>
+				{/if}
+			</section>
+		{/if}
+
 
 		<p class="mt-8 text-xs text-ink/50">Posted {posting.createdAt.toLocaleDateString()}</p>
 	</article>
