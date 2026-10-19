@@ -11,7 +11,6 @@
 	let nav = $derived([
 		{ href: '/', label: 'Home' },
 		{ href: '/jobs', label: 'Jobs' },
-		{ href: '/profile', label: 'Profile' },
 		...(data.user.role === 'job_seeker' ? [{ href: '/resumes', label: 'Resumes' }] : []),
 		{ href: '/settings', label: 'Settings' }
 	]);
