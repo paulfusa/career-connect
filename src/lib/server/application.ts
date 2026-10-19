@@ -26,3 +26,31 @@ export function applyProblem(job: { status: string; published: boolean } | undef
 	if (alreadyApplied) return 'You have already applied to this job.';
 	return null;
 }
+
+export function withdrawProblem(
+    job: {
+        status: string;
+        published: boolean;
+        applicationDeadline: string | null;
+    } | undefined,
+    hasApplication: boolean,
+    today: string
+): string | null {
+    if (!job || !job.published) {
+        return 'Job posting not found.';
+    }
+
+    if (job.status !== 'open') {
+        return 'This job is no longer accepting changes to applications.';
+    }
+
+    if (job.applicationDeadline && today > job.applicationDeadline) {
+        return 'The application deadline has passed.';
+    }
+
+    if (!hasApplication) {
+        return 'You have no application to withdraw.';
+    }
+
+    return null;
+}

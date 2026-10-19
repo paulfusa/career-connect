@@ -38,9 +38,23 @@
 					<p class="mt-2 text-ink/65">{posting.location} <span aria-hidden="true">·</span> Posted by {data.creatorName}</p>
 				</div>
 			</div>
-			{#if data.isOwner}
-				<a href="/jobs/{posting.id}/edit" class={primaryButton + ' px-5 text-center sm:w-auto'}>Edit posting</a>
-			{/if}
+	{#if data.isOwner}
+		<div class="flex flex-wrap gap-3">
+			<a
+				href="/jobs/{posting.id}/applications"
+				class={primaryButton + ' px-5 text-center sm:w-auto'}
+			>
+				View Applications
+			</a>
+
+			<a
+				href="/jobs/{posting.id}/edit"
+				class="rounded-xl border border-white/60 bg-white/70 px-5 py-3 text-center font-medium text-tide-deep hover:bg-white"
+			>
+				Edit posting
+			</a>
+		</div>
+	{/if}
 		</div>
 
 		<div class="mt-5 flex flex-wrap gap-2 text-sm">
@@ -118,11 +132,43 @@
 		{#if data.isJobSeeker}
 			<section class="mt-8 border-t border-white/60 pt-6">
 				<h2 class="font-display text-xl font-semibold">Apply for this job</h2>
-
-				{#if data.alreadyApplied || applicationMessage}
+				{#if data.alreadyApplied}
 					<p role="status" class="mt-4 rounded-xl bg-emerald-100 p-4 text-emerald-800">
-						{applicationMessage || 'You have already applied to this job.'}
+						You have already applied to this job.
 					</p>
+
+					{#if posting.status === 'open' && posting.published &&
+						(!posting.applicationDeadline ||
+						new Intl.DateTimeFormat('en-CA', {
+							timeZone: 'America/Toronto',
+							year: 'numeric',
+							month: '2-digit',
+							day: '2-digit'
+					}).format(new Date()) <= posting.applicationDeadline)}
+						<form
+							method="POST"
+							action="?/withdraw"
+							class="mt-4"
+							onsubmit={(event) => {
+								if (!confirm('Are you sure you want to withdraw your application?')) {
+									event.preventDefault();
+								}
+							}}
+						>
+							<button
+								type="submit"
+								class="rounded-xl border border-rose-300 px-5 py-3 font-medium text-rose-700 hover:bg-rose-50"
+							>
+								Withdraw application
+							</button>
+						</form>
+				{/if}
+
+				{:else if applicationMessage}
+					<p role="status" class="mt-4 rounded-xl bg-emerald-100 p-4 text-emerald-800">
+						{applicationMessage}
+					</p>
+
 				{:else if posting.status !== 'open' || !posting.published}
 					<p class="mt-4 text-ink/65">This job is not accepting applications.</p>
 				{:else if data.resumes.length === 0}

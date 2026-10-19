@@ -3,7 +3,7 @@ import { and, desc, eq } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import { application, companyProfile, jobPosting, resume, user } from '$lib/server/db/schema';
 import type { Actions, PageServerLoad } from './$types';
-import { applyProblem, parseApplication } from '$lib/server/application';
+import { applyProblem, parseApplication, withdrawProblem } from '$lib/server/application';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -136,7 +136,55 @@ export const actions: Actions = {
         if (inserted.length === 0) {
             return fail(400, { error: 'You have already applied to this job.' });
         }
-
         return { success: 'Application submitted successfully.' };
+    },
+
+    withdraw: async ({ params, locals }) => {
+        const me = locals.user!;
+
+        if (me.role !== 'job_seeker') {
+            return fail(403, { error: 'Only job seekers can withdraw applications.' });
+        }
+
+        if (!UUID.test(params.id)) {
+            return fail(404, { error: 'Job posting not found.' });
+        }
+
+        const [job] = await db
+            .select({
+                published: jobPosting.published,
+                status: jobPosting.status,
+                applicationDeadline: jobPosting.applicationDeadline
+            })
+            .from(jobPosting)
+            .where(eq(jobPosting.id, params.id));
+
+        const today = new Intl.DateTimeFormat('en-CA', {
+            timeZone: 'America/Toronto',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+        }).format(new Date());
+        const problem = withdrawProblem(job, true, today);
+
+        if (problem) {
+            return fail(400, { error: problem });
+        }
+
+        const deleted = await db
+            .delete(application)
+            .where(
+                and(
+                    eq(application.jobPostingId, params.id),
+                    eq(application.userId, me.id)
+                )
+            )
+            .returning({ id: application.id });
+
+        if (deleted.length === 0) {
+            return fail(404, { error: 'You have no application to withdraw.' });
+        }
+
+        return { success: 'Your application has been withdrawn.' };
     }
 };
