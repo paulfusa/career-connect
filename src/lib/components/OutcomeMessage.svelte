@@ -13,7 +13,9 @@
 		sentAt: Date;
 	} = $props();
 
-	const formatDate = (value: Date) => value.toLocaleDateString('en-CA', { dateStyle: 'medium' });
+	// date and time in Eastern time, e.g. 'Oct 22, 2026, 3:45 p.m. ET'; the zone is set so the server and the browser show the same time
+	const formatDateTime = (value: Date) =>
+		`${value.toLocaleString('en-CA', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'America/Toronto' })} ET`;
 </script>
 
 <section class="{glassPanel} p-6">
@@ -23,7 +25,7 @@
 		{:else}
 			<span class="rounded-full bg-rose-100 px-3 py-1 text-sm font-medium text-rose-800">Rejected</span>
 		{/if}
-		<p class="text-xs text-ink/50">Sent {formatDate(sentAt)}</p>
+		<p class="text-xs text-ink/50">Sent {formatDateTime(sentAt)}</p>
 	</div>
 
 	<section class="mt-6 border-t border-white/60 pt-6">
