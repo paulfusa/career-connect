@@ -20,9 +20,52 @@ export function parseApplication(data: FormData): ApplicationParse {
 	return Object.keys(errors).length ? { ok: false, errors, values } : { ok: true, values };
 }
 
-export function applyProblem(job: { status: string; published: boolean } | undefined, alreadyApplied: boolean): string | null {
+// today's date in Montreal as 'YYYY-MM-DD', so it can be compared with a deadline as text
+export function todayInMontreal(): string {
+	return new Intl.DateTimeFormat('en-CA', {
+		timeZone: 'America/Toronto',
+		year: 'numeric',
+		month: '2-digit',
+		day: '2-digit'
+	}).format(new Date());
+}
+
+export function applyProblem(
+	job: { status: string; published: boolean; applicationDeadline: string | null } | undefined,
+	alreadyApplied: boolean,
+	today: string
+): string | null {
 	if (!job || !job.published) return 'Job posting not found.';
 	if (job.status !== 'open') return 'This job is no longer receiving applications.';
+	// TODO (Mohamad): block applying after the deadline, same message as withdrawProblem
 	if (alreadyApplied) return 'You have already applied to this job.';
 	return null;
+}
+
+export function withdrawProblem(
+    job: {
+        status: string;
+        published: boolean;
+        applicationDeadline: string | null;
+    } | undefined,
+    hasApplication: boolean,
+    today: string
+): string | null {
+    if (!job || !job.published) {
+        return 'Job posting not found.';
+    }
+
+    if (job.status !== 'open') {
+        return 'This job is no longer accepting changes to applications.';
+    }
+
+    if (job.applicationDeadline && today > job.applicationDeadline) {
+        return 'The application deadline has passed.';
+    }
+
+    if (!hasApplication) {
+        return 'You have no application to withdraw.';
+    }
+
+    return null;
 }

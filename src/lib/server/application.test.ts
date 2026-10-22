@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { applyProblem, parseApplication } from './application.ts';
+import { applyProblem, parseApplication, withdrawProblem } from './application.ts';
 
 const form = (fields: Record<string, string>) => {
 	const data = new FormData();
@@ -24,21 +24,72 @@ test('application: rejects a missing or malformed resume id', () => {
 	}
 });
 
-const openJob = { status: 'open', published: true };
+const openJob = { status: 'open', published: true, applicationDeadline: null };
+const today = '2026-10-22';
 
 test('application: missing or unpublished job is not found', () => {
-	assert.equal(applyProblem(undefined, false), 'Job posting not found.');
-	assert.equal(applyProblem({ ...openJob, published: false }, false), 'Job posting not found.');
+	assert.equal(applyProblem(undefined, false, today), 'Job posting not found.');
+	assert.equal(applyProblem({ ...openJob, published: false }, false, today), 'Job posting not found.');
 });
 
 test('application: closed job cannot be applied to', () => {
-	assert.equal(applyProblem({ ...openJob, status: 'closed' }, false), 'This job is no longer receiving applications.');
+	assert.equal(applyProblem({ ...openJob, status: 'closed' }, false, today), 'This job is no longer receiving applications.');
 });
 
 test('application: second application is not allowed', () => {
-	assert.equal(applyProblem(openJob, true), 'You have already applied to this job.');
+	assert.equal(applyProblem(openJob, true, today), 'You have already applied to this job.');
 });
 
 test('application: open, published job with no earlier application is fine', () => {
-	assert.equal(applyProblem(openJob, false), null);
+	assert.equal(applyProblem(openJob, false, today), null);
+});
+
+// TODO (Mohamad): 2 deadline tests, one the day after the deadline and one on the deadline itself
+
+const withdrawalJob = {
+    status: 'open',
+    published: true,
+    applicationDeadline: '2026-10-31'
+};
+
+test('withdrawal: allows withdrawing an existing application before deadline', () => {
+    assert.equal(
+        withdrawProblem(withdrawalJob, true, '2026-10-18'),
+        null
+    );
+});
+
+test('withdrawal: rejects closed jobs', () => {
+    assert.equal(
+        withdrawProblem({ ...withdrawalJob, status: 'closed' }, true, '2026-10-18'),
+        'This job is no longer accepting changes to applications.'
+    );
+});
+
+test('withdrawal: rejects expired deadlines', () => {
+    assert.equal(
+        withdrawProblem(withdrawalJob, true, '2026-11-01'),
+        'The application deadline has passed.'
+    );
+});
+
+test('withdrawal: permits withdrawing on the deadline date', () => {
+    assert.equal(
+        withdrawProblem(withdrawalJob, true, '2026-10-31'),
+        null
+    );
+});
+
+test('withdrawal: rejects missing applications', () => {
+    assert.equal(
+        withdrawProblem(withdrawalJob, false, '2026-10-18'),
+        'You have no application to withdraw.'
+    );
+});
+
+test('withdrawal: rejects unpublished jobs', () => {
+    assert.equal(
+        withdrawProblem({ ...withdrawalJob, published: false }, true, '2026-10-18'),
+        'Job posting not found.'
+    );
 });

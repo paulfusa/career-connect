@@ -1,16 +1,21 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import { enhance } from '$app/forms';
+	import { invalidateAll } from '$app/navigation';
 	import OrgLogo from '$lib/components/OrgLogo.svelte';
 	import { EMPLOYMENT_TYPES, WORK_MODES } from '$lib/profile-options';
 	import { glassPanel, primaryButton, successBox } from '$lib/ui';
 	import type { PageProps } from './$types';
 
+	let selectedResumeId = $state('');
+	let applicationMessage = $state('');
+	let applicationError = $state('');
+	let submitting = $state(false);
 	let { data }: PageProps = $props();
 	let posting = $derived(data.posting);
-	// 'YYYY-MM-DD' => 'Oct 23, 2026'. The T00:00 makes it local midnight; without it,
-	// the date is read as UTC and shows a day EARLIER in Montreal.
+	// turns '2026-10-23' into 'Oct 23, 2026'; the T00:00 keeps it in local time, otherwise it shows a day early
 	const formatDate = (value: string) => new Date(`${value}T00:00`).toLocaleDateString('en-CA', { dateStyle: 'medium' });
-	// 50000 → '$50,000'
+	// formats 50000 as $50,000
 	const formatMoney = (amount: number) => `$${amount.toLocaleString('en-CA')}`;
 
 </script>
@@ -33,9 +38,23 @@
 					<p class="mt-2 text-ink/65">{posting.location} <span aria-hidden="true">·</span> Posted by {data.creatorName}</p>
 				</div>
 			</div>
-			{#if data.isOwner}
-				<a href="/jobs/{posting.id}/edit" class={primaryButton + ' px-5 text-center sm:w-auto'}>Edit posting</a>
-			{/if}
+	{#if data.isOwner}
+		<div class="flex flex-wrap gap-3">
+			<a
+				href="/jobs/{posting.id}/applications"
+				class={primaryButton + ' px-5 text-center sm:w-auto'}
+			>
+				View Applications
+			</a>
+
+			<a
+				href="/jobs/{posting.id}/edit"
+				class="rounded-xl border border-white/60 bg-white/70 px-5 py-3 text-center font-medium text-tide-deep hover:bg-white"
+			>
+				Edit posting
+			</a>
+		</div>
+	{/if}
 		</div>
 
 		<div class="mt-5 flex flex-wrap gap-2 text-sm">
@@ -52,7 +71,7 @@
 		</div>
 
 		{#if posting.status === 'closed'}
-			<p role="status" class="mt-5 rounded-2xl bg-rose-50 px-4 py-3 font-medium text-rose-800">This Job is no longer receiving applications.</p>
+			<p role="status" class="mt-5 rounded-2xl bg-rose-50 px-4 py-3 font-medium text-rose-800">This job is no longer receiving applications.</p>
 		{/if}
 
 		{#if posting.applicationDeadline}
@@ -109,6 +128,144 @@
 				{/if}
 			</section>
 		{/if}
+
+		{#if data.isJobSeeker}
+			<section class="mt-8 border-t border-white/60 pt-6">
+				<h2 class="font-display text-xl font-semibold">Apply for this job</h2>
+				<!-- the message stays after invalidateAll reloads alreadyApplied -->
+				{#if applicationMessage}
+					<p role="status" class="mt-4 rounded-xl bg-emerald-100 p-4 text-emerald-800">
+						{applicationMessage}
+					</p>
+				{:else if data.alreadyApplied}
+					<p role="status" class="mt-4 rounded-xl bg-emerald-100 p-4 text-emerald-800">
+						You have already applied to this job.
+					</p>
+				{/if}
+
+				{#if data.alreadyApplied}
+					{#if posting.status === 'open' && posting.published && !data.deadlinePassed}
+						<form
+							method="POST"
+							action="?/withdraw"
+							class="mt-4"
+							use:enhance={({ cancel }) => {
+								// enhance ignores preventDefault, so the confirm cancels the request here
+								if (!confirm('Are you sure you want to withdraw your application?')) {
+									cancel();
+									return;
+								}
+								submitting = true;
+								applicationError = '';
+								applicationMessage = '';
+
+								return async ({ result, update }) => {
+									submitting = false;
+
+									if (result.type === 'success') {
+										applicationMessage =
+											(result.data?.success as string) ??
+											'Your application has been withdrawn.';
+										await invalidateAll();
+									} else if (result.type === 'failure') {
+										applicationError =
+											(result.data?.error as string) ??
+											'Unable to withdraw your application.';
+									} else {
+										await update();
+									}
+								};
+							}}
+						>
+							{#if applicationError}
+								<p role="alert" class="mb-3 text-sm text-rose-700">
+									{applicationError}
+								</p>
+							{/if}
+
+							<button
+								type="submit"
+								disabled={submitting}
+								class="rounded-xl border border-rose-300 px-5 py-3 font-medium text-rose-700 hover:bg-rose-50"
+							>
+								{submitting ? 'Withdrawing...' : 'Withdraw application'}
+							</button>
+						</form>
+					{/if}
+				{:else if posting.status !== 'open' || !posting.published}
+					<p class="mt-4 text-ink/65">This job is not accepting applications.</p>
+				{:else if data.deadlinePassed}
+					<p class="mt-4 text-ink/65">The application deadline has passed.</p>
+				{:else if data.resumes.length === 0}
+					<p class="mt-4 text-ink/65">
+						You need to upload a resume before applying.
+						<a href="/resumes" class="font-medium text-tide-deep hover:underline">
+							Upload a resume
+						</a>
+					</p>
+				{:else}
+					<form
+						method="POST"
+						action="?/apply"
+						class="mt-4 space-y-4"
+						use:enhance={() => {
+							submitting = true;
+							applicationError = '';
+							applicationMessage = '';
+
+							return async ({ result, update }) => {
+								submitting = false;
+
+								if (result.type === 'success') {
+									applicationMessage =
+										(result.data?.success as string) ??
+										'Application submitted successfully.';
+									await invalidateAll();
+								} else if (result.type === 'failure') {
+									applicationError =
+										(result.data?.error as string) ??
+										'Unable to submit your application.';
+								} else {
+									await update();
+								}
+							};
+						}}
+					>
+						<label for="resumeId" class="block text-sm font-medium">
+							Choose your resume
+						</label>
+
+						<select
+							id="resumeId"
+							name="resumeId"
+							bind:value={selectedResumeId}
+							required
+							class="w-full rounded-xl border border-white/60 bg-white/70 px-4 py-3"
+						>
+							<option value="" disabled>Select a resume</option>
+							{#each data.resumes as resume}
+								<option value={resume.id}>{resume.fileName}</option>
+							{/each}
+						</select>
+
+						{#if applicationError}
+							<p role="alert" class="text-sm text-rose-700">
+								{applicationError}
+							</p>
+						{/if}
+
+						<button
+							type="submit"
+							disabled={submitting || !selectedResumeId}
+							class={primaryButton + ' px-6'}
+						>
+							{submitting ? 'Submitting...' : 'Submit application'}
+						</button>
+					</form>
+				{/if}
+			</section>
+		{/if}
+
 
 		<p class="mt-8 text-xs text-ink/50">Posted {posting.createdAt.toLocaleDateString()}</p>
 	</article>
