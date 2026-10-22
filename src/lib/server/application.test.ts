@@ -24,24 +24,27 @@ test('application: rejects a missing or malformed resume id', () => {
 	}
 });
 
-const openJob = { status: 'open', published: true };
+const openJob = { status: 'open', published: true, applicationDeadline: null };
+const today = '2026-10-22';
 
 test('application: missing or unpublished job is not found', () => {
-	assert.equal(applyProblem(undefined, false), 'Job posting not found.');
-	assert.equal(applyProblem({ ...openJob, published: false }, false), 'Job posting not found.');
+	assert.equal(applyProblem(undefined, false, today), 'Job posting not found.');
+	assert.equal(applyProblem({ ...openJob, published: false }, false, today), 'Job posting not found.');
 });
 
 test('application: closed job cannot be applied to', () => {
-	assert.equal(applyProblem({ ...openJob, status: 'closed' }, false), 'This job is no longer receiving applications.');
+	assert.equal(applyProblem({ ...openJob, status: 'closed' }, false, today), 'This job is no longer receiving applications.');
 });
 
 test('application: second application is not allowed', () => {
-	assert.equal(applyProblem(openJob, true), 'You have already applied to this job.');
+	assert.equal(applyProblem(openJob, true, today), 'You have already applied to this job.');
 });
 
 test('application: open, published job with no earlier application is fine', () => {
-	assert.equal(applyProblem(openJob, false), null);
+	assert.equal(applyProblem(openJob, false, today), null);
 });
+
+// TODO (Mohamad): 2 deadline tests, one the day after the deadline and one on the deadline itself
 
 const withdrawalJob = {
     status: 'open',

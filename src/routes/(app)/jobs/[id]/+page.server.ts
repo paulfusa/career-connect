@@ -3,7 +3,7 @@ import { and, desc, eq } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import { application, companyProfile, jobPosting, resume, user } from '$lib/server/db/schema';
 import type { Actions, PageServerLoad } from './$types';
-import { applyProblem, parseApplication, withdrawProblem } from '$lib/server/application';
+import { applyProblem, parseApplication, todayInMontreal, withdrawProblem } from '$lib/server/application';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -48,13 +48,17 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 					)
 				)
 		: [];
+	const deadline = result.posting.applicationDeadline;
+
 	return {
 		...result,
 		isOwner: result.posting.createdBy === locals.user!.id,
 		isJobSeeker,
 		resumes,
-		alreadyApplied: !!existingApplication
-		};
+		alreadyApplied: !!existingApplication,
+		// the deadline day itself still counts, same as withdrawProblem
+		deadlinePassed: !!deadline && todayInMontreal() > deadline
+	};
 };
 
 
@@ -99,7 +103,8 @@ export const actions: Actions = {
         const [job] = await db
             .select({
                 status: jobPosting.status,
-                published: jobPosting.published
+                published: jobPosting.published,
+                applicationDeadline: jobPosting.applicationDeadline
             })
             .from(jobPosting)
             .where(eq(jobPosting.id, params.id));
@@ -114,7 +119,7 @@ export const actions: Actions = {
                 )
             );
 
-        const problem = applyProblem(job, !!existing);
+        const problem = applyProblem(job, !!existing, todayInMontreal());
 
         if (problem) {
             return fail(400, { error: problem });
@@ -159,13 +164,7 @@ export const actions: Actions = {
             .from(jobPosting)
             .where(eq(jobPosting.id, params.id));
 
-        const today = new Intl.DateTimeFormat('en-CA', {
-            timeZone: 'America/Toronto',
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit'
-        }).format(new Date());
-        const problem = withdrawProblem(job, true, today);
+        const problem = withdrawProblem(job, true, todayInMontreal());
 
         if (problem) {
             return fail(400, { error: problem });
