@@ -49,7 +49,8 @@ export function withdrawProblem(
         applicationDeadline: string | null;
     } | undefined,
     hasApplication: boolean,
-    today: string
+    today: string,
+    decided: boolean
 ): string | null {
     if (!job || !job.published) {
         return 'Job posting not found.';
@@ -58,6 +59,8 @@ export function withdrawProblem(
     if (job.status !== 'open') {
         return 'This job is no longer accepting changes to applications.';
     }
+
+    // TODO (Mohamad, US-03): block withdrawing once the recruiter has sent a decision
 
     if (job.applicationDeadline && today > job.applicationDeadline) {
         return 'The application deadline has passed.';

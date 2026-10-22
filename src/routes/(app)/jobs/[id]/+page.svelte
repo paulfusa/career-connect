@@ -2,7 +2,9 @@
 	import { page } from '$app/state';
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
+	import AcceptanceRate from '$lib/components/AcceptanceRate.svelte';
 	import OrgLogo from '$lib/components/OrgLogo.svelte';
+	import OutcomeMessage from '$lib/components/OutcomeMessage.svelte';
 	import { EMPLOYMENT_TYPES, WORK_MODES } from '$lib/profile-options';
 	import { glassPanel, primaryButton, successBox } from '$lib/ui';
 	import type { PageProps } from './$types';
@@ -88,6 +90,8 @@
 			<p class="mt-2 text-ink/75"><span class="font-medium">Salary:</span> Up to {formatMoney(posting.salaryMax)}</p>
 		{/if}
 
+		<AcceptanceRate rate={data.acceptanceRate} />
+
 		<section class="mt-8 border-t border-white/60 pt-6">
 			<h2 class="font-display text-xl font-semibold">About the role</h2>
 			<p class="mt-3 whitespace-pre-line leading-7 text-ink/75">{posting.description}</p>
@@ -143,7 +147,17 @@
 					</p>
 				{/if}
 
-				{#if data.alreadyApplied}
+				{#if data.outcome}
+					<!-- US-03: the recruiter's decision; withdrawing is no longer possible -->
+					<div class="mt-4">
+						<OutcomeMessage
+							status={data.outcome.status}
+							message={data.outcome.message}
+							nextSteps={data.outcome.nextSteps ?? ''}
+							sentAt={data.outcome.createdAt}
+						/>
+					</div>
+				{:else if data.alreadyApplied}
 					{#if posting.status === 'open' && posting.published && !data.deadlinePassed}
 						<form
 							method="POST"

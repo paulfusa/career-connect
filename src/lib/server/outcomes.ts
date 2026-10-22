@@ -4,10 +4,12 @@ import { application, applicationOutcome, jobPosting } from '$lib/server/db/sche
 import type { OutcomeInput } from '$lib/server/application-outcome';
 
 // US-03: saves the decision (check that the recruiter owns the posting before calling this)
+// undefined means a decision was already sent, since there is only one per application
 export async function saveOutcome(applicationId: string, values: OutcomeInput) {
 	const [outcome] = await db
 		.insert(applicationOutcome)
 		.values({ applicationId, status: values.status, message: values.message, nextSteps: values.nextSteps || null })
+		.onConflictDoNothing({ target: applicationOutcome.applicationId })
 		.returning();
 	return outcome;
 }

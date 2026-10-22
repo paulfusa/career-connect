@@ -1,12 +1,17 @@
 
 <script lang="ts">
-    import { glassPanel, primaryButton } from '$lib/ui';
+    import OutcomeForm from '$lib/components/OutcomeForm.svelte';
+    import OutcomeMessage from '$lib/components/OutcomeMessage.svelte';
+    import { errorBox, glassPanel, primaryButton, successBox } from '$lib/ui';
     import type { PageProps } from './$types';
 
-    let { data }: PageProps = $props();
+    let { data, form }: PageProps = $props();
 
     const formatDate = (date: Date) =>
         date.toLocaleDateString('en-CA', { dateStyle: 'medium' });
+
+    // US-03: applications still waiting for a decision after the reminder delay
+    let waiting = $derived(data.applicants.filter((applicant) => applicant.needsReminder).length);
 </script>
 
 <svelte:head>
@@ -38,6 +43,16 @@
             </span>
         </div>
 
+        {#if waiting > 0}
+            <p role="status" class="mt-6 rounded-2xl bg-amber-100 px-4 py-3 font-medium text-amber-800">
+                {waiting === 1 ? '1 application is' : `${waiting} applications are`} still waiting for your decision.
+            </p>
+        {/if}
+
+        {#if form?.error && !form?.applicationId}
+            <p role="alert" class="{errorBox} mt-6">{form.error}</p>
+        {/if}
+
         {#if data.applicants.length === 0}
             <div class="mt-8 rounded-2xl bg-white/60 p-6 text-center">
                 <p class="font-medium">No applications yet</p>
@@ -48,6 +63,8 @@
         {:else}
             <div class="mt-8 space-y-4">
                 {#each data.applicants as applicant (applicant.id)}
+                    <!-- the last form result only belongs to the applicant it was sent for -->
+                    {@const result = form?.applicationId === applicant.id ? form : null}
                     <article class="rounded-2xl border border-white/60 bg-white/60 p-5">
                         <div class="flex flex-wrap items-start justify-between gap-4">
                             <div class="min-w-0">
@@ -62,6 +79,12 @@
                                 <p class="mt-2 text-xs text-ink/50">
                                     Applied {formatDate(applicant.appliedAt)}
                                 </p>
+
+                                {#if applicant.needsReminder}
+                                    <span class="mt-2 inline-block rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-amber-800">
+                                        Waiting for a decision
+                                    </span>
+                                {/if}
                             </div>
 
                             {#if applicant.resumeId && applicant.resumeName}
@@ -85,6 +108,33 @@
                                 Resume: {applicant.resumeName}
                             </p>
                         {/if}
+
+                        <!-- US-03: the decision the applicant sees, or the form to send one -->
+                        <div class="mt-5 border-t border-white/60 pt-5">
+                            {#if result?.success}
+                                <p role="status" class="{successBox} mb-4">{result.success}</p>
+                            {/if}
+
+                            {#if applicant.outcome}
+                                <OutcomeMessage
+                                    status={applicant.outcome.status}
+                                    message={applicant.outcome.message}
+                                    nextSteps={applicant.outcome.nextSteps ?? ''}
+                                    sentAt={applicant.outcome.createdAt}
+                                />
+                            {:else}
+                                {#if result?.error}
+                                    <p role="alert" class="{errorBox} mb-4">{result.error}</p>
+                                {/if}
+
+                                <OutcomeForm
+                                    action="?/decide"
+                                    applicationId={applicant.id}
+                                    values={result?.values ?? {}}
+                                    errors={result?.errors}
+                                />
+                            {/if}
+                        </div>
                     </article>
                 {/each}
             </div>
