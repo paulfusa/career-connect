@@ -1,7 +1,7 @@
 import { error, fail, redirect } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
 import { jobPosting } from '$lib/server/db/schema';
-import { parseJobPosting } from '$lib/server/job-posting';
+import { createJobPosting } from '$lib/server/job-posting-create';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = ({ locals }) => {
@@ -11,15 +11,20 @@ export const load: PageServerLoad = ({ locals }) => {
 
 export const actions: Actions = {
 	create: async ({ request, locals }) => {
-		if (locals.user!.role !== 'recruiter') return fail(403, { message: 'Only recruiters can create job postings.' });
+		const result = await createJobPosting(locals.user!, await request.formData(), async (values) => {
+			const [posting] = await db
+				.insert(jobPosting)
+				.values(values)
+				.returning({ id: jobPosting.id });
+			return posting.id;
+		});
 
-		const parsed = parseJobPosting(await request.formData());
-		if (!parsed.ok) return fail(400, { errors: parsed.errors, values: parsed.values });
-
-		const [posting] = await db
-			.insert(jobPosting)
-			.values({ ...parsed.values, createdBy: locals.user!.id })
-			.returning({ id: jobPosting.id });
-		redirect(303, `/jobs/${posting.id}`);
+		if (result.status === 'forbidden') {
+			return fail(403, { message: 'Only recruiters can create job postings.' });
+		}
+		if (result.status === 'invalid') {
+			return fail(400, { errors: result.errors, values: result.values });
+		}
+		redirect(303, `/jobs/${result.id}`);
 	}
 };
