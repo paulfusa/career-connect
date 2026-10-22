@@ -7,8 +7,9 @@
 
     let { data, form }: PageProps = $props();
 
-    const formatDate = (date: Date) =>
-        date.toLocaleDateString('en-CA', { dateStyle: 'medium' });
+    // date and time in Eastern time, e.g. 'Oct 22, 2026, 3:45 p.m. ET'; the zone is set so the server and the browser show the same time
+    const formatDateTime = (date: Date) =>
+        `${date.toLocaleString('en-CA', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'America/Toronto' })} ET`;
 
     // US-03: applications still waiting for a decision after the reminder delay
     let waiting = $derived(data.applicants.filter((applicant) => applicant.needsReminder).length);
@@ -77,7 +78,7 @@
                                 </p>
 
                                 <p class="mt-2 text-xs text-ink/50">
-                                    Applied {formatDate(applicant.appliedAt)}
+                                    Applied {formatDateTime(applicant.appliedAt)}
                                 </p>
 
                                 {#if applicant.needsReminder}
