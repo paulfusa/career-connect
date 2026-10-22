@@ -2,6 +2,7 @@ import { error, fail, redirect } from '@sveltejs/kit';
 import { and, eq } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import { jobPosting } from '$lib/server/db/schema';
+import { deleteJobPosting } from '$lib/server/job-posting-delete';
 import { editJobPosting } from '$lib/server/job-posting-edit';
 import type { Actions, PageServerLoad } from './$types';
 
@@ -65,14 +66,18 @@ export const actions: Actions = {
 	},
 
 	delete: async ({ params, locals }) => {
-		if (locals.user!.role !== 'recruiter') return fail(403, { message: 'Only recruiters can delete job postings.' });
-		if (!UUID.test(params.id)) return fail(404, { message: 'Job posting not found.' });
+		const result = await deleteJobPosting(locals.user!, params.id, async (id, ownerId) => {
+			const [posting] = await db
+				.delete(jobPosting)
+				.where(and(eq(jobPosting.id, id), eq(jobPosting.createdBy, ownerId)))
+				.returning({ id: jobPosting.id });
+			return posting?.id ?? null;
+		});
 
-		const [posting] = await db
-			.delete(jobPosting)
-			.where(and(eq(jobPosting.id, params.id), eq(jobPosting.createdBy, locals.user!.id)))
-			.returning({ id: jobPosting.id });
-		if (!posting) return fail(404, { message: 'Job posting not found.' });
+		if (result.status === 'forbidden') {
+			return fail(403, { message: 'Only recruiters can delete job postings.' });
+		}
+		if (result.status === 'not-found') return fail(404, { message: 'Job posting not found.' });
 		redirect(303, '/jobs?mine');
 	}
 };
