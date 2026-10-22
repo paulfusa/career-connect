@@ -20,10 +20,10 @@ export function parseApplication(data: FormData): ApplicationParse {
 	return Object.keys(errors).length ? { ok: false, errors, values } : { ok: true, values };
 }
 
-// today's date in Montreal as 'YYYY-MM-DD', so it can be compared with a deadline as text
-export function todayInMontreal(): string {
+// today's date in Eastern time (EST, or EDT in summer) as 'YYYY-MM-DD', so it can be compared with a deadline as text
+export function todayEastern(): string {
 	return new Intl.DateTimeFormat('en-CA', {
-		timeZone: 'America/Toronto',
+		timeZone: 'America/Toronto', // the official name for Eastern time, it switches between EST and EDT by itself
 		year: 'numeric',
 		month: '2-digit',
 		day: '2-digit'

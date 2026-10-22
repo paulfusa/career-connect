@@ -3,7 +3,7 @@ import { and, desc, eq } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import { application, companyProfile, jobPosting, resume, user } from '$lib/server/db/schema';
 import type { Actions, PageServerLoad } from './$types';
-import { applyProblem, parseApplication, todayInMontreal, withdrawProblem } from '$lib/server/application';
+import { applyProblem, parseApplication, todayEastern, withdrawProblem } from '$lib/server/application';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -57,7 +57,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 		resumes,
 		alreadyApplied: !!existingApplication,
 		// the deadline day itself still counts, same as withdrawProblem
-		deadlinePassed: !!deadline && todayInMontreal() > deadline
+		deadlinePassed: !!deadline && todayEastern() > deadline
 	};
 };
 
@@ -119,7 +119,7 @@ export const actions: Actions = {
                 )
             );
 
-        const problem = applyProblem(job, !!existing, todayInMontreal());
+        const problem = applyProblem(job, !!existing, todayEastern());
 
         if (problem) {
             return fail(400, { error: problem });
@@ -164,7 +164,7 @@ export const actions: Actions = {
             .from(jobPosting)
             .where(eq(jobPosting.id, params.id));
 
-        const problem = withdrawProblem(job, true, todayInMontreal());
+        const problem = withdrawProblem(job, true, todayEastern());
 
         if (problem) {
             return fail(400, { error: problem });
