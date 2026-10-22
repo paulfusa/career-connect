@@ -76,7 +76,7 @@
 
 		{#if posting.applicationDeadline}
 			<p class="mt-5 text-ink/75">
-				<span class="font-medium">Application deadline:</span> {formatDate(posting.applicationDeadline)}
+				<span class="font-medium">Application deadline:</span> {formatDate(posting.applicationDeadline)}, 11:59 p.m. ET
 			</p>
 		{/if}
 
