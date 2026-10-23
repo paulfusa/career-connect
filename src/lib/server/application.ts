@@ -60,7 +60,9 @@ export function withdrawProblem(
         return 'This job is no longer accepting changes to applications.';
     }
 
-    // TODO (Mohamad, US-03): block withdrawing once the recruiter has sent a decision
+    if (decided) {
+        return 'You can no longer withdraw because the recruiter has already sent a decision.';
+    }
 
     if (job.applicationDeadline && today > job.applicationDeadline) {
         return 'The application deadline has passed.';

@@ -94,4 +94,9 @@ test('withdrawal: rejects unpublished jobs', () => {
     );
 });
 
-// TODO (Mohamad, US-03): a test that withdrawing is blocked once a decision was sent
+test('withdrawal: rejects withdrawing after a decision was sent', () => {
+    assert.equal(
+        withdrawProblem(withdrawalJob, true, '2026-10-18', true),
+        'You can no longer withdraw because the recruiter has already sent a decision.'
+    );
+});
