@@ -44,7 +44,13 @@ test('application: open, published job with no earlier application is fine', () 
 	assert.equal(applyProblem(openJob, false, today), null);
 });
 
-// TODO (Mohamad): 2 deadline tests, one the day after the deadline and one on the deadline itself
+test('application: cannot apply after the deadline', () => {
+	assert.equal(applyProblem({ ...openJob, applicationDeadline: '2026-10-21' }, false, today), 'The application deadline has passed.');
+});
+
+test('application: can still apply on the deadline day', () => {
+	assert.equal(applyProblem({ ...openJob, applicationDeadline: today }, false, today), null);
+});
 
 const withdrawalJob = {
     status: 'open',
