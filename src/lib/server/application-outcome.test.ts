@@ -23,7 +23,7 @@ test('outcome: trims valid fields', () => {
 test('outcome: rejects a status other than offered or rejected', () => {
 	const parsed = parseOutcome(form({ ...offer, status: 'interview' }));
 	assert.ok(!parsed.ok);
-	assert.equal(parsed.errors.status, 'Choose Offered or Rejected.');
+	assert.equal(parsed.errors.status, 'Choose to offer the job or reject the application.');
 });
 
 test('outcome: enforces the message length limit', () => {

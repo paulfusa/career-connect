@@ -13,7 +13,7 @@
 		sentAt: Date;
 	} = $props();
 
-	// date and time in Eastern time, e.g. 'Oct 22, 2026, 3:45 p.m. ET'; the zone is set so the server and the browser show the same time
+	// like 'Oct 22, 2026, 3:45 p.m. ET', always in Eastern time so the server and the browser show the same time
 	const formatDateTime = (value: Date) =>
 		`${value.toLocaleString('en-CA', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'America/Toronto' })} ET`;
 </script>

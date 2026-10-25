@@ -12,7 +12,7 @@
         `${date.toLocaleString('en-CA', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'America/Toronto' })} ET`;
 
     // US-03: applications still waiting for a decision after the reminder delay
-    let waiting = $derived(data.applicants.filter((applicant) => applicant.needsReminder).length);
+    let waitingCount = $derived(data.applicants.filter((applicant) => applicant.needsReminder).length);
 </script>
 
 <svelte:head>
@@ -44,9 +44,9 @@
             </span>
         </div>
 
-        {#if waiting > 0}
+        {#if waitingCount > 0}
             <p role="status" class="mt-6 rounded-2xl bg-amber-100 px-4 py-3 font-medium text-amber-800">
-                {waiting === 1 ? '1 application is' : `${waiting} applications are`} still waiting for your decision.
+                {waitingCount === 1 ? '1 application is' : `${waitingCount} applications are`} still waiting for your decision.
             </p>
         {/if}
 
@@ -64,8 +64,8 @@
         {:else}
             <div class="mt-8 space-y-4">
                 {#each data.applicants as applicant (applicant.id)}
-                    <!-- the last form result only belongs to the applicant it was sent for -->
-                    {@const result = form?.applicationId === applicant.id ? form : null}
+                    <!-- the last form result is only shown on the applicant it was for -->
+                    {@const formResult = form?.applicationId === applicant.id ? form : null}
                     <article class="rounded-2xl border border-white/60 bg-white/60 p-5">
                         <div class="flex flex-wrap items-start justify-between gap-4">
                             <div class="min-w-0">
@@ -112,8 +112,8 @@
 
                         <!-- US-03: the decision the applicant sees, or the form to send one -->
                         <div class="mt-5 border-t border-white/60 pt-5">
-                            {#if result?.success}
-                                <p role="status" class="{successBox} mb-4">{result.success}</p>
+                            {#if formResult?.success}
+                                <p role="status" class="{successBox} mb-4">{formResult.success}</p>
                             {/if}
 
                             {#if applicant.outcome}
@@ -124,16 +124,16 @@
                                     sentAt={applicant.outcome.createdAt}
                                 />
                             {:else}
-                                {#if result?.error}
-                                    <p role="alert" class="{errorBox} mb-4">{result.error}</p>
+                                {#if formResult?.error}
+                                    <p role="alert" class="{errorBox} mb-4">{formResult.error}</p>
                                 {/if}
 
                                 <OutcomeForm
                                     action="?/decide"
                                     applicationId={applicant.id}
                                     applicantName={applicant.applicantName}
-                                    values={result?.values ?? {}}
-                                    errors={result?.errors}
+                                    values={formResult?.values ?? {}}
+                                    errors={formResult?.errors}
                                 />
                             {/if}
                         </div>

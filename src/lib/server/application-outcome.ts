@@ -20,10 +20,10 @@ export function parseOutcome(data: FormData): OutcomeParse {
 		nextSteps: data.get('nextSteps')?.toString().trim() ?? ''
 	};
 
-	if (values.status !== 'offered' && values.status !== 'rejected') errors.status = 'Choose Offered or Rejected.';
-	if (values.message.length < MESSAGE_MIN) errors.message = `Explaining your decision must include at least ${MESSAGE_MIN} characters.`;
+	if (values.status !== 'offered' && values.status !== 'rejected') errors.status = 'Choose to offer the job or reject the application.';
+	if (values.message.length < MESSAGE_MIN) errors.message = `Please explain your decision in at least ${MESSAGE_MIN} characters.`;
 	else if (values.message.length > MESSAGE_LIMIT) {
-		errors.message = `The message must be ${MESSAGE_LIMIT} characters or fewer.`;
+		errors.message = `Your reasons must be ${MESSAGE_LIMIT} characters or fewer.`;
 	}
 	if (values.status === 'offered') {
 		if (values.nextSteps.length === 0) errors.nextSteps = 'Explain the next steps and how to respond to the offer.';
