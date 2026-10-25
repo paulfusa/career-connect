@@ -131,6 +131,7 @@
                                 <OutcomeForm
                                     action="?/decide"
                                     applicationId={applicant.id}
+                                    applicantName={applicant.applicantName}
                                     values={result?.values ?? {}}
                                     errors={result?.errors}
                                 />
