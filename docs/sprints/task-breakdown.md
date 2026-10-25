@@ -1,7 +1,7 @@
 # Task Breakdown
 
-Each user story is a GitHub Issue, and the tasks below come from each issue's **Tasks** section.
-The owner of a user story is responsible for its tasks unless a task lists someone else.
+Every user story is a GitHub issue, and the tasks below are copied from its **Tasks** section.
+Whoever owns a story owns its tasks, unless a task names someone else.
 
 **Legend**
 - **Priority:** High / Medium / Low
@@ -18,9 +18,9 @@ The owner of a user story is responsible for its tasks unless a task lists someo
 | Andrew Rowe (dropped the course) | @an-rowe54 | - | - | T5 | - |
 | Michael Derocher | @MichaelDerocher1551 | - | US-12, US-13 | T5 | T12, T14 |
 
-Story ownership changed during Sprint 2: US-05 and US-14 moved from Michael to Mohamad, US-12 and US-13 from Andrew to Michael, US-10 and US-11 from Kimia to Paul, and US-15 was split between Mohamad, who built the application table (15.1), and Maher, who built the job seeker side (15.2 to 15.4, first assigned to Michael) and the recruiter side (15.5). Andrew Rowe dropped the course during Sprint 2, and Maher took over US-21.
+Some stories changed hands during Sprint 2. US-05 and US-14 went from Michael to Mohamad, US-12 and US-13 from Andrew to Michael, and US-10 and US-11 from Kimia to Paul. US-15 was split: Mohamad built the application table (15.1) and Maher built the rest (15.2 to 15.5), including the job seeker side that Michael was first assigned. Andrew Rowe dropped the course during Sprint 2, and Maher took over US-21.
 
-Stories not planned for a sprint yet: US-06 (Mohamad), US-09 (Maher), US-19 (Kimia), US-21 (Maher), US-22 (Paul) and US-23 (Michael).
+Not planned for a sprint yet: US-06 (Mohamad), US-09 (Maher), US-19 (Kimia), US-21 (Maher), US-22 (Paul) and US-23 (Michael).
 
 ## Sprint 1 Documentation Tasks
 
@@ -131,7 +131,7 @@ Each heading is written as **Title - Priority - Assignee - Sprint**.
 | 13.4 | Write tests | Michael | Completed |
 
 ### US-17: Forgot password (#90) - Medium - Maher - Sprint 2
-Completed in PR #96: the forgot-password and reset-password pages, the reset code email, and tests. The issue does not list separate tasks yet.
+Done in PR #96: the forgot-password and reset-password pages, the email with the reset code, and tests. The issue doesn't have separate tasks yet.
 
 ### US-05: Browse and view job offers (#10) - High - Mohamad - Sprint 2
 | Task | Description | Owner | Status |
@@ -143,7 +143,7 @@ Completed in PR #96: the forgot-password and reset-password pages, the reset cod
 | 5.5 | Prevent new applications when a job is not Open | Mohamad | Completed |
 | 5.6 | Test open, closed, unpublished, and no decision taken features | Mohamad | Completed |
 
-Status: Completed. PR #100 was merged on October 17, and the acceptance rate (5.4) was added with US-03 in PR #123. Acceptance tests: #108, #109.
+Status: Completed. Most of it went in with PR #100 on October 17, and the acceptance rate (5.4) came later with US-03 in PR #123. Acceptance tests: #108, #109.
 
 ### US-14: Job Search Filters (#19) - High - Mohamad - Sprint 2
 | Task | Description | Owner | Status |
@@ -153,7 +153,7 @@ Status: Completed. PR #100 was merged on October 17, and the acceptance rate (5.
 | 14.3 | Create database queries | Mohamad | Completed |
 | 14.4 | Write integration tests | Mohamad | Completed (unit tests and acceptance tests #110, #111) |
 
-Status: Completed (PR #116, merged October 17). Acceptance tests: #110, #111.
+Status: Completed, merged on October 17 in PR #116. Acceptance tests: #110, #111.
 
 ### US-15: Apply for a Job (#20) - High - Mohamad, Maher - Sprint 2
 | Task | Description | Owner | Status |
@@ -164,7 +164,7 @@ Status: Completed (PR #116, merged October 17). Acceptance tests: #110, #111.
 | 15.4 | Create success notification | Maher | Completed |
 | 15.5 | Display applications to the recruiter who owns the posting, with links to the applicants' resumes | Maher | Completed |
 
-Status: Completed (PR #118, merged October 22). Mohamad then fixed the success message, blocked applying after the deadline and showed the withdraw messages (PR #123).
+Status: Completed. Maher's PR #118 was merged on October 22. After testing it, Mohamad fixed the success message, blocked applying after the deadline and added the withdraw messages (PR #123).
 
 ### US-20: Application Status Tracking (#107) - High - Kimia - Sprint 2
 | Task | Description | Owner | Status |
@@ -175,7 +175,7 @@ Status: Completed (PR #118, merged October 22). Mohamad then fixed the success m
 | 20.4 | Build the job seeker's "My applications" page | Kimia | Completed |
 | 20.5 | Test status changes, permissions, and the My applications page | Kimia | Completed |
 
-Status: Completed (PR #122, merged October 25). Offered and Rejected are set by US-03 when the recruiter sends a decision (PR #123).
+Status: Completed with PR #122 on October 25. Offered and Rejected are set by US-03 when the recruiter sends a decision (PR #123).
 
 ### US-07: Recruiter company profile (#12) - High - Maher - Sprint 2
 | Task | Description | Owner | Status |
@@ -195,7 +195,7 @@ Status: Completed (PR #122, merged October 25). Offered and Rejected are set by 
 | 3.4 | Add a reminder to remind recruiters to respond to pending applications | Mohamad | Completed |
 | 3.5 | Test authorization, matching status, and delivery features | Mohamad | Completed |
 
-Status: Completed (PR #123).
+Status: Completed in PR #123.
 
 ### US-18: Recruiter Verification and Approval (#97) - Medium - Maher - Sprint 3
 | Task | Description | Owner | Status |
@@ -207,16 +207,16 @@ Status: Completed (PR #123).
 | 18.5 | Implement Approve and Reject functionality with appropriate access restrictions | Maher | Not Started |
 | 18.6 | Display a blue verified badge on approved recruiter profiles | Maher | Not Started |
 
-Status: Postponed from Sprint 2, where it was the first story we planned to postpone if we ran short of time. Maher will build it in Sprint 3.
+Status: Postponed. It was the story we said we'd drop first if we ran out of time, and Maher will build it in Sprint 3.
 | 18.7 | Allow recruiters to view their status and resubmit rejected requests | Maher | Not Started |
 | 18.8 | Test verification requests, approval, rejection, database updates, and authorization | Maher | Not Started |
 
 ### Generative AI feature: Resume AI autofill and review (#91) - High - Paul - Sprint 2
-In progress on the `feature/ai-resume` branch. The issue does not list separate tasks yet.
+Being built on the `feature/ai-resume` branch. The issue doesn't have separate tasks yet.
 
 ## Not Planned Yet - Remaining User Stories
 
-These stories are in the backlog but are not planned for a sprint yet. Their tasks come from each GitHub issue.
+These stories are in the backlog but haven't been planned for a sprint yet. Their tasks come from each GitHub issue.
 
 ### US-06: Submit feature suggestion (#11) - Low - Mohamad - Not planned yet
 | Task | Description | Owner | Status |

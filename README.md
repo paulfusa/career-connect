@@ -45,9 +45,9 @@ Then open http://localhost:5173 in your browser.
 # Testing
 Run the type check with `pnpm check` and the automated tests with `pnpm test`.
 
-Every pull request is also checked automatically by our CI pipeline on GitHub Actions ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)), which runs both commands and marks the pull request as passed or failed.
+Our CI pipeline on GitHub Actions ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs both on every pull request and marks it as passed or failed.
 
-Acceptance tests are GitHub Issues with the `Acceptance Test` label, linked to their user story.
+Acceptance tests are GitHub issues with the `Acceptance Test` label, linked to the user story they test.
 
 # Current Sprint 2 Scope
 Sprint 2 runs from September 29 to October 26, 2026. The status of each story is in the [Sprint 2 plan](docs/sprints/sprint-2.md).
@@ -68,17 +68,17 @@ Sprint 2 runs from September 29 to October 26, 2026. The status of each story is
 Completed in Sprint 1: US-01 (account registration), US-02 (login and logout), US-16 (first-login onboarding) and US-04 (profile management).
 
 # Implemented So Far
-- Account registration, email verification, login/logout, forgot password and first-login onboarding.
-- Job seeker profile management.
-- Resume upload, replacement, deletion and viewing.
-- Job posting creation, editing and deletion for recruiters, with company and city autofill.
-- Browsing job postings, with open/closed and draft status, requirements, deadline, salary and acceptance rate on the job details page.
-- Job search by keyword, company and location, with employment type and work mode filters.
-- Company profiles for recruiters, shown on their job postings.
-- Applying for a job with one of your resumes, and withdrawing the application before the deadline.
-- Recruiters viewing the applications to their postings and the applicants' resumes.
-- Offer and rejection messages from the recruiter, with their reasons and next steps, and reminders for applications left without a decision.
-- Application status tracking: recruiters move an application to Under Review or Interview, and job seekers follow each status on their My Applications page.
+- Signing up, email verification, logging in and out, resetting a forgotten password, and a first-login setup.
+- Job seeker profiles.
+- Uploading, replacing, deleting and viewing resumes.
+- Recruiters can create, edit and delete job postings, with company and city suggestions as they type.
+- A job list with Open, Closed and Draft badges, and a details page with the requirements, deadline, salary and acceptance rate.
+- Searching jobs by keyword, company or location, and filtering by employment type and work mode.
+- Company profiles, shown on each recruiter's postings.
+- Applying to a job with one of your resumes, and withdrawing before the deadline.
+- A page where recruiters see who applied to each posting and open their resumes.
+- Offer and rejection messages with the recruiter's reasons and next steps, plus reminders when an application waits too long.
+- Application statuses: recruiters can mark an application Under Review or Interview, and job seekers see every status on My Applications.
 
 # Planned Features
 
