@@ -14,8 +14,8 @@ export async function saveOutcome(applicationId: string, values: OutcomeInput) {
 			.onConflictDoNothing({ target: applicationOutcome.applicationId })
 			.returning();
 		if (outcome) {
-			// TODO (Mohamad, US-20): set this application's status to the decision (offered or rejected)
-			// await tx.update(application).set({ status: ______ as 'offered' | 'rejected', updatedAt: new Date() }).where(eq(application.id, ______));
+			// US-20: the application's status now matches the decision
+			await tx.update(application).set({ status: values.status as 'offered' | 'rejected', updatedAt: new Date() }).where(eq(application.id, applicationId));
 		}
 		return outcome;
 	});
