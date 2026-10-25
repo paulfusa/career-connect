@@ -55,7 +55,7 @@
 		<input name="location" value={data.search.location} placeholder="City or Remote" class={field} />
 	</label>
 
-	<!-- the value goes on the select so it follows the URL; Clear search then resets it to Any -->
+	<!-- the value is set on the select, not on each option, so Clear search puts it back to Any -->
 	<label class="block">
 		<span class={label}>Employment type</span>
 		<select name="employmentType" value={data.search.employmentType} class={field}>
