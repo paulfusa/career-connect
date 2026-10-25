@@ -32,7 +32,7 @@ test('outcome: enforces the message length limit', () => {
 	assert.ok(parsed.errors.message);
 });
 
-test('outcome: rejects a message shorter than the minimum', () => {
+test('outcome: rejects a message under 100 characters', () => {
 	const parsed = parseOutcome(form({ ...offer, message: 'y'.repeat(99) }));
 	assert.ok(!parsed.ok);
 	assert.ok(parsed.errors.message);

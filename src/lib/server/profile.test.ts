@@ -10,7 +10,7 @@ const form = (fields: Record<string, string | string[]>) => {
 };
 const today = new Date('2026-09-28');
 
-test('intro: trims, normalizes links, and ignores recruiter fields for job seekers', () => {
+test('profile: trims, fixes links and ignores recruiter fields for job seekers', () => {
 	const r = parseIntro(
 		form({ name: '  Ada Lovelace ', phone: '+1 514 555 0123', githubUrl: 'github.com/ada', company: 'Acme' }),
 		'job_seeker'
@@ -21,7 +21,7 @@ test('intro: trims, normalizes links, and ignores recruiter fields for job seeke
 	assert.equal(r.values.company, null);
 });
 
-test('intro: required name, valid phone and links, company required for recruiters', () => {
+test('profile: requires a name, a valid phone and links, and a company for recruiters', () => {
 	const r = parseIntro(form({ name: ' ', phone: 'call me', linkedinUrl: 'not a link' }), 'recruiter');
 	assert.ok(!r.ok);
 	assert.equal(r.errors.name, 'Name is required.');
@@ -30,7 +30,7 @@ test('intro: required name, valid phone and links, company required for recruite
 	assert.equal(r.errors.company, 'Company is required.');
 });
 
-test('skills: de-duplicated, top skills must be listed skills, max 5 top skills', () => {
+test('profile: removes duplicate skills and allows up to 5 top skills from the list', () => {
 	const ok = parseSkills(form({ skills: ['Svelte', 'SQL', 'svelte', ' '], topSkills: ['sql', 'Docker'] }));
 	assert.ok(ok.ok);
 	assert.deepEqual(ok.values.skills, ['Svelte', 'SQL']);
@@ -41,7 +41,7 @@ test('skills: de-duplicated, top skills must be listed skills, max 5 top skills'
 	assert.ok(tooMany.errors.topSkills);
 });
 
-test('preferences: unknown choices are dropped', () => {
+test('profile: drops unknown job preference choices', () => {
 	const r = parsePreferences(form({ openToWork: 'on', jobTypes: ['internship', 'astronaut'], workModes: ['remote'] }));
 	assert.ok(r.ok);
 	assert.equal(r.values.openToWork, true);
@@ -49,7 +49,7 @@ test('preferences: unknown choices are dropped', () => {
 	assert.deepEqual(r.values.workModes, ['remote']);
 });
 
-test('experience: dates are validated and current roles have no end date', () => {
+test('profile: checks experience dates, and a current role has no end date', () => {
 	const current = parseExperience(
 		form({ title: 'Intern', company: 'Shopify', companyDomain: 'shopify.com', startDate: '2026-05', current: 'on', endDate: '2026-08' }),
 		today
@@ -71,7 +71,7 @@ test('experience: dates are validated and current roles have no end date', () =>
 	assert.ok(missing.errors.title && missing.errors.company && missing.errors.endDate);
 });
 
-test('education: school required, years in range and in order, bad domains dropped', () => {
+test('profile: requires a school, checks the years and drops bad school domains', () => {
 	const ok = parseEducation(
 		form({ school: 'Concordia University', schoolDomain: 'concordia.ca', startYear: '2023', endYear: '2027' }),
 		today

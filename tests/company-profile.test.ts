@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import { validateCompanyProfile } from '../src/lib/server/company-profile-validation.ts';
 import { canManageCompany } from '../src/lib/server/company-profile-permissions.ts';
 
-test('accepts valid company information', () => {
+test('company profile: accepts valid company information', () => {
     const result = validateCompanyProfile(
         'TechNova Solutions',
         'A software development company.',
@@ -15,7 +15,7 @@ test('accepts valid company information', () => {
     assert.equal(result, null);
 });
 
-test('rejects missing required fields', () => {
+test('company profile: rejects missing required fields', () => {
     const result = validateCompanyProfile(
         '',
         'Software development company',
@@ -26,7 +26,7 @@ test('rejects missing required fields', () => {
     assert.equal(result, 'Please fill in all required fields.');
 });
 
-test('accepts an empty optional website', () => {
+test('company profile: accepts an empty optional website', () => {
     const result = validateCompanyProfile(
         'TechNova Solutions',
         'A software development company.',
@@ -37,7 +37,7 @@ test('accepts an empty optional website', () => {
     assert.equal(result, null);
 });
 
-test('rejects invalid website URLs', () => {
+test('company profile: rejects an invalid website URL', () => {
     const result = validateCompanyProfile(
         'TechNova Solutions',
         'A software development company.',
@@ -48,7 +48,7 @@ test('rejects invalid website URLs', () => {
     assert.equal(result, 'Please enter a valid website URL.');
 });
 
-test('rejects company names longer than 150 characters', () => {
+test('company profile: rejects a name over 150 characters', () => {
     const result = validateCompanyProfile(
         'A'.repeat(151),
         'A software development company.',
@@ -60,7 +60,7 @@ test('rejects company names longer than 150 characters', () => {
 });
 
 
-test('recruiter can manage their own company', () => {
+test('company profile: a recruiter can manage their own company', () => {
     const recruiter = {
         id: 'recruiter-1',
         role: 'recruiter'
@@ -69,7 +69,7 @@ test('recruiter can manage their own company', () => {
     assert.equal(canManageCompany(recruiter, 'recruiter-1'), true);
 });
 
-test('job seeker cannot manage a company', () => {
+test('company profile: a job seeker cannot manage a company', () => {
     const jobSeeker = {
         id: 'user-1',
         role: 'job_seeker'
@@ -78,7 +78,7 @@ test('job seeker cannot manage a company', () => {
     assert.equal(canManageCompany(jobSeeker, 'user-1'), false);
 });
 
-test('recruiter cannot manage another company', () => {
+test("company profile: a recruiter cannot manage another recruiter's company", () => {
     const recruiter = {
         id: 'recruiter-2',
         role: 'recruiter'
@@ -87,6 +87,6 @@ test('recruiter cannot manage another company', () => {
     assert.equal(canManageCompany(recruiter, 'recruiter-1'), false);
 });
 
-test('unauthenticated users cannot manage companies', () => {
+test('company profile: guests cannot manage companies', () => {
     assert.equal(canManageCompany(null, 'recruiter-1'), false);
 });
