@@ -136,7 +136,7 @@
 		{#if data.isJobSeeker}
 			<section class="mt-8 border-t border-white/60 pt-6">
 				<h2 class="font-display text-xl font-semibold">Apply for this job</h2>
-				<!-- the message stays after invalidateAll reloads alreadyApplied -->
+				<!-- checked first so the success message stays after the page reloads -->
 				{#if applicationMessage}
 					<p role="status" class="mt-4 rounded-xl bg-emerald-100 p-4 text-emerald-800">
 						{applicationMessage}
@@ -164,7 +164,7 @@
 							action="?/withdraw"
 							class="mt-4"
 							use:enhance={({ cancel }) => {
-								// enhance ignores preventDefault, so the confirm cancels the request here
+								// use:enhance ignores preventDefault, so cancel() is what stops the withdraw
 								if (!confirm('Are you sure you want to withdraw your application?')) {
 									cancel();
 									return;
