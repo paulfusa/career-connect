@@ -11,7 +11,7 @@
 | Andrew Rowe | Absent | --- |
 | Kimia Karimiyeganeh | Present | Worked on creating the Database and created two user stories |
 | Maher Waez | Present | Reviewed the work and discussed working on the database |
-| Micheal Derocher | Absent | --- |
+| Michael Derocher | Absent | --- |
 | Mohamad Alosta | Present | Worked on meeting minutes and created the first one within the project |
 | Paul Fourment | Present | Worked on creating the Database and created the project |
 

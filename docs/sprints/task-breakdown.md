@@ -12,15 +12,15 @@ The owner of a user story is responsible for its tasks unless a task lists someo
 | Member | GitHub | Sprint 1 Stories | Sprint 2 Stories | Sprint 1 Tasks | Sprint 2 Tasks |
 |---|---|---|---|---|---|
 | Paul Fourment | @paulfusa | US-01, US-02, US-16, US-04 | US-10, US-11, Generative AI feature (#91) | T4, T5 | T12, T14 |
-| Mohamad Alosta | @MAlos616 | - | US-03, US-05, US-14, US-15 (15.1) | T1, T2, T3, T4, T5, T6, T7, T8 | T9, T10, T11, T12, T13, T14, T15 |
+| Mohamad Alosta | @MAlos616 | - | US-03, US-05, US-14, US-15 (15.1) | T1, T2, T3, T4, T5, T6, T7, T8 | T9, T10, T11, T12, T13, T14, T15, T16 |
 | Kimia Karimiyeganeh | @kimiakarimiy | - | US-20 | T5 | T12, T14 |
 | Maher Waez | @Maherwaez01 | - | US-07, US-08, US-17, US-18, US-15 (15.5) | T5 | T12, T14 |
-| Andrew Rowe | @an-rowe54 | - | - | T5 | T12, T14 |
+| Andrew Rowe (dropped the course) | @an-rowe54 | - | - | T5 | - |
 | Michael Derocher | @MichaelDerocher1551 | - | US-12, US-13, US-15 (15.2, 15.3, 15.4) | T5 | T12, T14 |
 
-Story ownership changed during Sprint 2: US-05 and US-14 moved from Michael to Mohamad, US-12 and US-13 from Andrew to Michael, US-10 and US-11 from Kimia to Paul, and US-15 is split three ways: Mohamad builds the application table (15.1), Michael the job seeker side (15.2 to 15.4) and Maher the recruiter side (15.5).
+Story ownership changed during Sprint 2: US-05 and US-14 moved from Michael to Mohamad, US-12 and US-13 from Andrew to Michael, US-10 and US-11 from Kimia to Paul, and US-15 is split three ways: Mohamad builds the application table (15.1), Michael the job seeker side (15.2 to 15.4) and Maher the recruiter side (15.5). Andrew Rowe dropped the course during Sprint 2, and Maher took over US-21.
 
-Stories not planned for a sprint yet: US-06 (Mohamad), US-09 (Maher), US-19 (Kimia), US-21 (Andrew), US-22 (Paul) and US-23 (Michael).
+Stories not planned for a sprint yet: US-06 (Mohamad), US-09 (Maher), US-19 (Kimia), US-21 (Maher), US-22 (Paul) and US-23 (Michael).
 
 ## Sprint 1 Documentation Tasks
 
@@ -82,6 +82,7 @@ Each heading is written as **Title - Priority - Assignee - Sprint**.
 | T13 | Sprint 2 plan, task breakdown and contribution log (#104) | Task | Mohamad | High | Oct 24 | In Progress |
 | T14 | Sprint 2 AI usage logs (#105) | Task | Everyone | High | Oct 25 | In Progress |
 | T15 | Sprint 2 summary report (#106) | Task | Mohamad | High | Oct 25 | In Progress |
+| T16 | Sprint 2 meeting minutes, October 22 (#120) | Task | Mohamad | Medium | Oct 23 | Completed |
 
 ## Sprint 2 - User Stories
 
@@ -237,13 +238,13 @@ These stories are in the backlog but are not planned for a sprint yet. Their tas
 | 19.4 | Add a "From people I follow" filter to the job list | Kimia | Not Started |
 | 19.5 | Test following, unfollowing, and the duplicate and self-follow rules | Kimia | Not Started |
 
-### US-21: Dark Mode (#82) - Low - Andrew - Not planned yet
+### US-21: Dark Mode (#82) - Low - Maher - Not planned yet
 | Task | Description | Owner | Status |
 |---|---|---|---|
-| 21.1 | Define dark versions of the app's colours | Andrew | Not Started |
-| 21.2 | Add the theme toggle to the navigation bar | Andrew | Not Started |
-| 21.3 | Save the user's choice and apply it when a page loads | Andrew | Not Started |
-| 21.4 | Check every page in both themes for readability | Andrew | Not Started |
+| 21.1 | Define dark versions of the app's colours | Maher | Not Started |
+| 21.2 | Add the theme toggle to the navigation bar | Maher | Not Started |
+| 21.3 | Save the user's choice and apply it when a page loads | Maher | Not Started |
+| 21.4 | Check every page in both themes for readability | Maher | Not Started |
 
 ### US-22: Messaging between Job Seekers & Recruiters (#81) - Low - Paul - Not planned yet
 | Task | Description | Owner | Status |

@@ -1,6 +1,6 @@
 # Sprint 2
 **Dates:** September 29 - October 26, 2026
-**Team:** Paul Fourment, Mohamad Alosta, Michael Derocher, Kimia Karimiyeganeh, Andrew Rowe, Maher Waez
+**Team:** Paul Fourment, Mohamad Alosta, Michael Derocher, Kimia Karimiyeganeh, Maher Waez (Andrew Rowe dropped the course during the sprint)
 
 ## Sprint Goal
 For this sprint we will build the most important features first, especially the ones that other features depend on. These features are the core of CareerConnect, and they include: resume management, job search and job details, and job applications with status tracking. We will also start the recruiter dashboard, write acceptance tests for every Sprint 1 and Sprint 2 user story, and set up a CI pipeline that runs our checks and tests on every pull request.
@@ -16,7 +16,7 @@ For this sprint we will build the most important features first, especially the 
 At our October 1 and October 8 planning meetings we agreed to finish the mandatory (P0) features first, since other features depend on them, and to let anyone in the team propose new user stories.
 
 ## Team Capacity
-There are six of us and everyone has busy schedules, so we planned around roughly **4-5 hours per person per week** on the project. Sprint 2 is about 4 weeks long, which gives us roughly **96-120 hours** as a team, or about **48-60 story points** at roughly 2 hours per point. The stories planned for Sprint 2 add up to 63 points, slightly above our capacity, so US-18 (5 points), which has no milestone yet, is the first story we would postpone if we run short.
+There are six of us and everyone has busy schedules, so we planned around roughly **4-5 hours per person per week** on the project. Sprint 2 is about 4 weeks long, which gives us roughly **96-120 hours** as a team, or about **48-60 story points** at roughly 2 hours per point. The stories planned for Sprint 2 add up to 63 points, slightly above our capacity, so US-18 (5 points), which has no milestone yet, is the first story we would postpone if we run short. Andrew Rowe later dropped the course, so the team finished the sprint with five members. He had no Sprint 2 stories left by then, so no work had to be moved.
 
 In Sprint 1, Paul did most of the coding because he already knew SvelteKit. As planned, the coding work is spread out more evenly this sprint: more of us own features, and the members who are new to SvelteKit are learning it while building their own stories.
 

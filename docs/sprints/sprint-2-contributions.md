@@ -1,22 +1,22 @@
 # Sprint 2 - Team Member Contributions
 
-This log is based on our GitHub history (commits, pull requests, reviews and issues) and the meeting minutes from October 1 and October 8.
+This log is based on our GitHub history (commits, pull requests, reviews and issues) and the meeting minutes from October 1, October 8 and October 22.
 
 ## Summary
 
-| Member | GitHub | Commits | Merged PRs | Open PRs | Reviews approved | PRs merged for others | Issues created | Oct 1 meeting | Oct 8 meeting | Time spent |
-|---|---|---|---|---|---|---|---|---|---|---|
-| Mohamad Alosta | @MAlos616 | 18 | 10 (#85, #86, #87, #93, #98, #99, #100, #101, #112, #113) | 2 (US-14 and the docs update) | 0 | 0 | 12 (#83, #94, #102 to #111) | Present | Present | 33 h |
-| Paul Fourment | @paulfusa | 4 | 2 (#89, #92) | 0 | 3 (#88, #96, #99) | 3 | 5 (#79 to #82, #91) | Present | Present | ? h |
-| Maher Waez | @Maherwaez01 | 4 | 1 (#96) | 1 (#114) | 7 (#89, #92, #93, #100, #101, #112, #113) | 7 | 2 (#90, #97) | Present | Present | ? h |
-| Michael Derocher | @MichaelDerocher1551 | 2 | 1 (#88) | 0 | 4 (#85, #86, #87, #98) | 0 | 0 | Present | Present | ? h |
-| Kimia Karimiyeganeh | @kimiakarimiy | 0 | 0 | 0 | 0 | 0 | 0 | Present | Present | ? h |
-| Andrew Rowe | @an-rowe54 | 0 | 0 | 0 | 0 | 0 | 0 | Present | Absent | ? h |
+| Member | GitHub | Commits | Merged PRs | Open PRs | Reviews approved | PRs merged for others | Issues created | Oct 1 meeting | Oct 8 meeting | Oct 22 meeting | Time spent |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| Mohamad Alosta | @MAlos616 | 18 | 10 (#85, #86, #87, #93, #98, #99, #100, #101, #112, #113) | 2 (US-14 and the docs update) | 0 | 0 | 12 (#83, #94, #102 to #111) | Present | Present | Present | 33 h |
+| Paul Fourment | @paulfusa | 4 | 2 (#89, #92) | 0 | 3 (#88, #96, #99) | 3 | 5 (#79 to #82, #91) | Present | Present | Present | ? h |
+| Maher Waez | @Maherwaez01 | 4 | 1 (#96) | 1 (#114) | 7 (#89, #92, #93, #100, #101, #112, #113) | 7 | 2 (#90, #97) | Present | Present | Absent | ? h |
+| Michael Derocher | @MichaelDerocher1551 | 2 | 1 (#88) | 0 | 4 (#85, #86, #87, #98) | 0 | 0 | Present | Present | Present | ? h |
+| Kimia Karimiyeganeh | @kimiakarimiy | 0 | 0 | 0 | 0 | 0 | 0 | Present | Present | Present | ? h |
+| Andrew Rowe (dropped the course) | @an-rowe54 | 0 | 0 | 0 | 0 | 0 | 0 | Present | Absent | - | - |
 
 Note: Commit counts don't include merge commits, and include commits on branches that are still in review. "PRs merged for others" counts teammates' pull requests that the member merged. Each member fills in their own time spent, in hours, here and next to each activity below.
 
 ## Mohamad Alosta
-- Took the meeting minutes for the October 1 planning meeting (issue #83, PRs #85, #93) and the October 8 meeting (issue #94, PRs #98, #99), and revised them (PR #101). (0.5 h)
+- Took the meeting minutes for the October 1 planning meeting (issue #83, PRs #85, #93), the October 8 meeting (issue #94, PRs #98, #99) and the October 22 meeting (issue #120, PR #121), and revised all three (PRs #101 and #121). (1 h)
 - **Implemented US-05 (browse and view job offers)** in PR #100 (merged October 17): added status, published, requirements and deadline (required) and salary (optional) to job postings, with validation and 4 tests; hid unpublished jobs from job seekers; added status and draft badges; showed the new details on the job page. Wrote acceptance tests #108 and #109. (12 h)
 - **Implemented US-14 (job search filters)**: search by keyword, company and location, and filter by employment type and work mode, with 4 tests. Also fixed two comments and the closed-job notice from US-05. In review. Wrote acceptance tests #110 and #111. (6 h)
 - **Started US-03 (clear application outcome message)**: outcome validation with 7 tests, the outcome table, the recruiter's decision form and the applicant's message view. The rest depends on US-15. (6 h)
@@ -50,9 +50,10 @@ Note: Commit counts don't include merge commits, and include commits on branches
 - Reviewed and approved 4 teammates' pull requests (#85, #86, #87, #98). (? h)
 
 ## Kimia Karimiyeganeh
-- Attended the October 1 and October 8 planning meetings.
+- Attended the October 1, October 8 and October 22 planning meetings.
 - Assigned US-20 (application status tracking, issue #107).
 
 ## Andrew Rowe
 - Attended the October 1 planning meeting.
-- Assigned US-21 (dark mode, issue #82) for a later sprint.
+- Was assigned US-21 (dark mode, issue #82) for a later sprint; Maher took it over on October 22.
+- Dropped the course during Sprint 2.

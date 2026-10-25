@@ -11,7 +11,7 @@
 | Andrew Rowe | Absent |
 | Kimia Karimiyeganeh | Present |
 | Maher Waez | Present |
-| Micheal Derocher | Present |
+| Michael Derocher | Present |
 | Mohamad Alosta | Present |
 | Paul Fourment | Present |
 
