@@ -79,9 +79,9 @@ Each heading is written as **Title - Priority - Assignee - Sprint**.
 | T10 | Sprint 2 meeting minutes, October 8 (#94) | Task | Mohamad | Medium | Oct 9 | Completed |
 | T11 | CI pipeline that runs the type check and tests on every PR (#102) | Task | Mohamad | High | Oct 15 | Completed |
 | T12 | Acceptance tests, at least two per Sprint 1 and Sprint 2 user story (#103) | Task | Everyone | High | Oct 22 | In Progress |
-| T13 | Sprint 2 plan, task breakdown and contribution log (#104) | Task | Mohamad | High | Oct 24 | In Progress |
+| T13 | Sprint 2 plan, task breakdown and contribution log (#104) | Task | Mohamad | High | Oct 24 | Completed |
 | T14 | Sprint 2 AI usage logs (#105) | Task | Everyone | High | Oct 25 | In Progress |
-| T15 | Sprint 2 summary report (#106) | Task | Mohamad | High | Oct 25 | In Progress |
+| T15 | Sprint 2 summary report (#106) | Task | Mohamad | High | Oct 25 | Completed |
 | T16 | Sprint 2 meeting minutes, October 22 (#120) | Task | Mohamad | Medium | Oct 23 | Completed |
 
 ## Sprint 2 - User Stories
