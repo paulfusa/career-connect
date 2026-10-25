@@ -14,11 +14,11 @@ The owner of a user story is responsible for its tasks unless a task lists someo
 | Paul Fourment | @paulfusa | US-01, US-02, US-16, US-04 | US-10, US-11, Generative AI feature (#91) | T4, T5 | T12, T14 |
 | Mohamad Alosta | @MAlos616 | - | US-03, US-05, US-14, US-15 (15.1) | T1, T2, T3, T4, T5, T6, T7, T8 | T9, T10, T11, T12, T13, T14, T15, T16 |
 | Kimia Karimiyeganeh | @kimiakarimiy | - | US-20 | T5 | T12, T14 |
-| Maher Waez | @Maherwaez01 | - | US-07, US-08, US-17, US-18, US-15 (15.5) | T5 | T12, T14 |
+| Maher Waez | @Maherwaez01 | - | US-07, US-08, US-17, US-18, US-15 (15.2 to 15.5) | T5 | T12, T14 |
 | Andrew Rowe (dropped the course) | @an-rowe54 | - | - | T5 | - |
-| Michael Derocher | @MichaelDerocher1551 | - | US-12, US-13, US-15 (15.2, 15.3, 15.4) | T5 | T12, T14 |
+| Michael Derocher | @MichaelDerocher1551 | - | US-12, US-13 | T5 | T12, T14 |
 
-Story ownership changed during Sprint 2: US-05 and US-14 moved from Michael to Mohamad, US-12 and US-13 from Andrew to Michael, US-10 and US-11 from Kimia to Paul, and US-15 is split three ways: Mohamad builds the application table (15.1), Michael the job seeker side (15.2 to 15.4) and Maher the recruiter side (15.5). Andrew Rowe dropped the course during Sprint 2, and Maher took over US-21.
+Story ownership changed during Sprint 2: US-05 and US-14 moved from Michael to Mohamad, US-12 and US-13 from Andrew to Michael, US-10 and US-11 from Kimia to Paul, and US-15 was split between Mohamad, who built the application table (15.1), and Maher, who built the job seeker side (15.2 to 15.4, first assigned to Michael) and the recruiter side (15.5). Andrew Rowe dropped the course during Sprint 2, and Maher took over US-21.
 
 Stories not planned for a sprint yet: US-06 (Mohamad), US-09 (Maher), US-19 (Kimia), US-21 (Maher), US-22 (Paul) and US-23 (Michael).
 
@@ -139,11 +139,11 @@ Completed in PR #96: the forgot-password and reset-password pages, the reset cod
 | 5.1 | Retrieve published job postings and their application status | Mohamad | Completed |
 | 5.2 | Build the job offers list with a visible status for each job | Mohamad | Completed |
 | 5.3 | Build the job details page | Mohamad | Completed |
-| 5.4 | Calculate and display the acceptance rate if final application decisions were made | Mohamad | In Progress (display built; needs US-15) |
-| 5.5 | Prevent new applications when a job is not Open | Mohamad | In Progress (closed notice done; blocking applications needs US-15) |
-| 5.6 | Test open, closed, unpublished, and no decision taken features | Mohamad | In Progress (no-decision case needs US-15) |
+| 5.4 | Calculate and display the acceptance rate if final application decisions were made | Mohamad | Completed |
+| 5.5 | Prevent new applications when a job is not Open | Mohamad | Completed |
+| 5.6 | Test open, closed, unpublished, and no decision taken features | Mohamad | Completed |
 
-Status: In Progress. PR #100 was merged on October 17; the acceptance rate (5.4) is left. Acceptance tests: #108, #109.
+Status: Completed. PR #100 was merged on October 17, and the acceptance rate (5.4) was added with US-03. Acceptance tests: #108, #109.
 
 ### US-14: Job Search Filters (#19) - High - Mohamad - Sprint 2
 | Task | Description | Owner | Status |
@@ -151,18 +151,20 @@ Status: In Progress. PR #100 was merged on October 17; the acceptance rate (5.4)
 | 14.1 | Implement search API | Mohamad | Completed |
 | 14.2 | Add filter UI components | Mohamad | Completed |
 | 14.3 | Create database queries | Mohamad | Completed |
-| 14.4 | Write integration tests | Mohamad | In Progress (unit and acceptance tests done) |
+| 14.4 | Write integration tests | Mohamad | Completed (unit tests and acceptance tests #110, #111) |
 
-Status: In Review. Acceptance tests: #110, #111.
+Status: Completed (PR #116, merged October 17). Acceptance tests: #110, #111.
 
-### US-15: Apply for a Job (#20) - High - Mohamad, Michael, Maher - Sprint 2
+### US-15: Apply for a Job (#20) - High - Mohamad, Maher - Sprint 2
 | Task | Description | Owner | Status |
 |---|---|---|---|
-| 15.1 | Create application model | Mohamad | Completed (on the shared US-15 branch, not merged yet) |
-| 15.2 | Implement apply button workflow | Michael | Not Started |
-| 15.3 | Link resumes to applications | Michael | Not Started |
-| 15.4 | Create success notification | Michael | Not Started |
-| 15.5 | Display applications to the recruiter who owns the posting, with links to the applicants' resumes | Maher | Not Started |
+| 15.1 | Create application model | Mohamad | Completed |
+| 15.2 | Implement apply button workflow | Maher | Completed |
+| 15.3 | Link resumes to applications | Maher | Completed |
+| 15.4 | Create success notification | Maher | Completed |
+| 15.5 | Display applications to the recruiter who owns the posting, with links to the applicants' resumes | Maher | Completed |
+
+Status: Completed (PR #118, merged October 22). Mohamad then fixed the success message, blocked applying after the deadline and showed the withdraw messages.
 
 ### US-20: Application Status Tracking (#107) - High - Kimia - Sprint 2
 | Task | Description | Owner | Status |
@@ -176,20 +178,22 @@ Status: In Review. Acceptance tests: #110, #111.
 ### US-07: Recruiter company profile (#12) - High - Maher - Sprint 2
 | Task | Description | Owner | Status |
 |---|---|---|---|
-| 7.1 | Create a company profile table | Maher | In Review (PR #114) |
-| 7.2 | build a company profile form | Maher | In Review (PR #114) |
-| 7.3 | Add edit functionality | Maher | In Review (PR #114) |
-| 7.4 | Display company details on job postings | Maher | In Review (PR #114) |
-| 7.5 | Test recruiter permissions | Maher | In Review (PR #114) |
+| 7.1 | Create a company profile table | Maher | Completed |
+| 7.2 | build a company profile form | Maher | Completed |
+| 7.3 | Add edit functionality | Maher | Completed |
+| 7.4 | Display company details on job postings | Maher | Completed |
+| 7.5 | Test recruiter permissions | Maher | Completed |
 
 ### US-03: Clear Application Outcome Message (#8) - High - Mohamad - Sprint 2
 | Task | Description | Owner | Status |
 |---|---|---|---|
-| 3.1 | Design and store outcome messages linked to applications | Mohamad | In Progress (table designed; storing needs US-15) |
-| 3.2 | Build the offer or rejection form that displays a mandatory detailed response from the recruiter | Mohamad | In Progress (validation and form built) |
-| 3.3 | Display the message and notification to the applicant | Mohamad | In Progress (message display built) |
-| 3.4 | Add a reminder to remind recruiters to respond to pending applications | Mohamad | Not Started |
-| 3.5 | Test authorization, matching status, and delivery features | Mohamad | In Progress (validation tests written) |
+| 3.1 | Design and store outcome messages linked to applications | Mohamad | Completed |
+| 3.2 | Build the offer or rejection form that displays a mandatory detailed response from the recruiter | Mohamad | Completed |
+| 3.3 | Display the message and notification to the applicant | Mohamad | Completed |
+| 3.4 | Add a reminder to remind recruiters to respond to pending applications | Mohamad | Completed |
+| 3.5 | Test authorization, matching status, and delivery features | Mohamad | Completed |
+
+Status: Completed.
 
 ### US-18: Recruiter Verification and Approval (#97) - Medium - Maher - Sprint 2
 | Task | Description | Owner | Status |

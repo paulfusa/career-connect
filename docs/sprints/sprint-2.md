@@ -9,9 +9,9 @@ For this sprint we will build the most important features first, especially the 
 | Required feature | User stories | Status |
 |---|---|---|
 | 1. User profile and resume management | US-04 (#9), US-10 (#15), US-11 (#16) | Completed |
-| 2. Job search and job listing interface | US-05 (#10), US-14 (#19) | In Progress (US-05 merged; US-14 in review) |
-| 3. Job application submission and tracking | US-15 (#20), US-20 (#107), and US-03 (#8) for the Offered and Rejected statuses | In Progress |
-| 4. Recruiter dashboard and posting management (started this sprint) | US-12 (#17), US-13 (#18); viewing applications needs US-15 | In Progress |
+| 2. Job search and job listing interface | US-05 (#10), US-14 (#19) | Completed |
+| 3. Job application submission and tracking | US-15 (#20), US-20 (#107), and US-03 (#8) for the Offered and Rejected statuses | In Progress (US-15 and US-03 done; US-20 not started) |
+| 4. Recruiter dashboard and posting management (started this sprint) | US-12 (#17), US-13 (#18), and viewing applications from US-15 | In Progress |
 
 At our October 1 and October 8 planning meetings we agreed to finish the mandatory (P0) features first, since other features depend on them, and to let anyone in the team propose new user stories.
 
@@ -34,7 +34,7 @@ Starting this sprint we estimate in **story points** instead of hours. A story p
 
 Stories that were estimated in hours in Sprint 1 were converted using this table. One point is about 2 hours of work, so at the end of the sprint we can still compare our estimates with the time recorded in the contribution log.
 
-**Velocity:** Sprint 1 finished 12 points (US-01, US-02, US-16 and US-04). So far in Sprint 2 we have finished 24 points (US-08, US-10, US-11, US-12, US-13 and US-17).
+**Velocity:** Sprint 1 finished 12 points (US-01, US-02, US-16 and US-04). So far in Sprint 2 we have finished 45 points (US-08, US-10, US-11, US-12, US-13, US-17, US-14, US-07, US-05, US-15 and US-03).
 
 ## Product Backlog
 | Priority | Issue | User Story | Points | Status |
@@ -49,13 +49,13 @@ Stories that were estimated in hours in Sprint 1 were converted using this table
 | High | #17 | US-12: Recruiter Job Posting Creation | 5 | Completed (Sprint 2) |
 | High | #18 | US-13: Recruiter Job Posting Management | 3 | Completed (Sprint 2) |
 | Medium | #90 | US-17: Forgot password | 5 | Completed (Sprint 2) |
-| High | #10 | US-05: Browse and view job offers | 5 | In Progress (PR #100 merged; acceptance rate left) |
-| High | #19 | US-14: Job Search Filters | 3 | In Review |
-| High | #20 | US-15: Apply for a Job | 5 | In Progress |
+| High | #10 | US-05: Browse and view job offers | 5 | Completed (Sprint 2) |
+| High | #19 | US-14: Job Search Filters | 3 | Completed (Sprint 2) |
+| High | #20 | US-15: Apply for a Job | 5 | Completed (Sprint 2) |
 | High | #107 | US-20: Application Status Tracking | 5 | Not Started |
 | High | #91 | Generative AI feature: resume AI autofill and review | 8 | In Progress |
-| High | #12 | US-07: Recruiter company profile | 3 | In Review (PR #114) |
-| High | #8 | US-03: Clear Application Outcome Message | 5 | In Progress (blocked by US-15) |
+| High | #12 | US-07: Recruiter company profile | 3 | Completed (Sprint 2) |
+| High | #8 | US-03: Clear Application Outcome Message | 5 | Completed (Sprint 2) |
 | Medium | #97 | US-18: Recruiter verification and approval | 5 | Not Started |
 
 **How we prioritized:** the same rule as Sprint 1: anything the other features depend on comes first. You can't apply for a job without resumes and job postings, and you can't send an outcome message without an application.
@@ -83,19 +83,20 @@ Each story's tasks are listed in its GitHub issue, and who owns each story is in
 |---|---|---|---|---|---|---|
 | #83 | Sprint 2 meeting minutes (Oct 1) | Task | Mohamad | Oct 2 | Medium | Completed |
 | #94 | Sprint 2 meeting minutes (Oct 8) | Task | Mohamad | Oct 9 | Medium | Completed |
+| #120 | Sprint 2 meeting minutes (Oct 22) | Task | Mohamad | Oct 23 | Medium | Completed |
 | #13 | US-08: Account email verification | User Story | Maher | Oct 6 | High | Completed |
 | #17 | US-12: Recruiter job posting creation | User Story | Michael | Oct 6 | High | Completed |
 | #18 | US-13: Recruiter job posting management | User Story | Michael | Oct 6 | High | Completed |
 | #15 | US-10: Resume upload | User Story | Paul | Oct 8 | High | Completed |
 | #16 | US-11: Resume management | User Story | Paul | Oct 8 | High | Completed |
 | #90 | US-17: Forgot password | User Story | Maher | Oct 8 | Medium | Completed |
-| #10 | US-05: Browse and view job offers | User Story | Mohamad | Oct 22 | High | In Progress (PR #100 merged) |
-| #19 | US-14: Job search filters | User Story | Mohamad | Oct 15 | High | In Review |
-| #20 | US-15: Apply for a job | User Story | Mohamad, Michael, Maher | Oct 15 | High | In Progress |
+| #10 | US-05: Browse and view job offers | User Story | Mohamad | Oct 22 | High | Completed |
+| #19 | US-14: Job search filters | User Story | Mohamad | Oct 17 | High | Completed |
+| #20 | US-15: Apply for a job | User Story | Mohamad, Maher | Oct 15 | High | Completed |
 | #107 | US-20: Application status tracking | User Story | Kimia | Oct 19 | High | Not Started |
-| #8 | US-03: Clear application outcome message | User Story | Mohamad | Oct 22 | High | In Progress |
+| #8 | US-03: Clear application outcome message | User Story | Mohamad | Oct 22 | High | Completed |
 | #91 | Resume AI autofill and review | Feature | Paul | (confirm) | High | In Progress |
-| #12 | US-07: Recruiter company profile | User Story | Maher | (confirm) | High | In Review (PR #114) |
+| #12 | US-07: Recruiter company profile | User Story | Maher | Oct 17 | High | Completed |
 | #97 | US-18: Recruiter verification and approval | User Story | Maher | (confirm) | Medium | Not Started |
 | #102 | Add a CI pipeline (checks and tests on every PR) | Task | Mohamad | Oct 15 | High | Completed |
 | #103 | Acceptance tests (2 per user story, Sprint 1 and 2) | Task | Everyone | Oct 22 | High | In Progress |
