@@ -1,9 +1,11 @@
 
 <script lang="ts">
-    import { glassPanel, primaryButton } from '$lib/ui';
+    import { enhance } from '$app/forms';
+    import { APPLICATION_STATUSES } from '$lib/profile-options';
+    import { errorBox, field, glassPanel, primaryButton, successBox } from '$lib/ui';
     import type { PageProps } from './$types';
 
-    let { data }: PageProps = $props();
+    let { data, form }: PageProps = $props();
 
     const formatDate = (date: Date) =>
         date.toLocaleDateString('en-CA', { dateStyle: 'medium' });
@@ -37,6 +39,14 @@
                 {data.applicants.length} applicants
             </span>
         </div>
+
+        {#if form?.message}
+            <p role="alert" class="{errorBox} mt-5">{form.message}</p>
+        {/if}
+        {#if form?.success}
+            <p role="status" class="{successBox} mt-5">{form.success}</p>
+        {/if}
+        <p class="mt-5 text-sm text-ink/65">Offers and rejections require an outcome message.</p>
 
         {#if data.applicants.length === 0}
             <div class="mt-8 rounded-2xl bg-white/60 p-6 text-center">
@@ -84,6 +94,21 @@
                             <p class="mt-3 text-xs text-ink/60">
                                 Resume: {applicant.resumeName}
                             </p>
+                        {/if}
+                        <p class="mt-3 text-sm font-medium">Status: {APPLICATION_STATUSES[applicant.status]}</p>
+                        {#if applicant.status !== 'offered' && applicant.status !== 'rejected'}
+                            <form method="POST" action="?/updateStatus" use:enhance class="mt-4 flex flex-wrap items-end gap-3">
+                                <input type="hidden" name="applicationId" value={applicant.id} />
+                                <label class="text-sm font-medium" for="status-{applicant.id}">
+                                    Update status for {applicant.applicantName}
+                                    <select id="status-{applicant.id}" name="status" class={field} required>
+                                        <option value="" disabled selected={applicant.status === 'applied'}>Choose status</option>
+                                        <option value="under_review" selected={applicant.status === 'under_review'}>Under Review</option>
+                                        <option value="interview" selected={applicant.status === 'interview'}>Interview</option>
+                                    </select>
+                                </label>
+                                <button type="submit" class={primaryButton + ' px-5 sm:w-auto'}>Save status</button>
+                            </form>
                         {/if}
                     </article>
                 {/each}

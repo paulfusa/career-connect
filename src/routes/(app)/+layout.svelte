@@ -12,6 +12,7 @@
 		{ href: '/', label: 'Home' },
 		{ href: '/jobs', label: 'Jobs' },
 		...(data.user.role === 'job_seeker' ? [{ href: '/resumes', label: 'Resumes' }] : []),
+		...(data.user.role === 'job_seeker' ? [{ href: '/applications', label: 'My Applications' }] : []),
 		{ href: '/settings', label: 'Settings' }
 	]);
 

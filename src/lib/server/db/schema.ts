@@ -1,4 +1,5 @@
-import { pgTable, serial, integer, text, timestamp, boolean, date, uuid, unique, index } from 'drizzle-orm/pg-core';
+import { sql } from 'drizzle-orm';
+import { pgTable, serial, integer, text, timestamp, boolean, date, uuid, unique, index, check } from 'drizzle-orm/pg-core';
 import { user } from './auth.schema';
 
 export const task = pgTable('task', {
@@ -142,10 +143,11 @@ export const application = pgTable(
 			.references(() => jobPosting.id, { onDelete: 'cascade' }),
 		userId: userId(),
 		resumeId: uuid('resume_id').references(() => resume.id, { onDelete: 'set null' }),
+		status: text('status', { enum: ['applied', 'under_review', 'interview', 'offered', 'rejected'] }).default('applied').notNull(),
 		createdAt: timestamp('created_at').defaultNow().notNull(),
 		updatedAt: timestamp('updated_at').defaultNow().notNull()
 	},
-	(t) => [index('application_user_id_idx').on(t.userId), index('application_job_posting_id_idx').on(t.jobPostingId), unique('application_job_user_unique').on(t.jobPostingId, t.userId)]
+	(t) => [index('application_user_id_idx').on(t.userId), index('application_job_posting_id_idx').on(t.jobPostingId), unique('application_job_user_unique').on(t.jobPostingId, t.userId), check('application_status_check', sql`${t.status} in ('applied', 'under_review', 'interview', 'offered', 'rejected')`)]
 );
 
 export type Profile = typeof profile.$inferSelect;
