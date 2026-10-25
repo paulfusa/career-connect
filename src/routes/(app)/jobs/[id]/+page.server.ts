@@ -4,6 +4,7 @@ import { db } from '$lib/server/db';
 import { application, applicationOutcome, companyProfile, jobPosting, resume, user } from '$lib/server/db/schema';
 import type { Actions, PageServerLoad } from './$types';
 import { applyProblem, parseApplication, todayEastern, withdrawProblem } from '$lib/server/application';
+import { isClosed } from '$lib/server/job-posting';
 import { acceptanceRate } from '$lib/server/acceptance-rate';
 import { decisionCounts, submittedCount } from '$lib/server/outcomes';
 
@@ -53,6 +54,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 				)
 		: [];
 	const deadline = result.posting.applicationDeadline;
+	const today = todayEastern();
 
 	// US-05: offers out of all applications, shown once at least one decision was made
 	const submitted = await submittedCount(result.posting.id);
@@ -66,7 +68,9 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 		alreadyApplied: !!existingApplication,
 		outcome: existingApplication?.outcome ?? null,
 		// the deadline day itself still counts, same as withdrawProblem
-		deadlinePassed: !!deadline && todayEastern() > deadline,
+		deadlinePassed: !!deadline && today > deadline,
+		// US-05: Closed when the recruiter closed it or the deadline has passed
+		closed: isClosed(result.posting, today),
 		acceptanceRate: acceptanceRate(submitted, offered, decided)
 	};
 };
