@@ -143,7 +143,7 @@ Completed in PR #96: the forgot-password and reset-password pages, the reset cod
 | 5.5 | Prevent new applications when a job is not Open | Mohamad | Completed |
 | 5.6 | Test open, closed, unpublished, and no decision taken features | Mohamad | Completed |
 
-Status: Completed. PR #100 was merged on October 17, and the acceptance rate (5.4) was added with US-03. Acceptance tests: #108, #109.
+Status: Completed. PR #100 was merged on October 17, and the acceptance rate (5.4) was added with US-03 in PR #123. Acceptance tests: #108, #109.
 
 ### US-14: Job Search Filters (#19) - High - Mohamad - Sprint 2
 | Task | Description | Owner | Status |
@@ -164,16 +164,18 @@ Status: Completed (PR #116, merged October 17). Acceptance tests: #110, #111.
 | 15.4 | Create success notification | Maher | Completed |
 | 15.5 | Display applications to the recruiter who owns the posting, with links to the applicants' resumes | Maher | Completed |
 
-Status: Completed (PR #118, merged October 22). Mohamad then fixed the success message, blocked applying after the deadline and showed the withdraw messages.
+Status: Completed (PR #118, merged October 22). Mohamad then fixed the success message, blocked applying after the deadline and showed the withdraw messages (PR #123).
 
 ### US-20: Application Status Tracking (#107) - High - Kimia - Sprint 2
 | Task | Description | Owner | Status |
 |---|---|---|---|
-| 20.1 | Add a status column to the application table, starting at Applied | Kimia | Not Started |
-| 20.2 | Add a status control to the recruiter's list of applications for a posting | Kimia | Not Started |
-| 20.3 | Allow only the recruiter who owns the posting to change the status | Kimia | Not Started |
-| 20.4 | Build the job seeker's "My applications" page | Kimia | Not Started |
-| 20.5 | Test status changes, permissions, and the My applications page | Kimia | Not Started |
+| 20.1 | Add a status column to the application table, starting at Applied | Kimia | Completed |
+| 20.2 | Add a status control to the recruiter's list of applications for a posting | Kimia | Completed |
+| 20.3 | Allow only the recruiter who owns the posting to change the status | Kimia | Completed |
+| 20.4 | Build the job seeker's "My applications" page | Kimia | Completed |
+| 20.5 | Test status changes, permissions, and the My applications page | Kimia | Completed |
+
+Status: Completed (PR #122, merged October 25). Offered and Rejected are set by US-03 when the recruiter sends a decision (PR #123).
 
 ### US-07: Recruiter company profile (#12) - High - Maher - Sprint 2
 | Task | Description | Owner | Status |
@@ -193,7 +195,7 @@ Status: Completed (PR #118, merged October 22). Mohamad then fixed the success m
 | 3.4 | Add a reminder to remind recruiters to respond to pending applications | Mohamad | Completed |
 | 3.5 | Test authorization, matching status, and delivery features | Mohamad | Completed |
 
-Status: Completed.
+Status: Completed (PR #123).
 
 ### US-18: Recruiter Verification and Approval (#97) - Medium - Maher - Sprint 3
 | Task | Description | Owner | Status |

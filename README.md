@@ -78,6 +78,7 @@ Completed in Sprint 1: US-01 (account registration), US-02 (login and logout), U
 - Applying for a job with one of your resumes, and withdrawing the application before the deadline.
 - Recruiters viewing the applications to their postings and the applicants' resumes.
 - Offer and rejection messages from the recruiter, with their reasons and next steps, and reminders for applications left without a decision.
+- Application status tracking: recruiters move an application to Under Review or Interview, and job seekers follow each status on their My Applications page.
 
 # Planned Features
 

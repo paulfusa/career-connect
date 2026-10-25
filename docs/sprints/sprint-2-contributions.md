@@ -6,11 +6,11 @@ This log is based on our GitHub history (commits, pull requests, reviews and iss
 
 | Member | GitHub | Commits | Merged PRs | Open PRs | Reviews approved | PRs merged for others | Issues created | Oct 1 meeting | Oct 8 meeting | Oct 22 meeting | Time spent |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| Mohamad Alosta | @MAlos616 | 20 | 12 (#85, #86, #87, #93, #98, #99, #100, #101, #112, #113, #116, #117) | 1 (#121) | 1 (#114) | 1 | 13 (#83, #94, #102 to #111, #120) | Present | Present | Present | 39.5 h |
+| Mohamad Alosta | @MAlos616 | 37 | 13 (#85, #86, #87, #93, #98, #99, #100, #101, #112, #113, #116, #117, #121) | 1 (#123) | 2 (#114, #122) | 2 | 13 (#83, #94, #102 to #111, #120) | Present | Present | Present | 39.5 h |
 | Paul Fourment | @paulfusa | 4 | 2 (#89, #92) | 0 | 4 (#88, #96, #99, #119) | 5 | 5 (#79 to #82, #91) | Present | Present | Present | ? h |
 | Maher Waez | @Maherwaez01 | 9 | 3 (#96, #114, #118) | 0 | 9 (#89, #92, #93, #100, #101, #112, #113, #116, #117) | 9 | 2 (#90, #97) | Present | Present | Absent | ? h |
 | Michael Derocher | @MichaelDerocher1551 | 6 | 2 (#88, #119) | 0 | 5 (#85, #86, #87, #98, #118) | 0 | 0 | Present | Present | Present | ? h |
-| Kimia Karimiyeganeh | @kimiakarimiy | 0 | 0 | 0 | 0 | 0 | 0 | Present | Present | Present | ? h |
+| Kimia Karimiyeganeh | @kimiakarimiy | 1 | 1 (#122) | 0 | 1 (#121) | 1 | 0 | Present | Present | Present | ? h |
 | Andrew Rowe (dropped the course) | @an-rowe54 | 0 | 0 | 0 | 0 | 0 | 0 | Present | Absent | - | - |
 
 Note: Commit counts don't include merge commits, and include commits on branches that are still in review. "PRs merged for others" counts teammates' pull requests that the member merged. Each member fills in their own time spent, in hours, here and next to each activity below.
@@ -27,7 +27,7 @@ Note: Commit counts don't include merge commits, and include commits on branches
 - Updated the task breakdown at the end of Sprint 1 (PR #87), and wrote the Sprint 2 plan, the Sprint 2 task breakdown and this contribution log (issue #104, PRs #113 and #117). (3 h)
 - Updated the README for Sprint 2 and drafted the Sprint 2 summary report (issue #106). (1 h)
 - Opened and merged PR #86 for Maher's US-08 work.
-- Reviewed, approved and merged Maher's US-07 pull request (#114).
+- Reviewed, approved and merged Maher's US-07 pull request (#114) and Kimia's US-20 pull request (#122).
 
 ## Paul Fourment
 - **Implemented US-10 (resume upload) and US-11 (resume management)** in PR #92. (? h)
@@ -54,7 +54,8 @@ Note: Commit counts don't include merge commits, and include commits on branches
 
 ## Kimia Karimiyeganeh
 - Attended the October 1, October 8 and October 22 planning meetings.
-- Assigned US-20 (application status tracking, issue #107).
+- **Implemented US-20 (application status tracking)** in PR #122 (merged October 25). Every application now has a status that starts at Applied. Recruiters can move it to Under Review or Interview, and job seekers see each status on the new My Applications page. Added 10 tests. (? h)
+- Reviewed, approved and merged Mohamad's meeting minutes pull request (#121). (? h)
 
 ## Andrew Rowe
 - Attended the October 1 planning meeting.
