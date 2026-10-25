@@ -99,7 +99,7 @@
 					<div class="flex flex-wrap gap-2 text-sm text-ink/65">
 						<span class="rounded-full bg-white/65 px-3 py-1">{EMPLOYMENT_TYPES[posting.employmentType as keyof typeof EMPLOYMENT_TYPES] ?? posting.employmentType}</span>
 						<span class="rounded-full bg-white/65 px-3 py-1">{WORK_MODES[posting.workMode as keyof typeof WORK_MODES] ?? posting.workMode}</span>
-					{#if posting.status === 'open'}
+					{#if !posting.closed}
 						<span class="rounded-full bg-emerald-100 px-3 py-1 font-medium text-emerald-800">Open</span>
 					{:else}
 						<span class="rounded-full bg-rose-100 px-3 py-1 font-medium text-rose-800">Closed</span>

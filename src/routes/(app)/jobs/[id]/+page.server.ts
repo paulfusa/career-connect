@@ -4,6 +4,7 @@ import { db } from '$lib/server/db';
 import { application, companyProfile, jobPosting, resume, user } from '$lib/server/db/schema';
 import type { Actions, PageServerLoad } from './$types';
 import { applyProblem, parseApplication, todayEastern, withdrawProblem } from '$lib/server/application';
+import { isClosed } from '$lib/server/job-posting';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -49,6 +50,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 				)
 		: [];
 	const deadline = result.posting.applicationDeadline;
+	const today = todayEastern();
 
 	return {
 		...result,
@@ -57,7 +59,9 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 		resumes,
 		alreadyApplied: !!existingApplication,
 		// the deadline day itself still counts, same as withdrawProblem
-		deadlinePassed: !!deadline && todayEastern() > deadline
+		deadlinePassed: !!deadline && today > deadline,
+		// US-05: Closed when the recruiter closed it or the deadline has passed
+		closed: isClosed(result.posting, today)
 	};
 };
 
