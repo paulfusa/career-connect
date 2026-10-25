@@ -6,7 +6,7 @@ This log is based on our GitHub history (commits, pull requests, reviews and iss
 
 | Member | GitHub | Commits | Merged PRs | Open PRs | Reviews approved | PRs merged for others | Issues created | Oct 1 meeting | Oct 8 meeting | Oct 22 meeting | Time spent |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| Mohamad Alosta | @MAlos616 | 20 | 12 (#85, #86, #87, #93, #98, #99, #100, #101, #112, #113, #116, #117) | 1 (#121) | 1 (#114) | 1 | 13 (#83, #94, #102 to #111, #120) | Present | Present | Present | 37.5 h |
+| Mohamad Alosta | @MAlos616 | 20 | 12 (#85, #86, #87, #93, #98, #99, #100, #101, #112, #113, #116, #117) | 1 (#121) | 1 (#114) | 1 | 13 (#83, #94, #102 to #111, #120) | Present | Present | Present | 39.5 h |
 | Paul Fourment | @paulfusa | 4 | 2 (#89, #92) | 0 | 4 (#88, #96, #99, #119) | 5 | 5 (#79 to #82, #91) | Present | Present | Present | ? h |
 | Maher Waez | @Maherwaez01 | 9 | 3 (#96, #114, #118) | 0 | 9 (#89, #92, #93, #100, #101, #112, #113, #116, #117) | 9 | 2 (#90, #97) | Present | Present | Absent | ? h |
 | Michael Derocher | @MichaelDerocher1551 | 6 | 2 (#88, #119) | 0 | 5 (#85, #86, #87, #98, #118) | 0 | 0 | Present | Present | Present | ? h |
