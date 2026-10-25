@@ -16,7 +16,7 @@ For this sprint we will build the most important features first, especially the 
 At our October 1 and October 8 planning meetings we agreed to finish the mandatory (P0) features first, since other features depend on them, and to let anyone in the team propose new user stories.
 
 ## Team Capacity
-There are six of us and everyone has busy schedules, so we planned around roughly **4-5 hours per person per week** on the project. Sprint 2 is about 4 weeks long, which gives us roughly **96-120 hours** as a team, or about **48-60 story points** at roughly 2 hours per point. The stories planned for Sprint 2 add up to 63 points, slightly above our capacity, so US-18 (5 points), which has no milestone yet, is the first story we would postpone if we run short. Andrew Rowe later dropped the course, so the team finished the sprint with five members. He had no Sprint 2 stories left by then, so no work had to be moved.
+There are six of us and everyone has busy schedules, so we planned around roughly **4-5 hours per person per week** on the project. Sprint 2 is about 4 weeks long, which gives us roughly **96-120 hours** as a team, or about **48-60 story points** at roughly 2 hours per point. The stories planned for Sprint 2 add up to 58 points, near the top of our capacity. Andrew Rowe later dropped the course, so the team finished the sprint with five members. He had no Sprint 2 stories left by then, so no work had to be moved.
 
 In Sprint 1, Paul did most of the coding because he already knew SvelteKit. As planned, the coding work is spread out more evenly this sprint: more of us own features, and the members who are new to SvelteKit are learning it while building their own stories.
 
@@ -56,7 +56,6 @@ Stories that were estimated in hours in Sprint 1 were converted using this table
 | High | #91 | Generative AI feature: resume AI autofill and review | 8 | In Progress |
 | High | #12 | US-07: Recruiter company profile | 3 | Completed (Sprint 2) |
 | High | #8 | US-03: Clear Application Outcome Message | 5 | Completed (Sprint 2) |
-| Medium | #97 | US-18: Recruiter verification and approval | 5 | Not Started |
 
 **How we prioritized:** the same rule as Sprint 1: anything the other features depend on comes first. You can't apply for a job without resumes and job postings, and you can't send an outcome message without an application.
 
@@ -97,7 +96,6 @@ Each story's tasks are listed in its GitHub issue, and who owns each story is in
 | #8 | US-03: Clear application outcome message | User Story | Mohamad | Oct 22 | High | Completed |
 | #91 | Resume AI autofill and review | Feature | Paul | (confirm) | High | In Progress |
 | #12 | US-07: Recruiter company profile | User Story | Maher | Oct 17 | High | Completed |
-| #97 | US-18: Recruiter verification and approval | User Story | Maher | (confirm) | Medium | Not Started |
 | #102 | Add a CI pipeline (checks and tests on every PR) | Task | Mohamad | Oct 15 | High | Completed |
 | #103 | Acceptance tests (2 per user story, Sprint 1 and 2) | Task | Everyone | Oct 22 | High | In Progress |
 | #104 | Sprint 2 plan, task breakdown, contribution log | Task | Mohamad | Oct 24 | High | In Progress |

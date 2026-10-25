@@ -14,7 +14,7 @@ The owner of a user story is responsible for its tasks unless a task lists someo
 | Paul Fourment | @paulfusa | US-01, US-02, US-16, US-04 | US-10, US-11, Generative AI feature (#91) | T4, T5 | T12, T14 |
 | Mohamad Alosta | @MAlos616 | - | US-03, US-05, US-14, US-15 (15.1) | T1, T2, T3, T4, T5, T6, T7, T8 | T9, T10, T11, T12, T13, T14, T15, T16 |
 | Kimia Karimiyeganeh | @kimiakarimiy | - | US-20 | T5 | T12, T14 |
-| Maher Waez | @Maherwaez01 | - | US-07, US-08, US-17, US-18, US-15 (15.2 to 15.5) | T5 | T12, T14 |
+| Maher Waez | @Maherwaez01 | - | US-07, US-08, US-17, US-15 (15.2 to 15.5) | T5 | T12, T14 |
 | Andrew Rowe (dropped the course) | @an-rowe54 | - | - | T5 | - |
 | Michael Derocher | @MichaelDerocher1551 | - | US-12, US-13 | T5 | T12, T14 |
 
@@ -195,7 +195,7 @@ Status: Completed (PR #118, merged October 22). Mohamad then fixed the success m
 
 Status: Completed.
 
-### US-18: Recruiter Verification and Approval (#97) - Medium - Maher - Sprint 2
+### US-18: Recruiter Verification and Approval (#97) - Medium - Maher - Sprint 3
 | Task | Description | Owner | Status |
 |---|---|---|---|
 | 18.1 | Create a database table to store recruiter verification requests and their status | Maher | Not Started |
@@ -204,6 +204,8 @@ Status: Completed.
 | 18.4 | Allow admins to open and review recruiter profiles from the requests list | Maher | Not Started |
 | 18.5 | Implement Approve and Reject functionality with appropriate access restrictions | Maher | Not Started |
 | 18.6 | Display a blue verified badge on approved recruiter profiles | Maher | Not Started |
+
+Status: Postponed from Sprint 2, where it was the first story we planned to postpone if we ran short of time. Maher will build it in Sprint 3.
 | 18.7 | Allow recruiters to view their status and resubmit rejected requests | Maher | Not Started |
 | 18.8 | Test verification requests, approval, rejection, database updates, and authorization | Maher | Not Started |
 
