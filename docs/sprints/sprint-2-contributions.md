@@ -17,10 +17,10 @@ Note: Commit counts don't include merge commits, and include commits on branches
 
 ## Mohamad Alosta
 - Took the meeting minutes for the October 1 planning meeting (issue #83, PRs #85, #93), the October 8 meeting (issue #94, PRs #98, #99) and the October 22 meeting (issue #120, PR #121), and revised all three (PRs #101 and #121). (1 h)
-- **Implemented US-05 (browse and view job offers)** in PR #100 (merged October 17): added status, published, requirements and deadline (required) and salary (optional) to job postings, with validation and 4 tests; hid unpublished jobs from job seekers; added status and draft badges; showed the new details on the job page. Wrote acceptance tests #108 and #109. Later added the acceptance rate to the job page (offers out of all applications, shown once a decision is made), with 4 tests. (15 h)
-- **Implemented US-14 (job search filters)**: search by keyword, company and location, and filter by employment type and work mode, with 4 tests. Also fixed two comments and the closed-job notice from US-05 (PR #116, merged October 17). Wrote acceptance tests #110 and #111. (6 h)
-- **Implemented US-03 (clear application outcome message)**: the outcome table and its validation (7 tests); the decision form on the recruiter's applications page, where only the recruiter who posted the job can send an offer or rejection, once per application; the applicant's view of the message with the date and time it was sent; no withdrawing once a decision is sent (1 test); and reminders for applications left more than 7 days without a decision (4 tests). (9 h)
-- **Implemented US-15 (apply for a job), task 15.1**: the application table, the application statuses, the application validation and the apply rules, with 6 tests, which Maher built the rest of US-15 on (PR #118). After #118 was merged, fixed the confirmation message being hidden after applying, blocked applying after the deadline (2 tests), showed the withdraw messages, and added Eastern-time times to the dates. (3 h)
+- **Implemented US-05 (browse and view job offers)** in PR #100 (merged October 17). Job postings got a status, a published switch, requirements, a deadline and an optional salary range, with validation and 4 tests. Job seekers no longer see unpublished jobs, and every job shows whether it is open. Wrote acceptance tests #108 and #109. Later added the acceptance rate and made jobs show as closed after their deadline (PR #123). (15 h)
+- **Implemented US-14 (job search filters)**: search by keyword, company and location, and filter by employment type and work mode, with 4 tests. Also fixed two comments and the closed-job notice from US-05 (PR #116, merged October 17). Wrote acceptance tests #110 and #111. Later fixed the filters not resetting on Clear search (PR #123). (6 h)
+- **Implemented US-03 (clear application outcome message)** in PR #123. Recruiters can send an offer or a rejection from their applications page, but only for their own jobs and only once per application. The applicant sees it on the job page with the date it was sent, and can no longer withdraw. Sending a decision also sets the application status to Offered or Rejected. Recruiters get a reminder when an application waits more than 7 days. Added 12 tests. (9 h)
+- **Built the application table for US-15 (task 15.1)**, with the application statuses, validation and apply rules, and 6 tests. Maher built the rest of US-15 on top of it (PR #118). After testing #118, fixed the success message disappearing after applying, blocked applying after the deadline and showed the withdraw messages (PR #123). (3 h)
 - **Set up the CI pipeline** that runs the type check and tests on every pull request (issue #102, PR #112). (0.5 h)
 - Wrote user story US-20 (application status tracking, issue #107) to cover the status tracking required in Sprint 2. (0.5 h)
 - Created the Sprint 2 tracking issues (#102 to #106) and the `Acceptance Test` label. (0.5 h)
@@ -42,7 +42,7 @@ Note: Commit counts don't include merge commits, and include commits on branches
 - Wrote and **implemented US-17 (forgot password)** with the reset code email templates (issue #90, PR #96). (? h)
 - Wrote user story US-18 (recruiter verification and approval, issue #97). (? h)
 - **Implemented US-07 (recruiter company profile)**: the company profile table, the profile and edit pages, company details on job postings, and tests (PR #114, merged October 17). (? h)
-- **Implemented the rest of US-15 (apply for a job), tasks 15.2 to 15.5**, on top of Mohamad's application table: applying with one of your resumes, withdrawing before the deadline, the recruiter's list of applicants with their resumes, and 6 withdrawal tests. Also moved the profile links into the settings page (PR #118, merged October 22). (? h)
+- **Implemented the rest of US-15 (apply for a job), tasks 15.2 to 15.5**, on top of Mohamad's application table. Job seekers can apply with one of their resumes and withdraw before the deadline, and recruiters see the applicants and their resumes. Also added 6 withdrawal tests and moved the profile links into the settings page (PR #118, merged October 22). (? h)
 - Added AI usage logs for US-08, US-17, US-07 and US-15. (? h)
 - Reviewed, approved and merged 9 teammates' pull requests (#89, #92, #93, #100, #101, #112, #113, #116, #117). (? h)
 
@@ -58,5 +58,5 @@ Note: Commit counts don't include merge commits, and include commits on branches
 
 ## Andrew Rowe
 - Attended the October 1 planning meeting.
-- Was assigned US-21 (dark mode, issue #82) for a later sprint; Maher took it over on October 22.
+- Was assigned US-21 (dark mode, issue #82) for a later sprint. Maher took it over on October 22.
 - Dropped the course during Sprint 2.
