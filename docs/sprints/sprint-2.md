@@ -106,13 +106,13 @@ Each story's tasks are listed in its GitHub issue, and who owns each story is in
 ## Rubric 
 | Done | Category | Weight (/100) |
 | :---: | :--- | :--- |
-| [] | Core Feature Development (including acceptance tests) | 25 |
-| [] | Contribution by Team Members | 10 |
-| [] | Continuous Integration Pipeline | 10 |
-| [] | Sprint Planning | 15 |
-| [] | Task Breakdown | 15 |
+| [X] | Core Feature Development (including acceptance tests) | 25 |
+| [X] | Contribution by Team Members | 10 |
+| [X] | Continuous Integration Pipeline | 10 |
+| [X] | Sprint Planning | 15 |
+| [X] | Task Breakdown | 15 |
 | [X] | Meeting Minutes | 5 |
-| [] | Detailed Log of Each Team Member Contribution | 5 |
+| [X] | Detailed Log of Each Team Member Contribution | 5 |
 | [X] | Project Management and GitHub Usage | 10 |
-| [] | AI Usage Log and Validation Evidence | 5 |
+| [X] | AI Usage Log and Validation Evidence | 5 |
 | **Total** | | **100 (equivalent to 5% course weight)** |
