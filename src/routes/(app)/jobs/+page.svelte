@@ -55,22 +55,23 @@
 		<input name="location" value={data.search.location} placeholder="City or Remote" class={field} />
 	</label>
 
+	<!-- the value goes on the select so it follows the URL; Clear search then resets it to Any -->
 	<label class="block">
 		<span class={label}>Employment type</span>
-		<select name="employmentType" class={field}>
+		<select name="employmentType" value={data.search.employmentType} class={field}>
 			<option value="">Any type</option>
 			{#each Object.entries(EMPLOYMENT_TYPES) as [value, text] (value)}
-				<option {value} selected={data.search.employmentType === value}>{text}</option>
+				<option {value}>{text}</option>
 			{/each}
 		</select>
 	</label>
 
 	<label class="block">
 		<span class={label}>Work mode</span>
-		<select name="workMode" class={field}>
+		<select name="workMode" value={data.search.workMode} class={field}>
 			<option value="">Any work mode</option>
 			{#each Object.entries(WORK_MODES) as [value, text] (value)}
-				<option {value} selected={data.search.workMode === value}>{text}</option>
+				<option {value}>{text}</option>
 			{/each}
 		</select>
 	</label>
