@@ -20,9 +20,24 @@ export function parseApplication(data: FormData): ApplicationParse {
 	return Object.keys(errors).length ? { ok: false, errors, values } : { ok: true, values };
 }
 
-export function applyProblem(job: { status: string; published: boolean } | undefined, alreadyApplied: boolean): string | null {
+// today's date in Eastern time as 'YYYY-MM-DD', the same format as the deadlines
+export function todayEastern(): string {
+	return new Intl.DateTimeFormat('en-CA', {
+		timeZone: 'America/Toronto', // Eastern time, switches between EST and EDT on its own
+		year: 'numeric',
+		month: '2-digit',
+		day: '2-digit'
+	}).format(new Date());
+}
+
+export function applyProblem(
+	job: { status: string; published: boolean; applicationDeadline: string | null } | undefined,
+	alreadyApplied: boolean,
+	today: string
+): string | null {
 	if (!job || !job.published) return 'Job posting not found.';
 	if (job.status !== 'open') return 'This job is no longer receiving applications.';
+	if (job.applicationDeadline && today > job.applicationDeadline) return 'The application deadline has passed.';
 	if (alreadyApplied) return 'You have already applied to this job.';
 	return null;
 }
@@ -34,7 +49,8 @@ export function withdrawProblem(
         applicationDeadline: string | null;
     } | undefined,
     hasApplication: boolean,
-    today: string
+    today: string,
+    decided: boolean
 ): string | null {
     if (!job || !job.published) {
         return 'Job posting not found.';
@@ -42,6 +58,10 @@ export function withdrawProblem(
 
     if (job.status !== 'open') {
         return 'This job is no longer accepting changes to applications.';
+    }
+
+    if (decided) {
+        return 'You can no longer withdraw because the recruiter has already sent a decision.';
     }
 
     if (job.applicationDeadline && today > job.applicationDeadline) {

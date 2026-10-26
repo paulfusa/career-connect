@@ -15,7 +15,7 @@ test('job posting deletion: non-recruiters cannot delete postings', async () => 
 	assert.equal(removeCalled, false);
 });
 
-test('job posting deletion: invalid posting IDs are not deleted', async () => {
+test('job posting deletion: an invalid posting id deletes nothing', async () => {
 	let removeCalled = false;
 	const result = await deleteJobPosting(
 		{ id: 'recruiter-1', role: 'recruiter' },
@@ -30,7 +30,7 @@ test('job posting deletion: invalid posting IDs are not deleted', async () => {
 	assert.equal(removeCalled, false);
 });
 
-test('job posting deletion: recruiter can delete their own posting', async () => {
+test('job posting deletion: a recruiter can delete their own posting', async () => {
 	const postings = [{ id: postingId, createdBy: 'recruiter-1' }];
 	let removedId: string | undefined;
 
@@ -51,7 +51,7 @@ test('job posting deletion: recruiter can delete their own posting', async () =>
 	assert.deepEqual(postings, []);
 });
 
-test("job posting deletion: recruiter cannot delete another recruiter's posting", async () => {
+test("job posting deletion: a recruiter cannot delete another recruiter's posting", async () => {
 	const postings = [{ id: postingId, createdBy: 'owner-1' }];
 
 	const result = await deleteJobPosting(
@@ -68,7 +68,7 @@ test("job posting deletion: recruiter cannot delete another recruiter's posting"
 	assert.deepEqual(postings, [{ id: postingId, createdBy: 'owner-1' }]);
 });
 
-test('job posting deletion: returns not found when the posting does not exist', async () => {
+test('job posting deletion: a posting that does not exist is not found', async () => {
 	const result = await deleteJobPosting(
 		{ id: 'recruiter-1', role: 'recruiter' },
 		postingId,

@@ -14,6 +14,10 @@ registerHooks({
         if (specifier === './auth.schema') {
             return { url: new URL('../src/lib/server/db/auth.schema.ts', import.meta.url).href, shortCircuit: true };
         }
+        // other $lib files the route imports (US-03's outcomes and reminders) load from src/lib as they are
+        if (specifier.startsWith('$lib/')) {
+            return { url: new URL(`../src/lib/${specifier.slice(5)}.ts`, import.meta.url).href, shortCircuit: true };
+        }
         return next(specifier, context);
     },
     load(url, context, next) {

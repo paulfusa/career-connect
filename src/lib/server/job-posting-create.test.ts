@@ -19,7 +19,7 @@ const valid = {
 	applicationDeadline: '2026-10-23'
 };
 
-test('job posting creation: rejects non-recruiters without inserting', async () => {
+test('job posting creation: non-recruiters are rejected and nothing is saved', async () => {
 	let insertCalled = false;
 	const result = await createJobPosting(
 		{ id: 'user-1', role: 'job_seeker' },
@@ -34,7 +34,7 @@ test('job posting creation: rejects non-recruiters without inserting', async () 
 	assert.equal(insertCalled, false);
 });
 
-test('job posting creation: returns validation errors without inserting', async () => {
+test('job posting creation: invalid values return errors and nothing is saved', async () => {
 	let insertCalled = false;
 	const result = await createJobPosting(
 		{ id: 'recruiter-1', role: 'recruiter' },
@@ -51,7 +51,7 @@ test('job posting creation: returns validation errors without inserting', async 
 	assert.equal(insertCalled, false);
 });
 
-test('job posting creation: inserts valid values for the recruiter and returns the posting id', async () => {
+test("job posting creation: a recruiter's valid posting is saved and its id returned", async () => {
 	let insertedValues: Record<string, unknown> | undefined;
 	const result = await createJobPosting(
 		{ id: 'recruiter-1', role: 'recruiter' },

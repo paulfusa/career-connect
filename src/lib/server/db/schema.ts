@@ -150,12 +150,26 @@ export const application = pgTable(
 	(t) => [index('application_user_id_idx').on(t.userId), index('application_job_posting_id_idx').on(t.jobPostingId), unique('application_job_user_unique').on(t.jobPostingId, t.userId), check('application_status_check', sql`${t.status} in ('applied', 'under_review', 'interview', 'offered', 'rejected')`)]
 );
 
+// US-03: the recruiter's answer to an application (offer or rejection), only one per application
+export const applicationOutcome = pgTable('application_outcome', {
+	id: uuid('id').primaryKey().defaultRandom(),
+	applicationId: uuid('application_id')
+		.notNull()
+		.unique()
+		.references(() => application.id, { onDelete: 'cascade' }),
+	status: text('status').notNull(),
+	message: text('message').notNull(),
+	nextSteps: text('next_steps'), // only for offers
+	createdAt: timestamp('created_at').defaultNow().notNull()
+});
+
 export type Profile = typeof profile.$inferSelect;
 export type Resume = typeof resume.$inferSelect;
 export type Experience = typeof experience.$inferSelect;
 export type Education = typeof education.$inferSelect;
 export type JobPosting = typeof jobPosting.$inferSelect;
 export type Application = typeof application.$inferSelect;
+export type ApplicationOutcome = typeof applicationOutcome.$inferSelect;
 
 export * from './auth.schema';
 export type CompanyProfile = typeof companyProfile.$inferSelect;

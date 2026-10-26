@@ -1,9 +1,12 @@
 import { error, fail } from '@sveltejs/kit';
 import { and, desc, eq } from 'drizzle-orm';
 import { db } from '$lib/server/db';
-import { application, companyProfile, jobPosting, resume, user } from '$lib/server/db/schema';
+import { application, applicationOutcome, companyProfile, jobPosting, resume, user } from '$lib/server/db/schema';
 import type { Actions, PageServerLoad } from './$types';
-import { applyProblem, parseApplication, withdrawProblem } from '$lib/server/application';
+import { applyProblem, parseApplication, todayEastern, withdrawProblem } from '$lib/server/application';
+import { isClosed } from '$lib/server/job-posting';
+import { acceptanceRate } from '$lib/server/acceptance-rate';
+import { decisionCounts, submittedCount } from '$lib/server/outcomes';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -39,8 +42,10 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 
 	const [existingApplication] = isJobSeeker
 		? await db
-				.select({ id: application.id })
+				.select({ id: application.id, outcome: applicationOutcome })
 				.from(application)
+				// US-03: the recruiter's decision, null until one is sent
+				.leftJoin(applicationOutcome, eq(applicationOutcome.applicationId, application.id))
 				.where(
 					and(
 						eq(application.jobPostingId, result.posting.id),
@@ -48,13 +53,26 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 					)
 				)
 		: [];
+	const deadline = result.posting.applicationDeadline;
+	const today = todayEastern();
+
+	// US-05: offers out of all applications, shown once at least one decision was made
+	const submitted = await submittedCount(result.posting.id);
+	const { decided, offered } = await decisionCounts(result.posting.id);
+
 	return {
 		...result,
 		isOwner: result.posting.createdBy === locals.user!.id,
 		isJobSeeker,
 		resumes,
-		alreadyApplied: !!existingApplication
-		};
+		alreadyApplied: !!existingApplication,
+		outcome: existingApplication?.outcome ?? null,
+		// the deadline day itself still counts, same as withdrawProblem
+		deadlinePassed: !!deadline && today > deadline,
+		// US-05: Closed when the recruiter closed it or the deadline has passed
+		closed: isClosed(result.posting, today),
+		acceptanceRate: acceptanceRate(submitted, offered, decided)
+	};
 };
 
 
@@ -99,7 +117,8 @@ export const actions: Actions = {
         const [job] = await db
             .select({
                 status: jobPosting.status,
-                published: jobPosting.published
+                published: jobPosting.published,
+                applicationDeadline: jobPosting.applicationDeadline
             })
             .from(jobPosting)
             .where(eq(jobPosting.id, params.id));
@@ -114,7 +133,7 @@ export const actions: Actions = {
                 )
             );
 
-        const problem = applyProblem(job, !!existing);
+        const problem = applyProblem(job, !!existing, todayEastern());
 
         if (problem) {
             return fail(400, { error: problem });
@@ -159,13 +178,19 @@ export const actions: Actions = {
             .from(jobPosting)
             .where(eq(jobPosting.id, params.id));
 
-        const today = new Intl.DateTimeFormat('en-CA', {
-            timeZone: 'America/Toronto',
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit'
-        }).format(new Date());
-        const problem = withdrawProblem(job, true, today);
+        // US-03: the application and whether the recruiter already answered it
+        const [existing] = await db
+            .select({ id: application.id, outcomeId: applicationOutcome.id })
+            .from(application)
+            .leftJoin(applicationOutcome, eq(applicationOutcome.applicationId, application.id))
+            .where(
+                and(
+                    eq(application.jobPostingId, params.id),
+                    eq(application.userId, me.id)
+                )
+            );
+
+        const problem = withdrawProblem(job, !!existing, todayEastern(), !!existing?.outcomeId);
 
         if (problem) {
             return fail(400, { error: problem });

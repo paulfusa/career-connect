@@ -116,7 +116,7 @@ const visit = (path: string) => {
 	return run(() => handle({ event, resolve: async () => new Response('ok') } as any)).then((r) => ({ ...r, event }));
 };
 
-test('protected routes redirect guests to /login', async () => {
+test('access: guests are sent to /login from protected pages', async () => {
 	session = null;
 	for (const path of ['/', '/profile', '/logout', '/login-but-not-really']) {
 		const r = await visit(path);
@@ -125,7 +125,7 @@ test('protected routes redirect guests to /login', async () => {
 	}
 });
 
-test('public routes stay reachable for guests', async () => {
+test('access: guests can still reach public pages', async () => {
 	session = null;
 	for (const path of ['/login', '/register', '/api/auth/sign-in/email']) {
 		const r = await visit(path);
@@ -133,7 +133,7 @@ test('public routes stay reachable for guests', async () => {
 	}
 });
 
-test('signed-in users reach protected routes and get locals.user', async () => {
+test('access: signed-in users reach protected pages and get locals.user', async () => {
 	session = { session: {}, user: { id: 'u1' } };
 	const r = await visit('/profile');
 	assert.ok(r.result instanceof Response);
@@ -141,7 +141,7 @@ test('signed-in users reach protected routes and get locals.user', async () => {
 	session = null;
 });
 
-test('signed-in users visiting /login are sent home', async () => {
+test('access: signed-in users visiting /login are sent home', async () => {
 	const r = await run(() => loginLoad({ locals: { user: { id: 'u1' } } } as any));
 	assert.deepEqual(r, { status: 302, location: '/' });
 });

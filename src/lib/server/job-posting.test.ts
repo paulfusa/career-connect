@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { parseJobPosting } from './job-posting.ts';
+import { isClosed, parseJobPosting } from './job-posting.ts';
 
 const form = (fields: Record<string, string>) => {
 	const data = new FormData();
@@ -80,11 +80,28 @@ test('job posting: rejects negative salaries and a minimum greater than the maxi
 	assert.equal(reversed.errors.salaryMax, 'The maximum salary cannot be less than the minimum.'); 
 });
 
-test('job posting: defaults to open status and rejects unkown statuses', () => {
+test('job posting: defaults to Open and rejects unknown statuses', () => {
 	const Default = parseJobPosting(form({ ...valid}));
 	assert.ok(Default.ok);
 	assert.equal(Default.values.status, 'open');
 	const reject = parseJobPosting(form({ ...valid, status: 'Hello' }));
 	assert.ok(!reject.ok);
 	assert.equal(reject.errors.status, 'Choose Open or Closed.'); 
+});
+
+test('job posting: an open job before its deadline shows as open', () => {
+	assert.equal(isClosed({ status: 'open', applicationDeadline: '2026-10-31' }, '2026-10-25'), false);
+	assert.equal(isClosed({ status: 'open', applicationDeadline: null }, '2026-10-25'), false);
+});
+
+test('job posting: a job the recruiter closed shows as closed', () => {
+	assert.equal(isClosed({ status: 'closed', applicationDeadline: '2026-10-31' }, '2026-10-25'), true);
+});
+
+test('job posting: a job shows as closed the day after its deadline', () => {
+	assert.equal(isClosed({ status: 'open', applicationDeadline: '2026-10-24' }, '2026-10-25'), true);
+});
+
+test('job posting: a job still shows as open on its deadline day', () => {
+	assert.equal(isClosed({ status: 'open', applicationDeadline: '2026-10-25' }, '2026-10-25'), false);
 });

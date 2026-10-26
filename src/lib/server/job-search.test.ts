@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { parseJobSearch } from './job-search.ts';
 
-test('job search: trims text', () => {
+test('job search: trims the text fields', () => {
     const search = parseJobSearch(new URLSearchParams({ keyword: '  developer  ', company: ' Acme ', location: ' Montreal ' }));
     assert.equal(search.keyword, 'developer');
     assert.equal(search.company, 'Acme');
@@ -18,7 +18,7 @@ test('job search: keeps the valid dropdowns and drops the rest', () => {
     assert.equal(invalid.workMode, '');
 });
 
-test('job search: cutting a very long keyword, company, and location', () => {
+test('job search: cuts a very long keyword, company and location', () => {
     const search = parseJobSearch(new URLSearchParams({ keyword: 'x'.repeat(150), company: 'y'.repeat(150), location: 'y'.repeat(150) }));
     assert.equal(search.keyword.length, 100);
     assert.equal(search.company.length, 100);

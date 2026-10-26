@@ -3,6 +3,8 @@ import { db } from '$lib/server/db';
 import { jobPosting } from '$lib/server/db/schema';
 import type { PageServerLoad } from './$types';
 import { parseJobSearch } from '$lib/server/job-search';
+import { isClosed } from '$lib/server/job-posting';
+import { todayEastern } from '$lib/server/application';
 
 export const load: PageServerLoad = async ({ url, locals }) => {
 	// /jobs?mine shows a recruiter only the postings they created; job seekers always get the full list
@@ -21,5 +23,7 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 		.from(jobPosting)
 		.where(and(...conditions))
 		.orderBy(desc(jobPosting.createdAt));
-	return { postings, mine, search };
+	const today = todayEastern();
+	// US-05: past-deadline jobs show as Closed too
+	return { postings: postings.map((posting) => ({ ...posting, closed: isClosed(posting, today) })), mine, search };
 };

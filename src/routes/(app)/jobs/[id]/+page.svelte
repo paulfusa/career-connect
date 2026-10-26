@@ -2,7 +2,9 @@
 	import { page } from '$app/state';
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
+	import AcceptanceRate from '$lib/components/AcceptanceRate.svelte';
 	import OrgLogo from '$lib/components/OrgLogo.svelte';
+	import OutcomeMessage from '$lib/components/OutcomeMessage.svelte';
 	import { EMPLOYMENT_TYPES, WORK_MODES } from '$lib/profile-options';
 	import { glassPanel, primaryButton, successBox } from '$lib/ui';
 	import type { PageProps } from './$types';
@@ -60,7 +62,7 @@
 		<div class="mt-5 flex flex-wrap gap-2 text-sm">
 			<span class="rounded-full bg-white/65 px-3 py-1">{EMPLOYMENT_TYPES[posting.employmentType as keyof typeof EMPLOYMENT_TYPES] ?? posting.employmentType}</span>
 			<span class="rounded-full bg-white/65 px-3 py-1">{WORK_MODES[posting.workMode as keyof typeof WORK_MODES] ?? posting.workMode}</span>
-			{#if posting.status === 'open'}
+			{#if !data.closed}
 				<span class="rounded-full bg-emerald-100 px-3 py-1 font-medium text-emerald-800">Open</span>
 			{:else}
 				<span class="rounded-full bg-rose-100 px-3 py-1 font-medium text-rose-800">Closed</span>
@@ -70,13 +72,13 @@
 			{/if}
 		</div>
 
-		{#if posting.status === 'closed'}
+		{#if data.closed}
 			<p role="status" class="mt-5 rounded-2xl bg-rose-50 px-4 py-3 font-medium text-rose-800">This job is no longer receiving applications.</p>
 		{/if}
 
 		{#if posting.applicationDeadline}
 			<p class="mt-5 text-ink/75">
-				<span class="font-medium">Application deadline:</span> {formatDate(posting.applicationDeadline)}
+				<span class="font-medium">Application deadline:</span> {formatDate(posting.applicationDeadline)}, 11:59 p.m. ET
 			</p>
 		{/if}
 
@@ -87,6 +89,8 @@
 		{:else if posting.salaryMax !== null}
 			<p class="mt-2 text-ink/75"><span class="font-medium">Salary:</span> Up to {formatMoney(posting.salaryMax)}</p>
 		{/if}
+
+		<AcceptanceRate rate={data.acceptanceRate} />
 
 		<section class="mt-8 border-t border-white/60 pt-6">
 			<h2 class="font-display text-xl font-semibold">About the role</h2>
@@ -132,45 +136,80 @@
 		{#if data.isJobSeeker}
 			<section class="mt-8 border-t border-white/60 pt-6">
 				<h2 class="font-display text-xl font-semibold">Apply for this job</h2>
-				{#if data.alreadyApplied}
+				<!-- checked first so the success message stays after the page reloads -->
+				{#if applicationMessage}
+					<p role="status" class="mt-4 rounded-xl bg-emerald-100 p-4 text-emerald-800">
+						{applicationMessage}
+					</p>
+				{:else if data.alreadyApplied}
 					<p role="status" class="mt-4 rounded-xl bg-emerald-100 p-4 text-emerald-800">
 						You have already applied to this job.
 					</p>
+				{/if}
 
-					{#if posting.status === 'open' && posting.published &&
-						(!posting.applicationDeadline ||
-						new Intl.DateTimeFormat('en-CA', {
-							timeZone: 'America/Toronto',
-							year: 'numeric',
-							month: '2-digit',
-							day: '2-digit'
-					}).format(new Date()) <= posting.applicationDeadline)}
+				{#if data.outcome}
+					<!-- US-03: the recruiter's decision; withdrawing is no longer possible -->
+					<div class="mt-4">
+						<OutcomeMessage
+							status={data.outcome.status}
+							message={data.outcome.message}
+							nextSteps={data.outcome.nextSteps ?? ''}
+							sentAt={data.outcome.createdAt}
+						/>
+					</div>
+				{:else if data.alreadyApplied}
+					{#if posting.status === 'open' && posting.published && !data.deadlinePassed}
 						<form
 							method="POST"
 							action="?/withdraw"
 							class="mt-4"
-							onsubmit={(event) => {
+							use:enhance={({ cancel }) => {
+								// use:enhance ignores preventDefault, so cancel() is what stops the withdraw
 								if (!confirm('Are you sure you want to withdraw your application?')) {
-									event.preventDefault();
+									cancel();
+									return;
 								}
+								submitting = true;
+								applicationError = '';
+								applicationMessage = '';
+
+								return async ({ result, update }) => {
+									submitting = false;
+
+									if (result.type === 'success') {
+										applicationMessage =
+											(result.data?.success as string) ??
+											'Your application has been withdrawn.';
+										await invalidateAll();
+									} else if (result.type === 'failure') {
+										applicationError =
+											(result.data?.error as string) ??
+											'Unable to withdraw your application.';
+									} else {
+										await update();
+									}
+								};
 							}}
 						>
+							{#if applicationError}
+								<p role="alert" class="mb-3 text-sm text-rose-700">
+									{applicationError}
+								</p>
+							{/if}
+
 							<button
 								type="submit"
+								disabled={submitting}
 								class="rounded-xl border border-rose-300 px-5 py-3 font-medium text-rose-700 hover:bg-rose-50"
 							>
-								Withdraw application
+								{submitting ? 'Withdrawing...' : 'Withdraw application'}
 							</button>
 						</form>
-				{/if}
-
-				{:else if applicationMessage}
-					<p role="status" class="mt-4 rounded-xl bg-emerald-100 p-4 text-emerald-800">
-						{applicationMessage}
-					</p>
-
+					{/if}
 				{:else if posting.status !== 'open' || !posting.published}
 					<p class="mt-4 text-ink/65">This job is not accepting applications.</p>
+				{:else if data.deadlinePassed}
+					<p class="mt-4 text-ink/65">The application deadline has passed.</p>
 				{:else if data.resumes.length === 0}
 					<p class="mt-4 text-ink/65">
 						You need to upload a resume before applying.
