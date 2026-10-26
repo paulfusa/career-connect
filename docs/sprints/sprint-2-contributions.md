@@ -7,7 +7,7 @@ This log is based on our GitHub history (commits, pull requests, reviews and iss
 | Member | GitHub | Commits | Merged PRs | Open PRs | Reviews approved | PRs merged for others | Issues created | Oct 1 meeting | Oct 8 meeting | Oct 22 meeting | Time spent |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | Mohamad Alosta | @MAlos616 | 37 | 13 (#85, #86, #87, #93, #98, #99, #100, #101, #112, #113, #116, #117, #121) | 1 (#123) | 2 (#114, #122) | 2 | 13 (#83, #94, #102 to #111, #120) | Present | Present | Present | 39.5 h |
-| Paul Fourment | @paulfusa | 4 | 2 (#89, #92) | 0 | 4 (#88, #96, #99, #119) | 5 | 5 (#79 to #82, #91) | Present | Present | Present | ? h |
+| Paul Fourment | @paulfusa | 4 | 2 (#89, #92) | 0 | 4 (#88, #96, #99, #119) | 5 | 5 (#79 to #82, #91) | Present | Present | Present |  4.5h |
 | Maher Waez | @Maherwaez01 | 9 | 3 (#96, #114, #118) | 0 | 9 (#89, #92, #93, #100, #101, #112, #113, #116, #117) | 9 | 2 (#90, #97) | Present | Present | Absent | ? h |
 | Michael Derocher | @MichaelDerocher1551 | 6 | 2 (#88, #119) | 0 | 5 (#85, #86, #87, #98, #118) | 0 | 0 | Present | Present | Present | ? h |
 | Kimia Karimiyeganeh | @kimiakarimiy | 1 | 1 (#122) | 0 | 1 (#121) | 1 | 0 | Present | Present | Present | ? h |
@@ -30,12 +30,12 @@ Note: Commit counts don't include merge commits, and include commits on branches
 - Reviewed, approved and merged Maher's US-07 pull request (#114) and Kimia's US-20 pull request (#122).
 
 ## Paul Fourment
-- **Implemented US-10 (resume upload) and US-11 (resume management)** in PR #92. (? h)
-- Fixed an email verification bug (a redirect loop) and matched its pages to the rest of the app (PR #89). (? h)
-- Added the company and city autofill APIs and the "Your postings" tab for recruiters, as fixups on Michael's job postings PR (#88, commit 70ecaa6). (? h)
-- **Started the Generative AI feature** (resume AI autofill and review, issue #91) on the `feature/ai-resume` branch. (? h)
-- Proposed new features as issues #79 to #82 (search job seekers, following users, messaging, dark mode). (? h)
-- Reviewed and approved 4 teammates' pull requests (#88, #96, #99, #119) and merged 5 (#88, #96, #99, #118, #119). (? h)
+- **Implemented US-10 (resume upload) and US-11 (resume management)** in PR #92. (1 h)
+- Fixed an email verification bug (a redirect loop) and matched its pages to the rest of the app (PR #89). (.5 h)
+- Added the company and city autofill APIs and the "Your postings" tab for recruiters, as fixups on Michael's job postings PR (#88, commit 70ecaa6). (.5 h)
+- **Started the Generative AI feature** (resume AI autofill and review, issue #91) on the `feature/ai-resume` branch. (2 h)
+- Proposed new features as issues #79 to #82 (search job seekers, following users, messaging, dark mode). (.5 h)
+- Reviewed and approved 4 teammates' pull requests (#88, #96, #99, #119) and merged 5 (#88, #96, #99, #118, #119). (1 h)
 
 ## Maher Waez
 - **Implemented US-08 (account email verification)** (commit 400ed9a, merged in PR #86). (? h)
