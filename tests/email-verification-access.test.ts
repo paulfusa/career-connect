@@ -43,7 +43,7 @@ function getProtectedRouteRedirect({
 	return null;
 }
 
-test('public authentication routes are accessible', () => {
+test('email verification: the sign-up and login pages stay public', () => {
 	assert.equal(
 		getProtectedRouteRedirect({
 			pathname: '/login',
@@ -65,7 +65,7 @@ test('public authentication routes are accessible', () => {
 	);
 });
 
-test('guest users are redirected to login', () => {
+test('email verification: guests are sent to the login page', () => {
 	assert.equal(
 		getProtectedRouteRedirect({
 			pathname: '/',
@@ -77,7 +77,7 @@ test('guest users are redirected to login', () => {
 	);
 });
 
-test('unverified users are redirected to verification page', () => {
+test('email verification: unverified users are sent to the verification page', () => {
 	assert.equal(
 		getProtectedRouteRedirect({
 			pathname: '/',
@@ -90,7 +90,7 @@ test('unverified users are redirected to verification page', () => {
 	);
 });
 
-test('verified users can access protected pages', () => {
+test('email verification: verified users can reach protected pages', () => {
 	assert.equal(
 		getProtectedRouteRedirect({
 			pathname: '/',

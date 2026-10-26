@@ -10,16 +10,16 @@ Project for **SOEN 341 LAB FM** - *Fall 2026*
 | Mohamad Alosta | 40312377 |
 | Michael Derocher | 40308662 |
 | Kimia Karimiyeganeh | 40068588  |
-| Andrew Rowe | 40276263 |
+| Andrew Rowe (dropped the course) | 40276263 |
 | Maher Waez | 40248191 |
 
 ## Project description 
 CareerConnect is a web application designed to connect job seekers and recruiters. It allows both to manage the hiring process in a single place. Job seekers will have the ability to create their own profile, manage their resumes, browse for job postings, save their favorite opportunities to dive into later, submit applications, follow the application's status, and more. Recruiters, on the other hand, will be able to publish openings, review applications, and update decision status and communicate outcomes with applicants.
 
-The project aims to ease the application process organizing it and making it more transparent. Its proposed outcome-message feature tries to diminish the "ghosting" phenomenon that is practiced by many companies, and allows the applicants to receive genuine feedback and a way to improve. This provides clear and precise explanations to either move onto the next step of the process or to ameliorate their applications. The team will also implement generative AI features, and will define and document its usage throughout the developmental procedure.
+The project aims to make applying easier by keeping everything organized and clear. Its outcome-message feature tries to cut down on "ghosting" by companies, so applicants get real feedback and a way to improve. They get a clear explanation of either how to move on to the next step or how to improve their applications. The team will also add generative AI features, and will document how AI is used throughout development.
 
 ## Problem and Proposed Solution
-Job seekers often try to get opportunities throughout websites, emails, and personal documents. This poses some difficulty in terms of organizing and remembering the status of each application. Recruiters also need a way to post openings and respond to applications.
+Job seekers often try to get opportunities throughout websites, emails, and personal documents. That makes it hard to stay organized and remember where each application stands. Recruiters also need a way to post openings and respond to applications.
 
 CareerConnect aims to gather all this into one platform that tries to satisfy both user ends. In doing so, the hiring process will get easier as more features will be addressed in later stages.
 
@@ -45,9 +45,9 @@ Then open http://localhost:5173 in your browser.
 # Testing
 Run the type check with `pnpm check` and the automated tests with `pnpm test`.
 
-Every pull request is also checked automatically by our CI pipeline on GitHub Actions ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)), which runs both commands and marks the pull request as passed or failed.
+Our CI pipeline on GitHub Actions ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs both on every pull request and marks it as passed or failed.
 
-Acceptance tests are GitHub Issues with the `Acceptance Test` label, linked to their user story.
+Acceptance tests are GitHub issues with the `Acceptance Test` label, linked to the user story they test.
 
 # Current Sprint 2 Scope
 Sprint 2 runs from September 29 to October 26, 2026. The status of each story is in the [Sprint 2 plan](docs/sprints/sprint-2.md).
@@ -68,11 +68,17 @@ Sprint 2 runs from September 29 to October 26, 2026. The status of each story is
 Completed in Sprint 1: US-01 (account registration), US-02 (login and logout), US-16 (first-login onboarding) and US-04 (profile management).
 
 # Implemented So Far
-- Account registration, email verification, login/logout, forgot password and first-login onboarding.
-- Job seeker profile management.
-- Resume upload, replacement, deletion and viewing.
-- Job posting creation, editing and deletion for recruiters, with company and city autofill.
-- Browsing job postings, with open/closed and draft status, requirements, deadline and salary on the job details page.
+- Signing up, email verification, logging in and out, resetting a forgotten password, and a first-login setup.
+- Job seeker profiles.
+- Uploading, replacing, deleting and viewing resumes.
+- Recruiters can create, edit and delete job postings, with company and city suggestions as they type.
+- A job list with Open, Closed and Draft badges, and a details page with the requirements, deadline, salary and acceptance rate.
+- Searching jobs by keyword, company or location, and filtering by employment type and work mode.
+- Company profiles, shown on each recruiter's postings.
+- Applying to a job with one of your resumes, and withdrawing before the deadline.
+- A page where recruiters see who applied to each posting and open their resumes.
+- Offer and rejection messages with the recruiter's reasons and next steps, plus reminders when an application waits too long.
+- Application statuses: recruiters can mark an application Under Review or Interview, and job seekers see every status on My Applications.
 
 # Planned Features
 

@@ -28,7 +28,7 @@ test('resume: rejects empty and oversized files', () => {
 	assert.equal(validateResume({ ...pdf, size: RESUME_MAX_BYTES }, pdfHead), null);
 });
 
-test('resume: display names are stripped of paths and control characters', () => {
+test('resume: strips paths and control characters from file names', () => {
 	assert.equal(cleanFileName('../../etc/passwd.pdf'), 'passwd.pdf');
 	assert.equal(cleanFileName('C:\\Users\\ada\\My Resume.PDF'), 'My Resume.pdf');
 	assert.equal(cleanFileName('bad\u0000name\n.pdf'), 'badname.pdf');
@@ -36,7 +36,7 @@ test('resume: display names are stripped of paths and control characters', () =>
 	assert.equal(cleanFileName('x'.repeat(300) + '.pdf').length, 104);
 });
 
-test('resume: sizes are readable', () => {
+test('resume: shows sizes in KB and MB', () => {
 	assert.equal(formatBytes(120_000), '117 KB');
 	assert.equal(formatBytes(2_500_000), '2.4 MB');
 });

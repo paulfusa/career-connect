@@ -37,6 +37,15 @@ export const WORK_MODES = {
 	remote: 'Remote'
 } as const;
 
+// US-15/US-20: application statuses, new applications start as applied
+export const APPLICATION_STATUSES = {
+	applied: 'Applied',
+	under_review: 'Under Review',
+	interview: 'Interview',
+	offered: 'Offered',
+	rejected: 'Rejected'
+} as const;
+
 // suggestions only; any degree name is accepted
 export const DEGREES = [
 	'DEC (Diplôme d’études collégiales)',

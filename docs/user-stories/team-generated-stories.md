@@ -10,7 +10,7 @@ These user stories and features came from our own team members, after we reviewe
 
 **Story:** As a job seeker, I want a clear offer or rejection message with the reasons, so I am not left without an answer.
 
-**Why:** Recruiters must explain their decision giving reasons without the system providing any prompts, and get reminders for unanswered applications. This prevents the "ghosting" phenomenon practiced by companies. 
+**Why:** Recruiters must explain their decision giving reasons without the system providing any prompts, and get reminders for unanswered applications. This stops companies from "ghosting" applicants. 
 
 
 ### US-05: Browse and View Job Offers (#10)
@@ -28,7 +28,7 @@ These user stories and features came from our own team members, after we reviewe
 
 **Story:** As a user, I want to suggest features and explain how they would help me, so the team can improve the platform.
 
-**Why:** We cannot assume every user need, hence having them share their thoughts and ideas might improve the hiring process.
+**Why:** We can't guess every user need, so having users share their ideas might improve the hiring process.
 
 
 ## Required Features (to be confirmed)

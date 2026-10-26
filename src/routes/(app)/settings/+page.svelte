@@ -24,6 +24,20 @@
 
     <div class="{glassPanel} space-y-4 p-6">
 
+        <!-- Personal Information -->
+        <a
+            href="/profile"
+            class="block rounded-lg border border-white/40 p-4 transition hover:bg-white/20"
+        >
+            <h2 class="font-semibold">
+                Personal Information →
+            </h2>
+            <p class="mt-1 text-sm text-ink/60">
+                View or update your personal details and profile information.
+            </p>
+        </a>
+
+        <!-- Company Profile (Recruiters only) -->
         {#if isRecruiter}
             <a
                 href="/company"
@@ -38,6 +52,7 @@
             </a>
         {/if}
 
+        <!-- Appearance -->
         <div class="rounded-lg border border-white/40 p-4 opacity-60">
             <h2 class="font-semibold">
                 Appearance
