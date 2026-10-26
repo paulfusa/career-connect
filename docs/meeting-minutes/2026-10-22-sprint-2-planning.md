@@ -14,6 +14,8 @@
 | Mohamad Alosta | Present |
 | Paul Fourment | Present |
 
+Andrew Rowe dropped the course and is no longer part of the team.
+
 ## Topics Discussed and Decisions Taken
 1. Discussed progress on US-20 (application status tracking #107).
 2. Andrew Rowe dropped the course and is no longer part of the project.
