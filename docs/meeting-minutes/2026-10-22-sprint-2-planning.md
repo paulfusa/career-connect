@@ -17,8 +17,9 @@
 Andrew Rowe dropped the course and is no longer part of the team.
 
 ## Topics Discussed and Decisions Taken
-1. Discussed the progress on US-20 (application status tracking, #107).
+1. Discussed progress on US-20 (application status tracking #107).
+2. Andrew Rowe dropped the course and is no longer part of the project.
 
 ## Action Items
 1. Finish up the last of the user stories.
-2. Fix up the documents and logs required.
+2. Fix up the the documents and logs required.

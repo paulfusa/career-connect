@@ -10,7 +10,7 @@ const valid = {
   confirmPassword: 'NewPassword123'
 };
 
-test('accepts valid password reset input', () => {
+test('password reset: accepts a valid email, code and password', () => {
   assert.equal(
     validatePasswordReset(
       valid.email,
@@ -22,7 +22,7 @@ test('accepts valid password reset input', () => {
   );
 });
 
-test('rejects invalid email addresses', () => {
+test('password reset: rejects an invalid email address', () => {
   assert.match(
     validatePasswordReset(
       'invalid-email',
@@ -34,7 +34,7 @@ test('rejects invalid email addresses', () => {
   );
 });
 
-test('rejects codes shorter than 6 digits', () => {
+test('password reset: rejects a code shorter than 6 digits', () => {
   assert.match(
     validatePasswordReset(
       valid.email,
@@ -46,7 +46,7 @@ test('rejects codes shorter than 6 digits', () => {
   );
 });
 
-test('rejects codes containing letters', () => {
+test('password reset: rejects a code with letters', () => {
   assert.match(
     validatePasswordReset(
       valid.email,
@@ -58,7 +58,7 @@ test('rejects codes containing letters', () => {
   );
 });
 
-test('rejects passwords shorter than 8 characters', () => {
+test('password reset: rejects a password under 8 characters', () => {
   assert.match(
     validatePasswordReset(
       valid.email,
@@ -70,7 +70,7 @@ test('rejects passwords shorter than 8 characters', () => {
   );
 });
 
-test('rejects mismatched passwords', () => {
+test("password reset: rejects passwords that don't match", () => {
   assert.match(
     validatePasswordReset(
       valid.email,
@@ -82,7 +82,7 @@ test('rejects mismatched passwords', () => {
   );
 });
 
-test('accepts a password of exactly 8 characters', () => {
+test('password reset: accepts a password of exactly 8 characters', () => {
   assert.equal(
     validatePasswordReset(
       valid.email,

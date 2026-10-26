@@ -55,22 +55,23 @@
 		<input name="location" value={data.search.location} placeholder="City or Remote" class={field} />
 	</label>
 
+	<!-- the value is set on the select, not on each option, so Clear search puts it back to Any -->
 	<label class="block">
 		<span class={label}>Employment type</span>
-		<select name="employmentType" class={field}>
+		<select name="employmentType" value={data.search.employmentType} class={field}>
 			<option value="">Any type</option>
 			{#each Object.entries(EMPLOYMENT_TYPES) as [value, text] (value)}
-				<option {value} selected={data.search.employmentType === value}>{text}</option>
+				<option {value}>{text}</option>
 			{/each}
 		</select>
 	</label>
 
 	<label class="block">
 		<span class={label}>Work mode</span>
-		<select name="workMode" class={field}>
+		<select name="workMode" value={data.search.workMode} class={field}>
 			<option value="">Any work mode</option>
 			{#each Object.entries(WORK_MODES) as [value, text] (value)}
-				<option {value} selected={data.search.workMode === value}>{text}</option>
+				<option {value}>{text}</option>
 			{/each}
 		</select>
 	</label>
@@ -98,7 +99,7 @@
 					<div class="flex flex-wrap gap-2 text-sm text-ink/65">
 						<span class="rounded-full bg-white/65 px-3 py-1">{EMPLOYMENT_TYPES[posting.employmentType as keyof typeof EMPLOYMENT_TYPES] ?? posting.employmentType}</span>
 						<span class="rounded-full bg-white/65 px-3 py-1">{WORK_MODES[posting.workMode as keyof typeof WORK_MODES] ?? posting.workMode}</span>
-					{#if posting.status === 'open'}
+					{#if !posting.closed}
 						<span class="rounded-full bg-emerald-100 px-3 py-1 font-medium text-emerald-800">Open</span>
 					{:else}
 						<span class="rounded-full bg-rose-100 px-3 py-1 font-medium text-rose-800">Closed</span>

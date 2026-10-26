@@ -24,23 +24,32 @@ test('application: rejects a missing or malformed resume id', () => {
 	}
 });
 
-const openJob = { status: 'open', published: true };
+const openJob = { status: 'open', published: true, applicationDeadline: null };
+const today = '2026-10-22';
 
-test('application: missing or unpublished job is not found', () => {
-	assert.equal(applyProblem(undefined, false), 'Job posting not found.');
-	assert.equal(applyProblem({ ...openJob, published: false }, false), 'Job posting not found.');
+test('application: a missing or unpublished job is not found', () => {
+	assert.equal(applyProblem(undefined, false, today), 'Job posting not found.');
+	assert.equal(applyProblem({ ...openJob, published: false }, false, today), 'Job posting not found.');
 });
 
-test('application: closed job cannot be applied to', () => {
-	assert.equal(applyProblem({ ...openJob, status: 'closed' }, false), 'This job is no longer receiving applications.');
+test('application: cannot apply to a closed job', () => {
+	assert.equal(applyProblem({ ...openJob, status: 'closed' }, false, today), 'This job is no longer receiving applications.');
 });
 
-test('application: second application is not allowed', () => {
-	assert.equal(applyProblem(openJob, true), 'You have already applied to this job.');
+test('application: cannot apply twice to the same job', () => {
+	assert.equal(applyProblem(openJob, true, today), 'You have already applied to this job.');
 });
 
-test('application: open, published job with no earlier application is fine', () => {
-	assert.equal(applyProblem(openJob, false), null);
+test('application: can apply to an open job', () => {
+	assert.equal(applyProblem(openJob, false, today), null);
+});
+
+test('application: cannot apply after the deadline', () => {
+	assert.equal(applyProblem({ ...openJob, applicationDeadline: '2026-10-21' }, false, today), 'The application deadline has passed.');
+});
+
+test('application: can still apply on the deadline day', () => {
+	assert.equal(applyProblem({ ...openJob, applicationDeadline: today }, false, today), null);
 });
 
 const withdrawalJob = {
@@ -49,44 +58,51 @@ const withdrawalJob = {
     applicationDeadline: '2026-10-31'
 };
 
-test('withdrawal: allows withdrawing an existing application before deadline', () => {
+test('withdrawal: can withdraw before the deadline', () => {
     assert.equal(
-        withdrawProblem(withdrawalJob, true, '2026-10-18'),
+        withdrawProblem(withdrawalJob, true, '2026-10-18', false),
         null
     );
 });
 
-test('withdrawal: rejects closed jobs', () => {
+test('withdrawal: cannot withdraw from a closed job', () => {
     assert.equal(
-        withdrawProblem({ ...withdrawalJob, status: 'closed' }, true, '2026-10-18'),
+        withdrawProblem({ ...withdrawalJob, status: 'closed' }, true, '2026-10-18', false),
         'This job is no longer accepting changes to applications.'
     );
 });
 
-test('withdrawal: rejects expired deadlines', () => {
+test('withdrawal: cannot withdraw after the deadline', () => {
     assert.equal(
-        withdrawProblem(withdrawalJob, true, '2026-11-01'),
+        withdrawProblem(withdrawalJob, true, '2026-11-01', false),
         'The application deadline has passed.'
     );
 });
 
-test('withdrawal: permits withdrawing on the deadline date', () => {
+test('withdrawal: can still withdraw on the deadline day', () => {
     assert.equal(
-        withdrawProblem(withdrawalJob, true, '2026-10-31'),
+        withdrawProblem(withdrawalJob, true, '2026-10-31', false),
         null
     );
 });
 
-test('withdrawal: rejects missing applications', () => {
+test('withdrawal: cannot withdraw without an application', () => {
     assert.equal(
-        withdrawProblem(withdrawalJob, false, '2026-10-18'),
+        withdrawProblem(withdrawalJob, false, '2026-10-18', false),
         'You have no application to withdraw.'
     );
 });
 
-test('withdrawal: rejects unpublished jobs', () => {
+test('withdrawal: an unpublished job is not found', () => {
     assert.equal(
-        withdrawProblem({ ...withdrawalJob, published: false }, true, '2026-10-18'),
+        withdrawProblem({ ...withdrawalJob, published: false }, true, '2026-10-18', false),
         'Job posting not found.'
+    );
+});
+
+test('withdrawal: cannot withdraw once a decision was sent', () => {
+    assert.equal(
+        withdrawProblem(withdrawalJob, true, '2026-10-18', true),
+        'You can no longer withdraw because the recruiter has already sent a decision.'
     );
 });

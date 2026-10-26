@@ -21,7 +21,7 @@ const valid = {
 
 const postingId = 'd2719f0a-98a7-4a21-8b67-123456789abc';
 
-test('job posting editing: non-recruiters cannot save a posting', async () => {
+test('job posting editing: non-recruiters cannot edit postings', async () => {
 	let updateCalled = false;
 	const result = await editJobPosting(
 		{ id: 'user-1', role: 'job_seeker' },
@@ -37,7 +37,7 @@ test('job posting editing: non-recruiters cannot save a posting', async () => {
 	assert.equal(updateCalled, false);
 });
 
-test('job posting editing: invalid posting IDs are not updated', async () => {
+test('job posting editing: an invalid posting id updates nothing', async () => {
 	let updateCalled = false;
 	const result = await editJobPosting(
 		{ id: 'recruiter-1', role: 'recruiter' },
@@ -53,7 +53,7 @@ test('job posting editing: invalid posting IDs are not updated', async () => {
 	assert.equal(updateCalled, false);
 });
 
-test('job posting editing: invalid form values are returned without updating', async () => {
+test('job posting editing: invalid values return errors and nothing is updated', async () => {
 	let updateCalled = false;
 	const result = await editJobPosting(
 		{ id: 'recruiter-1', role: 'recruiter' },
@@ -71,7 +71,7 @@ test('job posting editing: invalid form values are returned without updating', a
 	assert.equal(updateCalled, false);
 });
 
-test('job posting editing: recruiter can update their own posting', async () => {
+test('job posting editing: a recruiter can edit their own posting', async () => {
 	const existing = {
 		id: postingId,
 		createdBy: 'recruiter-1',
@@ -97,7 +97,7 @@ test('job posting editing: recruiter can update their own posting', async () => 
 	assert.ok(saved?.updatedAt instanceof Date);
 });
 
-test("job posting editing: recruiter cannot update another recruiter's posting", async () => {
+test("job posting editing: a recruiter cannot edit another recruiter's posting", async () => {
 	const existing = {
 		id: postingId,
 		createdBy: 'owner-1',
