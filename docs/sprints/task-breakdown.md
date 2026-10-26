@@ -164,7 +164,7 @@ Status: Completed, merged on October 17 in PR #116. Acceptance tests: #110, #111
 | 15.4 | Create success notification | Maher | Completed |
 | 15.5 | Display applications to the recruiter who owns the posting, with links to the applicants' resumes | Maher | Completed |
 
-Status: Completed. Maher's PR #118 was merged on October 22. After testing it, Mohamad fixed the success message, blocked applying after the deadline and added the withdraw messages (PR #123).
+Status: Completed. Maher's PR #118 was merged on October 22. After testing it, Mohamad fixed the success message, blocked applying after the deadline and added the withdraw messages (PR #123). Acceptance test: #128.
 
 ### US-20: Application Status Tracking (#107) - High - Kimia - Sprint 2
 | Task | Description | Owner | Status |
@@ -175,7 +175,7 @@ Status: Completed. Maher's PR #118 was merged on October 22. After testing it, M
 | 20.4 | Build the job seeker's "My applications" page | Kimia | Completed |
 | 20.5 | Test status changes, permissions, and the My applications page | Kimia | Completed |
 
-Status: Completed with PR #122 on October 25. Offered and Rejected are set by US-03 when the recruiter sends a decision (PR #123).
+Status: Completed with PR #122 on October 25. Offered and Rejected are set by US-03 when the recruiter sends a decision (PR #123). Acceptance tests: #131, #132.
 
 ### US-07: Recruiter company profile (#12) - High - Maher - Sprint 2
 | Task | Description | Owner | Status |
@@ -195,7 +195,7 @@ Status: Completed with PR #122 on October 25. Offered and Rejected are set by US
 | 3.4 | Add a reminder to remind recruiters to respond to pending applications | Mohamad | Completed |
 | 3.5 | Test authorization, matching status, and delivery features | Mohamad | Completed |
 
-Status: Completed in PR #123.
+Status: Completed in PR #123. Acceptance tests: #126, #127.
 
 ### US-18: Recruiter Verification and Approval (#97) - Medium - Maher - Sprint 3
 | Task | Description | Owner | Status |
