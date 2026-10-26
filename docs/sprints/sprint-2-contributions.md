@@ -9,7 +9,7 @@ This log is based on our GitHub history (commits, pull requests, reviews and iss
 | Mohamad Alosta | @MAlos616 | 18 | 10 (#85, #86, #87, #93, #98, #99, #100, #101, #112, #113) | 2 (US-14 and the docs update) | 0 | 0 | 12 (#83, #94, #102 to #111) | Present | Present | 33 h |
 | Paul Fourment | @paulfusa | 4 | 2 (#89, #92) | 0 | 3 (#88, #96, #99) | 3 | 5 (#79 to #82, #91) | Present | Present | ? h |
 | Maher Waez | @Maherwaez01 | 4 | 1 (#96) | 1 (#114) | 7 (#89, #92, #93, #100, #101, #112, #113) | 7 | 2 (#90, #97) | Present | Present | ? h |
-| Michael Derocher | @MichaelDerocher1551 | 2 | 1 (#88) | 0 | 4 (#85, #86, #87, #98) | 0 | 0 | Present | Present | ? h |
+| Michael Derocher | @MichaelDerocher1551 | 2 | 1 (#88) | 0 | 4 (#85, #86, #87, #98) | 0 | 0 | Present | Present | 12.5 h |
 | Kimia Karimiyeganeh | @kimiakarimiy | 0 | 0 | 0 | 0 | 0 | 0 | Present | Present | ? h |
 | Andrew Rowe | @an-rowe54 | 0 | 0 | 0 | 0 | 0 | 0 | Present | Absent | ? h |
 
@@ -45,9 +45,9 @@ Note: Commit counts don't include merge commits, and include commits on branches
 - Reviewed, approved and merged 7 teammates' pull requests (#89, #92, #93, #100, #101, #112, #113). (? h)
 
 ## Michael Derocher
-- **Implemented US-12 (job posting creation) and US-13 (job posting management)**: creating, viewing, editing and deleting job postings (PR #88). (? h)
-- Added an AI prompt log for the job postings work. (? h)
-- Reviewed and approved 4 teammates' pull requests (#85, #86, #87, #98). (? h)
+- **Implemented US-12 (job posting creation) and US-13 (job posting management)**: creating, viewing, editing and deleting job postings (PR #88). (11 h)
+- Added an AI prompt log for the job postings work. (1 h)
+- Reviewed and approved 4 teammates' pull requests (#85, #86, #87, #98). (0.5 h)
 
 ## Kimia Karimiyeganeh
 - Attended the October 1 and October 8 planning meetings.
