@@ -9,7 +9,7 @@ This log is based on our GitHub history (commits, pull requests, reviews and iss
 | Mohamad Alosta | @MAlos616 | 37 | 13 (#85, #86, #87, #93, #98, #99, #100, #101, #112, #113, #116, #117, #121) | 1 (#123) | 2 (#114, #122) | 2 | 13 (#83, #94, #102 to #111, #120) | Present | Present | Present | 39.5 h |
 | Paul Fourment | @paulfusa | 4 | 2 (#89, #92) | 0 | 4 (#88, #96, #99, #119) | 5 | 5 (#79 to #82, #91) | Present | Present | Present |  4.5h |
 | Maher Waez | @Maherwaez01 | 9 | 3 (#96, #114, #118) | 0 | 9 (#89, #92, #93, #100, #101, #112, #113, #116, #117) | 9 | 2 (#90, #97) | Present | Present | Absent | ? h |
-| Michael Derocher | @MichaelDerocher1551 | 6 | 2 (#88, #119) | 0 | 5 (#85, #86, #87, #98, #118) | 0 | 0 | Present | Present | Present | ? h |
+| Michael Derocher | @MichaelDerocher1551 | 6 | 2 (#88, #119) | 0 | 5 (#85, #86, #87, #98, #118) | 0 | 0 | Present | Present | Present | 12.5 h |
 | Kimia Karimiyeganeh | @kimiakarimiy | 1 | 1 (#122) | 0 | 1 (#121) | 1 | 0 | Present | Present | Present | ? h |
 | Andrew Rowe (dropped the course) | @an-rowe54 | 0 | 0 | 0 | 0 | 0 | 0 | Present | Absent | - | - |
 
@@ -47,10 +47,10 @@ Note: Commit counts don't include merge commits, and include commits on branches
 - Reviewed, approved and merged 9 teammates' pull requests (#89, #92, #93, #100, #101, #112, #113, #116, #117). (? h)
 
 ## Michael Derocher
-- **Implemented US-12 (job posting creation) and US-13 (job posting management)**: creating, viewing, editing and deleting job postings (PR #88). (? h)
-- Added tests for creating, editing and deleting job postings, moving that logic into separate files so it can be tested (PR #119, merged October 22). (? h)
-- Added AI prompt logs for the job postings work and its tests. (? h)
-- Reviewed and approved 5 teammates' pull requests (#85, #86, #87, #98, #118). (? h)
+- **Implemented US-12 (job posting creation) and US-13 (job posting management)**: creating, viewing, editing and deleting job postings (PR #88). (8 h)
+- Added tests for creating, editing and deleting job postings, moving that logic into separate files so it can be tested (PR #119, merged October 22). (3 h)
+- Added AI prompt logs for the job postings work and its tests. (1 h)
+- Reviewed and approved 5 teammates' pull requests (#85, #86, #87, #98, #118). (0.5 h)
 
 ## Kimia Karimiyeganeh
 - Attended the October 1, October 8 and October 22 planning meetings.
