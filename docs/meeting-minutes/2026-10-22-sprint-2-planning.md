@@ -22,4 +22,4 @@ Andrew Rowe dropped the course and is no longer part of the team.
 
 ## Action Items
 1. Finish up the last of the user stories.
-2. Fix up the the documents and logs required.
+2. Fix up the documents and logs required.
