@@ -99,7 +99,7 @@ The tasks for each story are in its GitHub issue, and who owns what is in [task-
 | #102 | Add a CI pipeline (checks and tests on every PR) | Task | Mohamad | Oct 15 | High | Completed |
 | #103 | Acceptance tests (2 per user story, Sprint 1 and 2) | Task | Everyone | Oct 22 | High | In Progress |
 | #104 | Sprint 2 plan, task breakdown, contribution log | Task | Mohamad | Oct 24 | High | Completed |
-| #105 | Sprint 2 AI usage logs | Task | Everyone | Oct 25 | High | In Progress |
+| #105 | Sprint 2 AI usage logs | Task | Everyone | Oct 25 | High | Completed |
 | #106 | Sprint 2 summary report (one page) | Task | Mohamad | Oct 25 | High | Completed |
 
 
