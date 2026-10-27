@@ -6,9 +6,9 @@ This log is based on our GitHub history (commits, pull requests, reviews and iss
 
 | Member | GitHub | Commits | Merged PRs | Open PRs | Reviews approved | PRs merged for others | Issues created | Oct 1 meeting | Oct 8 meeting | Oct 22 meeting | Time spent |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| Mohamad Alosta | @MAlos616 | 56 | 18 (#85, #86, #87, #93, #98, #99, #100, #101, #112, #113, #116, #117, #121, #123, #124, #125, #129, #133) | 0 | 4 (#114, #122, #130, #147) | 4 | 16 (#83, #94, #102 to #111, #120, #126 to #128) | Present | Present | Present | 39.5 h |
+| Mohamad Alosta | @MAlos616 | 56 | 18 (#85, #86, #87, #93, #98, #99, #100, #101, #112, #113, #116, #117, #121, #123, #124, #125, #129, #133) | 1 (#148) | 4 (#114, #122, #130, #147) | 4 | 16 (#83, #94, #102 to #111, #120, #126 to #128) | Present | Present | Present | 39.5 h |
 | Paul Fourment | @paulfusa | 7 | 3 (#89, #92, #130) | 0 | 8 (#88, #96, #99, #119, #123, #124, #125, #129) | 9 | 9 (#79 to #82, #91, #134 to #137) | Present | Present | Present | 5.5 h |
-| Maher Waez | @Maherwaez01 | 10 | 4 (#96, #114, #118, #147) | 0 | 10 (#89, #92, #93, #100, #101, #112, #113, #116, #117, #133) | 10 | 11 (#90, #97, #138 to #146) | Present | Present | Absent | 44 h |
+| Maher Waez | @Maherwaez01 | 11 | 4 (#96, #114, #118, #147) | 0 | 10 (#89, #92, #93, #100, #101, #112, #113, #116, #117, #133) | 10 | 11 (#90, #97, #138 to #146) | Present | Present | Absent | 44 h |
 | Michael Derocher | @MichaelDerocher1551 | 7 | 2 (#88, #119) | 0 | 6 (#85, #86, #87, #98, #118, #130) | 0 | 0 | Present | Present | Present | 12.5 h |
 | Kimia Karimiyeganeh | @kimiakarimiy | 3 | 1 (#122) | 0 | 1 (#121) | 1 | 2 (#131, #132) | Present | Present | Present | 8 h |
 | Andrew Rowe (dropped the course) | @an-rowe54 | 0 | 0 | 0 | 0 | 0 | 0 | Present | Absent | - | - |
