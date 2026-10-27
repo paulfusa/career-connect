@@ -80,7 +80,7 @@ Each heading is written as **Title - Priority - Assignee - Sprint**.
 | T11 | CI pipeline that runs the type check and tests on every PR (#102) | Task | Mohamad | High | Oct 15 | Completed |
 | T12 | Acceptance tests, at least two per Sprint 1 and Sprint 2 user story (#103) | Task | Everyone | High | Oct 22 | In Progress |
 | T13 | Sprint 2 plan, task breakdown and contribution log (#104) | Task | Mohamad | High | Oct 24 | Completed |
-| T14 | Sprint 2 AI usage logs (#105) | Task | Everyone | High | Oct 25 | In Progress |
+| T14 | Sprint 2 AI usage logs (#105) | Task | Everyone | High | Oct 25 | Completed |
 | T15 | Sprint 2 summary report (#106) | Task | Mohamad | High | Oct 25 | Completed |
 | T16 | Sprint 2 meeting minutes, October 22 (#120) | Task | Mohamad | Medium | Oct 23 | Completed |
 
@@ -98,6 +98,8 @@ Each heading is written as **Title - Priority - Assignee - Sprint**.
 | 8.5 | Add a resend verification option | Maher | Completed |
 | 8.6 | Test verified and unverified accounts access | Maher | Completed |
 
+Acceptance tests: #140, #141.
+
 ### US-10: Resume Upload (#15) - High - Paul - Sprint 2
 | Task | Description | Owner | Status |
 |---|---|---|---|
@@ -106,6 +108,8 @@ Each heading is written as **Title - Priority - Assignee - Sprint**.
 | 10.3 | Build resume upload UI | Paul | Completed |
 | 10.4 | Validate file type and size | Paul | Completed |
 
+Acceptance tests: #134, #135.
+
 ### US-11: Resume Management (#16) - High - Paul - Sprint 2
 | Task | Description | Owner | Status |
 |---|---|---|---|
@@ -113,6 +117,8 @@ Each heading is written as **Title - Priority - Assignee - Sprint**.
 | 11.2 | Implement resume replacement feature | Paul | Completed |
 | 11.3 | Implement resume deletion feature | Paul | Completed |
 | 11.4 | Add confirmation dialog for deletion | Paul | Completed |
+
+Acceptance tests: #136, #137.
 
 ### US-12: Recruiter Job Posting Creation (#17) - High - Michael - Sprint 2
 | Task | Description | Owner | Status |
@@ -131,7 +137,7 @@ Each heading is written as **Title - Priority - Assignee - Sprint**.
 | 13.4 | Write tests | Michael | Completed |
 
 ### US-17: Forgot password (#90) - Medium - Maher - Sprint 2
-Done in PR #96: the forgot-password and reset-password pages, the email with the reset code, and tests. The issue doesn't have separate tasks yet.
+Done in PR #96: the forgot-password and reset-password pages, the email with the reset code, and tests. The issue doesn't have separate tasks yet. Acceptance tests: #144, #145, #146.
 
 ### US-05: Browse and view job offers (#10) - High - Mohamad - Sprint 2
 | Task | Description | Owner | Status |
@@ -164,7 +170,7 @@ Status: Completed, merged on October 17 in PR #116. Acceptance tests: #110, #111
 | 15.4 | Create success notification | Maher | Completed |
 | 15.5 | Display applications to the recruiter who owns the posting, with links to the applicants' resumes | Maher | Completed |
 
-Status: Completed. Maher's PR #118 was merged on October 22. After testing it, Mohamad fixed the success message, blocked applying after the deadline and added the withdraw messages (PR #123). Acceptance test: #128.
+Status: Completed. Maher's PR #118 was merged on October 22. After testing it, Mohamad fixed the success message, blocked applying after the deadline and added the withdraw messages (PR #123). Acceptance tests: #128, #142, #143.
 
 ### US-20: Application Status Tracking (#107) - High - Kimia - Sprint 2
 | Task | Description | Owner | Status |
@@ -185,6 +191,8 @@ Status: Completed with PR #122 on October 25. Offered and Rejected are set by US
 | 7.3 | Add edit functionality | Maher | Completed |
 | 7.4 | Display company details on job postings | Maher | Completed |
 | 7.5 | Test recruiter permissions | Maher | Completed |
+
+Acceptance tests: #138, #139.
 
 ### US-03: Clear Application Outcome Message (#8) - High - Mohamad - Sprint 2
 | Task | Description | Owner | Status |
