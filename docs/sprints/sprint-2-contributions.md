@@ -8,7 +8,7 @@ This log is based on our GitHub history (commits, pull requests, reviews and iss
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | Mohamad Alosta | @MAlos616 | 53 | 17 (#85, #86, #87, #93, #98, #99, #100, #101, #112, #113, #116, #117, #121, #123, #124, #125, #129) | 1 (#133) | 3 (#114, #122, #130) | 3 | 16 (#83, #94, #102 to #111, #120, #126 to #128) | Present | Present | Present | 39.5 h |
 | Paul Fourment | @paulfusa | 6 | 3 (#89, #92, #130) | 0 | 8 (#88, #96, #99, #119, #123, #124, #125, #129) | 9 | 5 (#79 to #82, #91) | Present | Present | Present | ? h |
-| Maher Waez | @Maherwaez01 | 9 | 3 (#96, #114, #118) | 0 | 9 (#89, #92, #93, #100, #101, #112, #113, #116, #117) | 9 | 2 (#90, #97) | Present | Present | Absent | ? h |
+| Maher Waez | @Maherwaez01 | 9 | 3 (#96, #114, #118) | 0 | 9 (#89, #92, #93, #100, #101, #112, #113, #116, #117) | 9 | 2 (#90, #97) | Present | Present | Absent | 44 h |
 | Michael Derocher | @MichaelDerocher1551 | 6 | 2 (#88, #119) | 0 | 6 (#85, #86, #87, #98, #118, #130) | 0 | 0 | Present | Present | Present | ? h |
 | Kimia Karimiyeganeh | @kimiakarimiy | 1 | 1 (#122) | 0 | 1 (#121) | 1 | 2 (#131, #132) | Present | Present | Present | ? h |
 | Andrew Rowe (dropped the course) | @an-rowe54 | 0 | 0 | 0 | 0 | 0 | 0 | Present | Absent | - | - |
@@ -39,13 +39,27 @@ Note: Commit counts don't include merge commits, and include commits on branches
 - Reviewed and approved 8 teammates' pull requests (#88, #96, #99, #119, #123, #124, #125, #129) and merged 9 (#88, #96, #99, #118, #119, #123, #124, #125, #129). (? h)
 
 ## Maher Waez
-- **Implemented US-08 (account email verification)** (commit 400ed9a, merged in PR #86). (? h)
-- Wrote and **implemented US-17 (forgot password)** with the reset code email templates (issue #90, PR #96). (? h)
-- Wrote user story US-18 (recruiter verification and approval, issue #97). (? h)
-- **Implemented US-07 (recruiter company profile)**: the company profile table, the profile and edit pages, company details on job postings, and tests (PR #114, merged October 17). (? h)
-- **Implemented the rest of US-15 (apply for a job), tasks 15.2 to 15.5**, on top of Mohamad's application table. Job seekers can apply with one of their resumes and withdraw before the deadline, and recruiters see the applicants and their resumes. Also added 6 withdrawal tests and moved the profile links into the settings page (PR #118, merged October 22). (? h)
-- Added AI usage logs for US-08, US-17, US-07 and US-15. (? h)
-- Reviewed, approved and merged 9 teammates' pull requests (#89, #92, #93, #100, #101, #112, #113, #116, #117). (? h)
+## Maher Waez
+
+- **Implemented US-08 (Account Email Verification)** (commit `400ed9a`, PR #86). Developed the email verification workflow using Resend and Better Auth, restricted unverified users from accessing protected routes, and implemented verification and resend functionality. Debugged verification links, email configuration, and authentication redirects. Personally tested registration, verification links, resend functionality, and verified/unverified account access during development. (6 h)
+
+- **Proposed and implemented US-17 (Forgot Password)** (issue #90, PR #96). Designed and developed password recovery using email verification codes. Implemented 10-minute code expiration, a five-attempt limit, single-use codes, a 60-second resend cooldown, password validation, and confirmation checks. Worked on email templates, frontend pages, server actions, database integration, and error handling. Personally tested successful resets, incorrect and expired codes, resend functionality, password validation, and security restrictions. Added automated tests for password reset validation. (8 h)
+
+- **Implemented US-07 (Recruiter Company Profile)** (PR #114, merged October 17). Developed company profile database integration, creation and editing forms, server-side validation, and recruiter authorization. Integrated company information into job postings while maintaining the existing application design. Personally tested profile creation, editing, field validation, and recruiter permissions. Added automated tests for company information validation and authorization. (8 h)
+
+- **Implemented US-15 (Job Applications), tasks 15.2–15.5** (PR #118, merged October 22). Developed application submission using uploaded resumes, duplicate prevention, submission confirmation, and integration with the existing database model. Built the recruiter applicant-viewing page with applicant information and resume links. Implemented authorization checks protecting private PDF resumes. Proposed and developed application withdrawal and reapplication functionality, including deadline restrictions and access revocation. Personally tested applications, database records, recruiter permissions, withdrawals, and resume access using different accounts. Added six automated withdrawal tests and verified the implementation with the project's test suite. (10 h)
+
+- **Improved CareerConnect navigation** by moving Profile from the main sidebar into Settings under Personal Information. Modified the Settings page and application layout, maintained recruiter-only Company Profile access, and verified the implementation using `pnpm check`. Included in PR #118. (1 h)
+
+- **Created AI usage documentation** for US-08, US-17, US-07, US-15, and the profile navigation improvement. Documented development requirements, implementation decisions, AI assistance, coding contributions, and testing activities. (3 h)
+
+- **Participated in GitHub collaboration and code reviews.** Reviewed, approved, and merged nine teammates' pull requests (#89, #92, #93, #100, #101, #112, #113, #116, #117). Reviewed changes, checked integration compatibility, and contributed to maintaining the shared codebase. (3 h)
+
+- **Contributed to sprint planning and feature discussions.** Attended the October 1 and October 8 meetings, proposed US-18 (Recruiter Verification and Approval, issue #97), and participated in discussions about requirements, responsibilities, and implementation priorities. (2 h)
+
+- **Created and performed acceptance tests** for US-07, US-08, US-15, and US-17. Documented scenarios using Given, When, Then, and Result, covering successful workflows, validation errors, permissions, and security restrictions. Personally verified functionality through manual testing during implementation, including different user accounts and expected results. (3 h)
+
+**Total estimated time: 44 h**
 
 ## Michael Derocher
 - **Implemented US-12 (job posting creation) and US-13 (job posting management)**: creating, viewing, editing and deleting job postings (PR #88). (? h)
