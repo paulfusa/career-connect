@@ -23,9 +23,10 @@ Free tiers have daily and per-minute limits that change over time; check the pro
 1. Install Ollama from <https://ollama.com/download> (or `brew install ollama` on macOS).
 2. Download a model. This is the one the features were tested with:
    ```bash
-   ollama pull qwen3.5:9b-mlx
+   ollama pull qwen3.5:9b
    ```
    Any Ollama chat model works. Smaller models answer faster but make more mistakes.
+   > FOR MACOS - Use `qwen3.5:9b-mlx` as it is built to work on the Apple Silicon neural engine cores
 3. Make sure Ollama is running: open the Ollama app, or run `ollama serve` in a terminal and leave it open.
 4. In `.env`:
    ```
