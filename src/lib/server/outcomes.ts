@@ -30,7 +30,7 @@ export async function findOutcome(applicationId: string) {
 // US-03: only returns the application if the recruiter owns the job it was sent to
 export async function findOwnedApplication(applicationId: string, recruiterId: string) {
 	const [row] = await db
-		.select({ id: application.id })
+		.select({ id: application.id, userId: application.userId, jobTitle: jobPosting.title })
 		.from(application)
 		.innerJoin(jobPosting, eq(application.jobPostingId, jobPosting.id))
 		.where(and(eq(application.id, applicationId), eq(jobPosting.createdBy, recruiterId)));

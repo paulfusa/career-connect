@@ -77,9 +77,9 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 export const actions: Actions = {
     // US-03: the recruiter sends an offer or a rejection to one applicant
     decide: async ({ request, locals }) => {
-        const me = locals.user!;
+        const me = locals.user;
 
-        if (me.role !== 'recruiter') {
+        if (!me || me.role !== 'recruiter') {
             return fail(403, { error: 'Only recruiters can send decisions.' });
         }
 
@@ -87,7 +87,10 @@ export const actions: Actions = {
         const applicationId = data.get('applicationId')?.toString() ?? '';
 
         // Only the recruiter who posted the job can answer its applications.
-        if (!UUID.test(applicationId) || !(await findOwnedApplication(applicationId, me.id))) {
+        const owned = UUID.test(applicationId)
+            ? await findOwnedApplication(applicationId, me.id)
+            : undefined;
+        if (!owned) {
             return fail(404, { error: 'Application not found.' });
         }
 
@@ -101,6 +104,37 @@ export const actions: Actions = {
 
         if (!saved) {
             return fail(400, { applicationId, error: 'A decision was already sent for this application.' });
+        }
+
+        const dedupeKey = `application_outcome:${saved.id}:${owned.userId}`;
+
+        // saveOutcome has committed both writes. Notification failure cannot undo them.
+        try {
+            if (saved.status !== 'offered' && saved.status !== 'rejected') {
+                throw new Error('Unexpected persisted outcome status');
+            }
+            const offered = saved.status === 'offered';
+            await notificationService.createNotification({
+                userId: owned.userId,
+                type: offered ? 'job_offer' : 'application_rejected',
+                title: offered ? 'Job offer received' : 'Application rejected',
+                message: offered
+                    ? `You have received a job offer for "${owned.jobTitle}".`
+                    : `Your application for "${owned.jobTitle}" was rejected.`,
+                link: '/applications',
+                dedupeKey
+            });
+        } catch (notificationError) {
+            console.error('Failed to create application-outcome notification', {
+                applicationId: saved.applicationId,
+                outcomeId: saved.id,
+                recipientId: owned.userId,
+                status: saved.status,
+                dedupeKey,
+                errorName: notificationError instanceof Error
+                    ? notificationError.name
+                    : 'UnknownError'
+            });
         }
 
         return { applicationId, success: 'Decision sent to the applicant.' };
