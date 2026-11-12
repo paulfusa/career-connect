@@ -7,6 +7,7 @@ import { applyProblem, parseApplication, todayEastern, withdrawProblem } from '$
 import { isClosed } from '$lib/server/job-posting';
 import { acceptanceRate } from '$lib/server/acceptance-rate';
 import { decisionCounts, submittedCount } from '$lib/server/outcomes';
+import { notificationService } from '$lib/server/notifications-db';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -116,6 +117,9 @@ export const actions: Actions = {
         // Check the job posting.
         const [job] = await db
             .select({
+                id: jobPosting.id,
+                createdBy: jobPosting.createdBy,
+                title: jobPosting.title,
                 status: jobPosting.status,
                 published: jobPosting.published,
                 applicationDeadline: jobPosting.applicationDeadline
@@ -135,8 +139,8 @@ export const actions: Actions = {
 
         const problem = applyProblem(job, !!existing, todayEastern());
 
-        if (problem) {
-            return fail(400, { error: problem });
+        if (problem || !job) {
+            return fail(400, { error: problem ?? 'Job posting not found.' });
         }
 
         // Save the application and prevent duplicates.
@@ -154,6 +158,30 @@ export const actions: Actions = {
 
         if (inserted.length === 0) {
             return fail(400, { error: 'You have already applied to this job.' });
+        }
+
+        const applicationId = inserted[0].id;
+        const dedupeKey = `new_application:${applicationId}:${job.createdBy}`;
+
+        // The application is saved. Notification failure must not undo submission.
+        try {
+            await notificationService.createNotification({
+                userId: job.createdBy,
+                type: 'new_application',
+                title: 'New job application',
+                message: `A new application was submitted for "${job.title}".`,
+                link: `/jobs/${job.id}/applications`,
+                dedupeKey
+            });
+        } catch (notificationError) {
+            console.error('Failed to create new-application notification', {
+                applicationId,
+                recruiterId: job.createdBy,
+                dedupeKey,
+                errorName: notificationError instanceof Error
+                    ? notificationError.name
+                    : 'UnknownError'
+            });
         }
         return { success: 'Application submitted successfully.' };
     },
