@@ -1,11 +1,13 @@
 
 import { error, fail } from '@sveltejs/kit';
-import { and, desc, eq, exists, inArray } from 'drizzle-orm';
+import { randomUUID } from 'node:crypto';
+import { and, desc, eq, inArray, ne } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import { application, applicationOutcome, jobPosting, resume, user } from '$lib/server/db/schema';
 import { parseOutcome } from '$lib/server/application-outcome';
 import { findOwnedApplication, saveOutcome } from '$lib/server/outcomes';
 import { needsReminder } from '$lib/server/reminders';
+import { notificationService } from '$lib/server/notifications-db';
 import type { Actions, PageServerLoad } from './$types';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -123,21 +125,71 @@ export const actions: Actions = {
             return fail(400, { message: 'Choose Under Review or Interview. Offers and rejections require an outcome message.' });
         }
 
+        const transitionId = randomUUID();
         const [updated] = await db.update(application)
             .set({ status, updatedAt: new Date() })
+            .from(jobPosting)
             .where(and(
                 eq(application.id, applicationId),
                 eq(application.jobPostingId, params.id),
+                eq(jobPosting.id, application.jobPostingId),
+                eq(jobPosting.createdBy, me.id),
                 inArray(application.status, ['applied', 'under_review', 'interview']),
-                exists(db.select({ id: jobPosting.id }).from(jobPosting).where(and(
-                    eq(jobPosting.id, application.jobPostingId),
-                    eq(jobPosting.createdBy, me.id)
-                )))
+                ne(application.status, status)
             ))
-            .returning({ id: application.id });
+            .returning({
+                id: application.id,
+                userId: application.userId,
+                jobPostingId: application.jobPostingId,
+                status: application.status,
+                jobTitle: jobPosting.title
+            });
 
         if (!updated) {
+            // An owned no-op keeps the existing success response without writing
+            // a timestamp or notifying. This read never authorizes another write.
+            const [unchanged] = await db
+                .select({ id: application.id })
+                .from(application)
+                .innerJoin(jobPosting, eq(jobPosting.id, application.jobPostingId))
+                .where(and(
+                    eq(application.id, applicationId),
+                    eq(application.jobPostingId, params.id),
+                    eq(jobPosting.createdBy, me.id),
+                    eq(application.status, status)
+                ))
+                .limit(1);
+
+            if (unchanged) return { success: 'Application status updated.' };
             return fail(404, { message: 'Application not found or cannot be updated.' });
+        }
+
+        const interview = updated.status === 'interview';
+        const dedupeKey = `application_status:${updated.id}:${updated.userId}:${updated.status}:${transitionId}`;
+
+        // The status is saved. Delivery is best effort and cannot undo it.
+        // Each genuine transition gets a key, including returns to an earlier status.
+        try {
+            await notificationService.createNotification({
+                userId: updated.userId,
+                type: interview ? 'interview_invitation' : 'application_update',
+                title: interview ? 'Application moved to interview' : 'Application under review',
+                message: interview
+                    ? `Your application for "${updated.jobTitle}" has moved to the interview stage. No interview date or time has been scheduled through CareerConnect.`
+                    : `Your application for "${updated.jobTitle}" is now under review.`,
+                link: '/applications',
+                dedupeKey
+            });
+        } catch (notificationError) {
+            console.error('Failed to create application-status notification', {
+                applicationId: updated.id,
+                recipientId: updated.userId,
+                status: updated.status,
+                dedupeKey,
+                errorName: notificationError instanceof Error
+                    ? notificationError.name
+                    : 'UnknownError'
+            });
         }
         return { success: 'Application status updated.' };
     }
