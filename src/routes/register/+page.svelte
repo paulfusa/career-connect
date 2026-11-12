@@ -34,7 +34,16 @@
 			<div class="mt-1.5 grid grid-cols-2 gap-2">
 				{#each roles as role, i (role.value)}
 					<label
-						class="cursor-pointer rounded-xl border border-white/70 bg-white/50 p-3 transition hover:bg-white/70 has-checked:border-tide has-checked:bg-white/85 has-checked:ring-4 has-checked:ring-tide/15 has-focus-visible:outline-2 has-focus-visible:outline-tide"
+						class="cursor-pointer rounded-xl border border-white/70 bg-white/50 p-3
+							transition hover:bg-white/70
+							has-checked:border-tide has-checked:bg-white/85
+							has-checked:ring-4 has-checked:ring-tide/15
+							has-focus-visible:outline-2 has-focus-visible:outline-tide
+							dark:border-white/15 dark:bg-[#242427] dark:text-[#f5f5f5]
+							dark:hover:bg-[#303034]
+							dark:has-checked:border-[#43a9b8]
+							dark:has-checked:bg-[#20383c]
+							dark:has-checked:ring-[#43a9b8]/20"
 					>
 						<input
 							type="radio"
@@ -45,7 +54,9 @@
 							class="sr-only"
 						/>
 						<span class="block font-semibold">{role.label}</span>
-						<span class="mt-0.5 block text-xs leading-snug text-ink/60">{role.detail}</span>
+						<span class="mt-0.5 block text-xs leading-snug text-ink/60 dark:text-zinc-300">
+							{role.detail}
+						</span>
 					</label>
 				{/each}
 			</div>
