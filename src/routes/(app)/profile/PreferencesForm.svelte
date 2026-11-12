@@ -13,8 +13,21 @@
 </script>
 
 <form method="post" action="?/preferences" class="mt-6 space-y-6" use:enhance={withPending((v) => (pending = v))}>
-	<label class="flex cursor-pointer items-start gap-3 rounded-2xl bg-white/50 p-4 ring-1 ring-white/70">
-		<input type="checkbox" name="openToWork" checked={p?.openToWork} class="mt-0.5 size-5 rounded border-white text-tide focus:ring-tide/30" />
+	<label
+		class="flex cursor-pointer items-start gap-3 rounded-2xl
+			bg-white/50 p-4 ring-1 ring-white/70 transition
+			dark:bg-[#242427] dark:ring-white/15
+			dark:hover:bg-[#303034]"
+	>	
+	<input
+		type="checkbox"
+		name="openToWork"
+		checked={p?.openToWork}
+		class="mt-0.5 size-5 rounded border-white text-tide
+			focus:ring-tide/30
+			dark:border-white/30 dark:bg-[#303034]
+			dark:checked:bg-[#238998] dark:checked:border-[#238998]"
+	/>
 		<span>
 			<span class="block font-semibold">I’m open to work</span>
 			<span class="block text-sm text-ink/60">Shows an “Open to work” badge on your profile for recruiters.</span>
