@@ -2,10 +2,33 @@
 	import { page } from '$app/state';
 	import Avatar from '$lib/components/Avatar.svelte';
 	import Backdrop from '$lib/components/Backdrop.svelte';
+	import NotificationBell from '$lib/components/NotificationBell.svelte';
+	import { notificationContextIsCurrent } from '$lib/notification-ui';
 	import { glassPanel } from '$lib/ui';
 	import type { LayoutProps } from './$types';
 
 	let { data, children }: LayoutProps = $props();
+	let signingOutUserId = $state<string | null>(null);
+	let sessionExpired = $state(false);
+	let notificationContextValid = $derived(signingOutUserId !== data.user.id && !sessionExpired && notificationContextIsCurrent(
+		data.notificationOwnerId, data.user.id, data.notificationSessionExpiresAt
+	));
+
+	$effect(() => {
+		// Cancel stale timers when fresh server session data arrives.
+		const expiresAt = data.notificationSessionExpiresAt;
+		sessionExpired = expiresAt !== null && expiresAt.getTime() <= Date.now();
+		if (expiresAt === null) return;
+		// Recheck long sessions in bounded timer intervals (no network polling).
+		let timer = 0;
+		function checkExpiry() {
+			const remaining = expiresAt!.getTime() - Date.now();
+			if (remaining <= 0) { sessionExpired = true; return; }
+			timer = window.setTimeout(checkExpiry, Math.min(remaining, 2_147_000_000));
+		}
+		checkExpiry();
+		return () => window.clearTimeout(timer);
+	});
 
 	const roleLabel = { job_seeker: 'Job seeker', recruiter: 'Recruiter' };
 	let nav = $derived([
@@ -25,6 +48,7 @@
 
 <Backdrop />
 
+{#key data.user.id}
 <div class="mx-auto grid max-w-6xl gap-6 px-4 py-6 md:grid-cols-[17rem_minmax(0,1fr)] md:gap-8 md:py-10">
 	<aside class="app-sidebar md:sticky md:top-10 md:self-start">
 		<a href="/" class="mb-5 inline-block font-display text-2xl font-semibold tracking-tight">
@@ -43,7 +67,7 @@
 				</div>
 			</div>
 
-			<nav class="mt-5 flex gap-1 md:flex-col">
+			<nav aria-label="Main navigation" class="mt-5 flex flex-wrap gap-1 md:flex-col">
 				{#each nav as item (item.href)}
 					<a
 						href={item.href}
@@ -58,9 +82,10 @@
 						{item.label}
 					</a>
 				{/each}
+				<NotificationBell unreadCount={notificationContextValid ? data.notificationUnreadCount : null} current={page.url.pathname === '/notifications'} />
 			</nav>
 
-			<form method="post" action="/logout" class="mt-4 border-t border-white/60 pt-4">
+			<form method="post" action="/logout" onsubmit={() => { signingOutUserId = data.user.id; }} class="mt-4 border-t border-white/60 pt-4">
 				<button
 					class="w-full rounded-xl px-3 py-2 text-left text-sm font-medium text-ink/60 transition hover:bg-white/60 hover:text-ink focus-visible:outline-2 focus-visible:outline-tide"
 				>
@@ -71,6 +96,11 @@
 	</aside>
 
 	<main class="min-w-0">
-		{@render children()}
+		{#if !notificationContextValid && page.url.pathname === '/notifications'}
+			<p role="alert" class="rounded-xl bg-white/70 p-5">Your notification session is unavailable. <a href="/login" class="font-semibold text-tide underline">Sign in again</a>.</p>
+		{:else}
+			{@render children()}
+		{/if}
 	</main>
 </div>
+{/key}
