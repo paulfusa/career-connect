@@ -53,20 +53,39 @@
 								? 'page'
 								: undefined
 						}
-						class="flex-1 rounded-xl px-3 py-2 text-sm font-medium text-ink/70 transition hover:bg-white/60 hover:text-ink aria-[current=page]:bg-white/75 aria-[current=page]:text-ink md:flex-none"
+							class="flex-1 rounded-xl px-3 py-2 text-sm font-medium
+							text-ink/70 transition
+							hover:bg-white/60 hover:text-ink
+							aria-[current=page]:bg-white/75
+							aria-[current=page]:text-ink
+							dark:hover:bg-white/10
+							dark:aria-[current=page]:bg-white/12
+							dark:aria-[current=page]:text-white
+							md:flex-none"
 					>
 						{item.label}
 					</a>
 				{/each}
 			</nav>
 
-			<form method="post" action="/logout" class="mt-4 border-t border-white/60 pt-4">
+			
+			<form
+				method="post"
+				action="/logout"
+				class="mt-4 border-t border-white/60 pt-4 dark:border-white/15"
+			>
 				<button
-					class="w-full rounded-xl px-3 py-2 text-left text-sm font-medium text-ink/60 transition hover:bg-white/60 hover:text-ink focus-visible:outline-2 focus-visible:outline-tide"
+					type="submit"
+					class="w-full rounded-xl px-3 py-2 text-left text-sm
+						font-medium text-ink/60 transition
+						hover:bg-white/60 hover:text-ink
+						dark:hover:bg-white/10 dark:hover:text-white
+						focus-visible:outline-2 focus-visible:outline-tide"
 				>
 					Log out
 				</button>
 			</form>
+
 		</section>
 	</aside>
 

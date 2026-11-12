@@ -25,7 +25,19 @@
                 </h2>
                 <p class="mt-1 text-ink/65">{application.company}</p>
                 <p class="mt-3 text-sm text-ink/65">Applied {formatDate(application.appliedAt)}</p>
-                <p class="mt-2 text-sm font-medium">Status: {APPLICATION_STATUSES[application.status]}</p>
+                <p class="mt-2 text-sm font-medium">
+                    Status:
+                    <span
+                        class="ml-1 inline-block rounded-full px-2.5 py-1 text-xs font-semibold
+                            {application.status === 'offered'
+                                ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300'
+                                : application.status === 'rejected'
+                                    ? 'bg-rose-100 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300'
+                                    : 'bg-slate-100 text-slate-700 dark:bg-white/10 dark:text-zinc-300'}"
+                    >
+                        {APPLICATION_STATUSES[application.status]}
+                    </span>
+                </p>
             </article>
         {/each}
     </section>

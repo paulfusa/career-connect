@@ -23,7 +23,12 @@
 
 	let full = $derived(data.resumes.length >= RESUME_MAX_COUNT);
 	const dateFmt = new Intl.DateTimeFormat('en-CA', { dateStyle: 'medium' });
-	const actionLink = 'rounded-lg px-2.5 py-1.5 text-sm font-medium text-tide hover:bg-white/70 focus-visible:outline-2 focus-visible:outline-tide';
+	const actionLink =
+		'rounded-lg px-2.5 py-1.5 text-sm font-medium text-tide ' +
+		'transition hover:bg-white/70 ' +
+		'dark:text-[#7dd3df] dark:hover:bg-[#303034] ' +
+		'focus-visible:outline-2 focus-visible:outline-tide';
+
 </script>
 
 <svelte:head><title>Resumes · CareerConnect</title></svelte:head>
@@ -61,7 +66,15 @@
 					required
 					disabled={full}
 					aria-describedby="upload-hint"
-					class="block w-full text-sm text-ink/70 file:mr-3 file:rounded-lg file:border-0 file:bg-white/75 file:px-3.5 file:py-2.5 file:font-semibold file:text-tide hover:file:bg-white disabled:opacity-50"
+					class="block w-full text-sm text-ink/70
+						file:mr-3 file:cursor-pointer file:rounded-lg file:border-0
+						file:bg-white/75 file:px-3.5 file:py-2.5
+						file:font-semibold file:text-tide-deep
+						hover:file:bg-white
+						dark:file:bg-[#303034]
+						dark:file:text-[#7dd3df]
+						dark:hover:file:bg-[#404044]
+						disabled:opacity-50"
 				/>
 			</label>
 			<button type="submit" disabled={full || busy === 'upload'} class="{primaryButton} sm:w-auto sm:px-6">
@@ -80,15 +93,36 @@
 	<section class="{glassPanel} p-6">
 		<h2 class="font-display text-xl font-semibold">Your resumes</h2>
 		{#if data.resumes.length}
-			<ul class="mt-2 divide-y divide-white/60">
+			<ul class="mt-2 divide-y divide-white/60 dark:divide-white/15">
 				{#each data.resumes as r (r.id)}
 					<li class="flex flex-wrap items-center gap-x-4 gap-y-2 py-4 last:pb-0">
-						<span class="grid size-11 shrink-0 place-items-center rounded-xl bg-white/80 text-xs font-bold text-rose-600 ring-1 ring-white" aria-hidden="true">PDF</span>
-						<div class="min-w-0 flex-1">
-							<a href="/resumes/{r.id}" target="_blank" rel="noopener" class="block truncate font-semibold hover:text-tide hover:underline">{r.fileName}</a>
-							<p class="text-sm text-ink/55">
-								{formatBytes(r.sizeBytes)}{' · '}{r.updatedAt > r.createdAt ? 'Replaced' : 'Uploaded'}
-								{dateFmt.format(r.updatedAt)}
+						<span
+							class="grid size-11 shrink-0 place-items-center rounded-xl
+								bg-white/80 text-rose-600 ring-1 ring-white
+								dark:bg-rose-950/50 dark:text-rose-300 dark:ring-rose-800/40"
+							aria-hidden="true"
+						>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="24"
+								height="24"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="1.8"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							>
+								<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+								<path d="M14 2v6h6" />
+								<path d="M8 13h8M8 17h8" />
+							</svg>
+							</span>
+							<div class="min-w-0 flex-1">
+								<a href="/resumes/{r.id}" target="_blank" rel="noopener" class="block truncate font-semibold hover:text-tide hover:underline">{r.fileName}</a>
+									<p class="text-sm text-ink/55">
+										{formatBytes(r.sizeBytes)}{' · '}{r.updatedAt > r.createdAt ? 'Replaced' : 'Uploaded'}
+										{dateFmt.format(r.updatedAt)}
 							</p>
 						</div>
 						<div class="flex items-center gap-1">
@@ -114,7 +148,11 @@
 								type="button"
 								onclick={() => (confirming = r)}
 								aria-label="Delete {r.fileName}"
-								class="rounded-lg px-2.5 py-1.5 text-sm font-medium text-rose-700 hover:bg-rose-50/80 focus-visible:outline-2 focus-visible:outline-rose-600"
+								class="rounded-lg px-2.5 py-1.5 text-sm font-medium
+									text-rose-700 hover:bg-rose-50/80
+									dark:text-rose-400 dark:hover:bg-rose-950/50
+									dark:hover:text-rose-300
+									focus-visible:outline-2 focus-visible:outline-rose-600"
 							>
 								Delete
 							</button>

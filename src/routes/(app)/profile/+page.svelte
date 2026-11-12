@@ -108,7 +108,7 @@
 	{#snippet deleteForm()}
 		{@const r = resultFor('delete')}
 		<details class="{glassPanel} group p-6" open={!!r}>
-			<summary class="cursor-pointer font-semibold text-rose-700 marker:text-rose-400">Delete account</summary>
+			<summary class="cursor-pointer font-semibold text-rose-700 marker:text-rose-400 dark:text-rose-400">Delete account</summary>
 			<form method="post" action="?/deleteAccount" class="mt-4 max-w-md space-y-4" use:enhance={track('delete')}>
 				<p class="text-sm text-ink/70">
 					This permanently deletes your account, profile, experience and education. It can’t be undone.

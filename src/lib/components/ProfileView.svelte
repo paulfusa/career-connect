@@ -62,8 +62,15 @@
 	}
 	const years = (e: Education) => [e.startYear, e.endYear].filter(Boolean).join(' – ');
 
-	const editLink = 'rounded-lg px-2.5 py-1 text-sm font-medium text-tide hover:bg-white/70';
-	const chip = 'rounded-full bg-white/70 px-3 py-1 text-sm ring-1 ring-white';
+	
+	const editLink =
+    'rounded-lg px-2.5 py-1 text-sm font-medium text-tide transition ' +
+    'hover:bg-white/70 ' +
+    'dark:text-[#7dd3df] dark:hover:bg-[#303034] ' +
+    'focus-visible:outline-2 focus-visible:outline-tide';
+	const chip =
+    'rounded-full bg-white/70 px-3 py-1 text-sm ring-1 ring-white ' +
+    'dark:bg-white/10 dark:text-zinc-200 dark:ring-white/10';
 </script>
 
 {#snippet section(title: string, action: { href: string; label: string } | null, body: Snippet)}
@@ -90,7 +97,7 @@
 				<div class="flex flex-wrap items-center gap-x-3 gap-y-1">
 					<h1 class="font-display text-3xl font-semibold tracking-tight">{user.name}</h1>
 					{#if isSeeker && p?.openToWork}
-						<span class="rounded-full bg-emerald-100/80 px-2.5 py-0.5 text-xs font-semibold text-emerald-800 ring-1 ring-emerald-200">
+						<span class="rounded-full bg-emerald-100/80 px-2.5 py-0.5 text-xs font-semibold text-emerald-800 ring-1 ring-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300 dark:ring-emerald-800/50">
 							Open to work
 						</span>
 					{/if}
@@ -104,7 +111,7 @@
 				{#if links.length}
 					<p class="mt-3 flex flex-wrap gap-2">
 						{#each links as [label, href] (label)}
-							<a {href} target="_blank" rel="noopener noreferrer" class="{chip} font-medium text-tide hover:bg-white">{label}</a>
+							<a {href} target="_blank" rel="noopener noreferrer" class="{chip} font-medium text-tide hover:bg-white dark:text-[#7dd3df] dark:hover:bg-white/15">{label}</a>
 						{/each}
 					</p>
 				{/if}
@@ -128,7 +135,7 @@
 	{#if isSeeker}
 		{#snippet experienceBody()}
 			{#if experience.length}
-				<ul class="divide-y divide-white/60">
+				<ul class="divide-y divide-white/60 dark:divide-white/15">
 					{#each experience as e (e.id)}
 						<li class="flex gap-4 py-4 first:pt-0 last:pb-0">
 							<OrgLogo name={e.company} domain={e.companyDomain} />

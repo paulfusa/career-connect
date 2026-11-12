@@ -126,11 +126,18 @@
 />
 
 <ul
-	bind:this={list}
-	id="{id}-list"
-	popover="manual"
-	role="listbox"
-	class="m-0 max-h-80 overflow-y-auto rounded-2xl border border-white/70 bg-white/85 p-1.5 text-ink shadow-[0_18px_40px_-12px_rgba(27,38,56,0.3)] backdrop-blur-xl"
+    bind:this={list}
+    id="{id}-list"
+    popover="manual"
+    role="listbox"
+    class="m-0 max-h-80 overflow-y-auto rounded-2xl
+           border border-white/70 bg-white/85 p-1.5 text-ink
+           shadow-[0_18px_40px_-12px_rgba(27,38,56,0.3)]
+           backdrop-blur-xl
+           dark:border-white/15
+           dark:bg-[#242427]
+           dark:text-[#f5f5f5]
+           dark:shadow-[0_18px_40px_-12px_rgba(0,0,0,0.6)]"
 >
 	{#each options as option, i (option.label)}
 		<!-- mousedown keeps focus in the input; keyboard users pick with arrows + Enter on the input -->
@@ -139,7 +146,11 @@
 			id="{id}-{i}"
 			role="option"
 			aria-selected={i === active}
-			class="flex cursor-pointer items-center gap-3 rounded-xl px-2.5 py-2 {i === active ? 'bg-tide/10' : 'hover:bg-white'}"
+			class="flex cursor-pointer items-center gap-3 rounded-xl px-2.5 py-2
+     			  {i === active
+						? 'bg-tide/10 dark:bg-[#404044] dark:text-white'
+						: 'hover:bg-white dark:hover:bg-[#343438]'}"
+
 			onmousedown={(e) => e.preventDefault()}
 			onmousemove={() => (active = i)}
 			onclick={() => choose(option)}

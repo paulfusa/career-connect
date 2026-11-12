@@ -48,10 +48,12 @@
 			>
 				View Applications
 			</a>
-
 			<a
 				href="/jobs/{posting.id}/edit"
-				class="rounded-xl border border-white/60 bg-white/70 px-5 py-3 text-center font-medium text-tide-deep hover:bg-white"
+				class="rounded-xl border border-white/60 bg-white/70 px-5 py-3 text-center
+					font-medium text-tide-deep hover:bg-white
+					dark:border-white/15 dark:bg-[#303034]
+					dark:text-[#7dd3df] dark:hover:bg-[#404044]"
 			>
 				Edit posting
 			</a>
@@ -59,9 +61,15 @@
 	{/if}
 		</div>
 
-		<div class="mt-5 flex flex-wrap gap-2 text-sm">
-			<span class="rounded-full bg-white/65 px-3 py-1">{EMPLOYMENT_TYPES[posting.employmentType as keyof typeof EMPLOYMENT_TYPES] ?? posting.employmentType}</span>
-			<span class="rounded-full bg-white/65 px-3 py-1">{WORK_MODES[posting.workMode as keyof typeof WORK_MODES] ?? posting.workMode}</span>
+		<div class="mt-5 flex flex-wrap gap-2 text-sm">	
+			<span class="rounded-full bg-white/65 px-3 py-1 text-ink/75
+						dark:bg-white/12 dark:text-zinc-200 dark:ring-1 dark:ring-white/10">
+				{EMPLOYMENT_TYPES[posting.employmentType as keyof typeof EMPLOYMENT_TYPES] ?? posting.employmentType}
+			</span>
+			<span class="rounded-full bg-white/65 px-3 py-1 text-ink/75
+						dark:bg-white/12 dark:text-zinc-200 dark:ring-1 dark:ring-white/10">
+				{WORK_MODES[posting.workMode as keyof typeof WORK_MODES] ?? posting.workMode}
+			</span>
 			{#if !data.closed}
 				<span class="rounded-full bg-emerald-100 px-3 py-1 font-medium text-emerald-800">Open</span>
 			{:else}
@@ -73,7 +81,12 @@
 		</div>
 
 		{#if data.closed}
-			<p role="status" class="mt-5 rounded-2xl bg-rose-50 px-4 py-3 font-medium text-rose-800">This job is no longer receiving applications.</p>
+			<p
+				role="status"
+				class="mt-5 rounded-2xl bg-rose-50 px-4 py-3 font-medium text-rose-800 dark:bg-rose-950/40 dark:text-rose-300 dark:ring-1 dark:ring-rose-800/50"
+			>
+				This job is no longer receiving applications.
+			</p>
 		{/if}
 
 		{#if posting.applicationDeadline}
@@ -92,13 +105,13 @@
 
 		<AcceptanceRate rate={data.acceptanceRate} />
 
-		<section class="mt-8 border-t border-white/60 pt-6">
+		<section class="mt-8 border-t border-white/60 dark:border-white/15 pt-6">
 			<h2 class="font-display text-xl font-semibold">About the role</h2>
 			<p class="mt-3 whitespace-pre-line leading-7 text-ink/75">{posting.description}</p>
 		</section>
 
 		{#if posting.requirements}
-			<section class="mt-8 border-t border-white/60 pt-6">
+			<section class="mt-8 border-t border-white/60 dark:border-white/15 pt-6">
 				<h2 class="font-display text-xl font-semibold">Requirements</h2>
 				<p class="mt-3 whitespace-pre-line leading-7 text-ink/75">
 					{posting.requirements}
@@ -107,7 +120,7 @@
 		{/if}
 		
 		{#if data.companyProfile}
-			<section class="mt-8 border-t border-white/60 pt-6">
+			<section class="mt-8 border-t border-white/60 dark:border-white/15 pt-6">
 				<h2 class="font-display text-xl font-semibold">
 					About {data.companyProfile.name}
 				</h2>
@@ -134,7 +147,7 @@
 		{/if}
 
 		{#if data.isJobSeeker}
-			<section class="mt-8 border-t border-white/60 pt-6">
+			<section class="mt-8 border-t border-white/60 dark:border-white/15 pt-6">
 				<h2 class="font-display text-xl font-semibold">Apply for this job</h2>
 				<!-- checked first so the success message stays after the page reloads -->
 				{#if applicationMessage}
@@ -254,7 +267,8 @@
 							name="resumeId"
 							bind:value={selectedResumeId}
 							required
-							class="w-full rounded-xl border border-white/60 bg-white/70 px-4 py-3"
+							class="w-full rounded-xl border border-white/60 bg-white/70 px-4 py-3 text-ink
+    						dark:border-white/15 dark:bg-[#242427] dark:text-[#f5f5f5]"
 						>
 							<option value="" disabled>Select a resume</option>
 							{#each data.resumes as resume}

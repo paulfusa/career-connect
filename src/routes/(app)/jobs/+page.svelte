@@ -21,12 +21,12 @@
 </div>
 
 {#if data.user.role === 'recruiter'}
-	<nav class="mt-5 inline-flex gap-1 rounded-2xl bg-white/45 p-1 ring-1 ring-white/60" aria-label="Which postings to show">
+	<nav class="mt-5 inline-flex gap-1 rounded-2xl bg-white/45 p-1 ring-1 ring-white/60 dark:bg-[#242427] dark:ring-white/10">
 		{#each [{ href: '/jobs', label: 'All postings', current: !data.mine }, { href: '/jobs?mine', label: 'Your postings', current: data.mine }] as tab (tab.href)}
 			<a
 				href={tab.href}
 				aria-current={tab.current ? 'page' : undefined}
-				class="rounded-xl px-4 py-2 text-sm font-medium text-ink/65 transition hover:text-ink focus-visible:outline-2 focus-visible:outline-tide aria-[current=page]:bg-white/85 aria-[current=page]:text-ink aria-[current=page]:shadow-sm"
+				class="rounded-xl px-4 py-2 text-sm font-medium text-ink/65 transition hover:text-ink focus-visible:outline-2 focus-visible:outline-tide aria-[current=page]:bg-white/85 aria-[current=page]:text-ink aria-[current=page]:shadow-sm dark:aria-[current=page]:bg-[#444448] dark:aria-[current=page]:text-white"
 			>
 				{tab.label}
 			</a>
@@ -85,7 +85,7 @@
 	<section class="mt-6 grid gap-4">
 		{#each data.postings as posting (posting.id)}
 			<!-- the title link stretches over the whole card (after:inset-0); Edit sits above it -->
-			<article class="{glassPanel} relative p-6 transition hover:bg-white/65 has-[h2_a:focus-visible]:outline-2 has-[h2_a:focus-visible]:outline-tide">
+			<article class="{glassPanel} relative p-6 transition hover:bg-white/65 dark:hover:bg-[#242427] has-[h2_a:focus-visible]:outline-2 has-[h2_a:focus-visible]:outline-tide">
 				<div class="flex flex-wrap items-start justify-between gap-3">
 					<div class="flex min-w-0 items-start gap-4">
 						<OrgLogo name={posting.company} domain={posting.companyDomain} />
@@ -97,8 +97,15 @@
 						</div>
 					</div>
 					<div class="flex flex-wrap gap-2 text-sm text-ink/65">
-						<span class="rounded-full bg-white/65 px-3 py-1">{EMPLOYMENT_TYPES[posting.employmentType as keyof typeof EMPLOYMENT_TYPES] ?? posting.employmentType}</span>
-						<span class="rounded-full bg-white/65 px-3 py-1">{WORK_MODES[posting.workMode as keyof typeof WORK_MODES] ?? posting.workMode}</span>
+						
+					<span class="rounded-full bg-white/65 px-3 py-1 dark:bg-white/10 dark:text-[#d4d4d8]">
+						{EMPLOYMENT_TYPES[posting.employmentType as keyof typeof EMPLOYMENT_TYPES] ?? posting.employmentType}
+					</span>
+
+					<span class="rounded-full bg-white/65 px-3 py-1 dark:bg-white/10 dark:text-[#d4d4d8]">
+						{WORK_MODES[posting.workMode as keyof typeof WORK_MODES] ?? posting.workMode}
+					</span>
+
 					{#if !posting.closed}
 						<span class="rounded-full bg-emerald-100 px-3 py-1 font-medium text-emerald-800">Open</span>
 					{:else}
@@ -112,8 +119,19 @@
 				<p class="mt-4 line-clamp-3 whitespace-pre-line text-sm leading-6 text-ink/70">{posting.description}</p>
 				<div class="mt-4 flex items-center justify-between gap-3">
 					<p class="text-xs text-ink/50">Posted {posting.createdAt.toLocaleDateString()}</p>
-					{#if posting.createdBy === data.user.id}
-						<a href="/jobs/{posting.id}/edit" aria-label="Edit {posting.title}" class="relative z-10 rounded-lg border border-white/70 bg-white/70 px-3.5 py-1.5 text-sm font-semibold text-tide-deep transition hover:bg-white focus-visible:outline-2 focus-visible:outline-tide">Edit</a>
+					{#if posting.createdBy === data.user.id}	
+					<a
+						href="/jobs/{posting.id}/edit"
+						aria-label="Edit {posting.title}"
+						class="relative z-10 rounded-lg border border-white/70
+							bg-white/70 px-3.5 py-1.5 text-sm font-semibold
+							text-tide-deep transition hover:bg-white
+							focus-visible:outline-2 focus-visible:outline-tide
+							dark:border-white/15 dark:bg-[#303034]
+							dark:text-[#7dd3df] dark:hover:bg-[#404044]"
+					>
+						Edit
+					</a>
 					{/if}
 				</div>
 			</article>

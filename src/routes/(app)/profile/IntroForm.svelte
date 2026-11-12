@@ -48,7 +48,14 @@
 				accept="image/png,image/jpeg,image/webp"
 				onchange={previewAvatar}
 				aria-describedby="avatar-hint avatar-error"
-				class="mt-1.5 block w-full text-sm text-ink/70 file:mr-3 file:rounded-lg file:border-0 file:bg-white/75 file:px-3 file:py-2 file:font-semibold file:text-tide hover:file:bg-white"
+				class="mt-1.5 block w-full text-sm text-ink/70
+					file:mr-3 file:cursor-pointer file:rounded-lg file:border-0
+					file:bg-white/75 file:px-3 file:py-2
+					file:font-semibold file:text-tide-deep
+					hover:file:bg-white
+					dark:file:bg-[#303034]
+					dark:file:text-[#7dd3df]
+					dark:hover:file:bg-[#404044]"
 			/>
 			<span id="avatar-hint" class={hint}>PNG, JPG or WebP, up to 2 MB.</span>
 			<FieldError id="avatar-error" message={errors?.avatar} />

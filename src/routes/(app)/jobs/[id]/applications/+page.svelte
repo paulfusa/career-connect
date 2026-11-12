@@ -76,7 +76,7 @@
                 {#each data.applicants as applicant (applicant.id)}
                     <!-- the last form result is only shown on the applicant it was for -->
                     {@const formResult = form?.applicationId === applicant.id ? form : null}
-                    <article class="rounded-2xl border border-white/60 bg-white/60 p-5">
+                    <article class="rounded-2xl border border-white/60 bg-white/60 p-5 dark:border-white/10 dark:bg-[#1c1c1f]">
                         <div class="flex flex-wrap items-start justify-between gap-4">
                             <div class="min-w-0">
                                 <h2 class="font-display text-lg font-semibold">
