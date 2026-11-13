@@ -1,5 +1,7 @@
 <script lang="ts">
 	import OrgLogo from '$lib/components/OrgLogo.svelte';
+	import SuggestInput from '$lib/components/SuggestInput.svelte';
+	import { searchCities, searchCompanies } from '$lib/suggest.svelte';
 	import { EMPLOYMENT_TYPES, WORK_MODES } from '$lib/profile-options';
 	import { field, glassPanel, label, primaryButton } from '$lib/ui';
 	import type { PageProps } from './$types';
@@ -45,14 +47,19 @@
 		<input name="keyword" value={data.search.keyword} placeholder="Job title or description" class={field} />
 	</label>
 
+	<!-- US-28: suggestions like on the posting form. {#key} makes a fresh box when the search changes, so Clear search empties it -->
 	<label class="block">
 		<span class={label}>Company</span>
-		<input name="company" value={data.search.company} placeholder="e.g. Shopify" class={field} />
+		{#key data.search.company}
+			<SuggestInput name="company" search={searchCompanies} value={data.search.company} placeholder="e.g. Shopify" class={field} />
+		{/key}
 	</label>
 
 	<label class="block">
 		<span class={label}>Location</span>
-		<input name="location" value={data.search.location} placeholder="City or Remote" class={field} />
+		{#key data.search.location}
+			<SuggestInput name="location" search={searchCities} fixed={['Remote']} value={data.search.location} placeholder="City or Remote" class={field} />
+		{/key}
 	</label>
 
 	<!-- the value is set on the select, not on each option, so Clear search puts it back to Any -->
