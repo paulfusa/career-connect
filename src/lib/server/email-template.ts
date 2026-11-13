@@ -116,3 +116,39 @@ export function passwordResetEmailHtml(otp: string): string {
     </p>
   `);
 }
+
+export function jobOfferEmailHtml(url: string): string {
+  const safeUrl = escapeHtml(url);
+
+  return emailLayout('You received a job offer!', `
+    <h1 style="font-size:25px;color:${navy};">
+      Congratulations!
+    </h1>
+
+    <p style="font-size:15px;line-height:25px;color:#526276;">
+      Great news! You've received a job offer through CareerConnect.
+    </p>
+
+    <p style="font-size:15px;line-height:25px;color:#526276;">
+      Log in to your CareerConnect account to view your offer
+      and find out what to do next.
+    </p>
+
+    <table role="presentation" width="100%">
+      <tr>
+        <td align="center" bgcolor="${teal}"
+            style="border-radius:12px;">
+          <a href="${safeUrl}"
+             style="display:block;padding:16px;color:#FFFFFF;
+                    text-decoration:none;font-weight:700;">
+            View My Job Offer
+          </a>
+        </td>
+      </tr>
+    </table>
+
+    <p style="font-size:13px;color:${muted};margin-top:24px;">
+      This is an automated notification from CareerConnect.
+    </p>
+  `);
+}
