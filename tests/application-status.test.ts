@@ -9,6 +9,9 @@ registerHooks({
     resolve(specifier, context, next) {
         if (specifier === '$lib/server/db') return { url: 'fake:status-db', shortCircuit: true };
         if (specifier === '$lib/server/notifications-db') return { url: 'fake:status-notifications', shortCircuit: true };
+        if (specifier === '$lib/server/email') {
+            return { url: 'fake:email', shortCircuit: true };
+        }
         if (specifier === '$lib/server/db/schema') {
             return { url: new URL('../src/lib/server/db/schema.ts', import.meta.url).href, shortCircuit: true };
         }
@@ -27,6 +30,13 @@ registerHooks({
         }
         if (url === 'fake:status-notifications') {
             return { format: 'module', source: 'export const notificationService = { createNotification: async () => null };', shortCircuit: true };
+        }
+        if (url === 'fake:email') {
+            return {
+                format: 'module',
+                source: 'export async function sendJobOfferEmail() {}',
+                shortCircuit: true
+            };
         }
         return next(url, context);
     }

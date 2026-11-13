@@ -12,6 +12,7 @@ registerHooks({
     resolve(specifier, context, next) {
         if (specifier === '$lib/server/db') return { url: 'fake:transition-db', shortCircuit: true };
         if (specifier === '$lib/server/notifications-db') return { url: 'fake:transition-notifications', shortCircuit: true };
+        if (specifier === '$lib/server/email') return { url: 'fake:transition-email', shortCircuit: true };
         if (specifier === './auth.schema') {
             return { url: new URL('../src/lib/server/db/auth.schema.ts', import.meta.url).href, shortCircuit: true };
         }
@@ -21,6 +22,9 @@ registerHooks({
         return next(specifier, context);
     },
     load(url, context, next) {
+        if (url === 'fake:transition-email') {
+            return { format: 'module', source: 'export async function sendJobOfferEmail() { throw new Error("Status transitions must not send offer emails"); }', shortCircuit: true };
+        }
         if (url === 'fake:transition-db') {
             return { format: 'module', source: 'export const db = globalThis.__transitionMocks.db;', shortCircuit: true };
         }

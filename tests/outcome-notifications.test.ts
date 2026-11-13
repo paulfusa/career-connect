@@ -12,6 +12,7 @@ registerHooks({
     resolve(specifier, context, next) {
         if (specifier === '$lib/server/db') return { url: 'fake:outcome-db', shortCircuit: true };
         if (specifier === '$lib/server/notifications-db') return { url: 'fake:outcome-notifications', shortCircuit: true };
+        if (specifier === '$lib/server/email') return { url: 'fake:outcome-email', shortCircuit: true };
         if (specifier === './auth.schema') {
             return { url: new URL('../src/lib/server/db/auth.schema.ts', import.meta.url).href, shortCircuit: true };
         }
@@ -21,6 +22,9 @@ registerHooks({
         return next(specifier, context);
     },
     load(url, context, next) {
+        if (url === 'fake:outcome-email') {
+            return { format: 'module', source: 'export const sendJobOfferEmail = globalThis.__outcomeMocks.sendJobOfferEmail;', shortCircuit: true };
+        }
         if (url === 'fake:outcome-db') {
             return { format: 'module', source: 'export const db = globalThis.__outcomeMocks.db;', shortCircuit: true };
         }
@@ -50,6 +54,7 @@ const dialect = new PgDialect();
 const applications = new Map<string, ApplicationState>();
 const outcomes = new Map<string, ApplicationOutcome>();
 const notifications: CreateNotificationInput[] = [];
+const emails: { to: string; url: string }[] = [];
 const events: string[] = [];
 const lookups: { fields: unknown; from: unknown; join: unknown; joinSql: string; sql: string; params: unknown[] }[] = [];
 const updates: { values: unknown; sql: string; params: unknown[] }[] = [];
@@ -59,6 +64,8 @@ let forceConflict: boolean;
 let persistedStatusOverride: string | undefined;
 let transactionCount: number;
 let notifyResult: () => Promise<{ id: string } | null>;
+let emailShouldFail: boolean;
+let emailLookupShouldFail: boolean;
 
 const db = {
     select(fields: unknown) {
@@ -74,6 +81,14 @@ const db = {
             },
             async where(condition: Condition) {
                 const compiled = dialect.sqlToQuery(condition);
+                if (from === application && join === user) {
+                    assert.ok(events.includes('commit'));
+                    assert.deepEqual(fields, { email: user.email });
+                    assert.deepEqual(compiled.params, [applicationId]);
+                    events.push('email-lookup');
+                    if (emailLookupShouldFail) throw new Error('Email lookup failed');
+                    return [{ email: 'applicant@example.com' }];
+                }
                 lookups.push({ fields, from, join, joinSql, ...compiled });
                 const row = applications.get(String(compiled.params[0]));
                 return row && row.recruiterId === compiled.params[1]
@@ -161,21 +176,32 @@ const notificationService = {
         return notifyResult();
     }
 };
-const mocks = { db, notifications: notificationService };
+const mocks = {
+    db,
+    notifications: notificationService,
+    async sendJobOfferEmail(to: string, url: string) {
+        assert.ok(events.includes('commit'));
+        events.push('email');
+        emails.push({ to, url });
+        if (emailShouldFail) throw new Error('Email service unavailable');
+    }
+};
 (globalThis as typeof globalThis & { __outcomeMocks: typeof mocks }).__outcomeMocks = mocks;
 const { actions } = await import('../src/routes/(app)/jobs/[id]/applications/+page.server.ts');
-const { application, applicationOutcome, jobPosting } = await import('../src/lib/server/db/schema.ts');
+const { application, applicationOutcome, jobPosting, user } = await import('../src/lib/server/db/schema.ts');
 
 beforeEach(() => {
     applications.clear();
     outcomes.clear();
     applications.set(applicationId, { id: applicationId, userId: applicantId, recruiterId: owner.id, jobTitle, status: 'interview', updatedAt: now });
-    notifications.length = events.length = lookups.length = updates.length = inserts.length = 0;
+    notifications.length = emails.length = events.length = lookups.length = updates.length = inserts.length = 0;
     failAt = undefined;
     forceConflict = false;
     persistedStatusOverride = undefined;
     transactionCount = 0;
     notifyResult = async () => ({ id: 'notification-1' });
+    emailShouldFail = false;
+    emailLookupShouldFail = false;
 });
 
 async function decide(fields: Record<string, string> = {}, user: unknown = owner) {
@@ -183,6 +209,7 @@ async function decide(fields: Record<string, string> = {}, user: unknown = owner
     for (const [key, value] of Object.entries({ applicationId, ...offer, ...fields })) data.set(key, value);
     return actions.decide({
         locals: { user },
+        url: new URL('https://careerconnect.example/jobs/123/applications'),
         request: new Request('http://localhost/', { method: 'POST', body: data })
     } as never);
 }
@@ -200,7 +227,11 @@ for (const status of ['offered', 'rejected'] as const) {
         assert.deepEqual(await decide({ status, message: `  ${offer.message}  ` }), {
             applicationId, success: 'Decision sent to the applicant.'
         });
-        assert.deepEqual(events, ['outcome-insert', 'application-update', 'commit', 'notification']);
+        assert.deepEqual(events, ['outcome-insert', 'application-update', 'commit', 'notification',
+            ...(status === 'offered' ? ['email-lookup', 'email'] : [])]);
+        assert.deepEqual(emails, status === 'offered'
+            ? [{ to: 'applicant@example.com', url: 'https://careerconnect.example/applications' }]
+            : []);
         assert.equal(applications.get(applicationId)!.status, status);
         const saved = outcomes.get(applicationId)!;
         assert.equal(saved.message, offer.message);
@@ -257,6 +288,7 @@ test('US-26: guests and job seekers cannot save or notify', async () => {
     assert.equal(lookups.length, 0);
     assert.equal(transactionCount, 0);
     assert.deepEqual(notifications, []);
+    assert.deepEqual(emails, []);
 });
 
 test('US-26: malformed, missing and foreign applications cannot save or notify', async () => {
@@ -267,6 +299,7 @@ test('US-26: malformed, missing and foreign applications cannot save or notify',
     assert.deepEqual(await decide({}, { id: 'another-recruiter', role: 'recruiter' }), missing);
     assert.equal(transactionCount, 0);
     assert.deepEqual(notifications, []);
+    assert.deepEqual(emails, []);
 });
 
 test('US-26: invalid decisions retain validation responses and never save or notify', async () => {
@@ -283,6 +316,7 @@ test('US-26: invalid decisions retain validation responses and never save or not
     }
     assert.equal(transactionCount, 0);
     assert.deepEqual(notifications, []);
+    assert.deepEqual(emails, []);
 });
 
 test('US-26: an existing decision cannot be replaced or notified again', async () => {
@@ -297,6 +331,7 @@ test('US-26: an existing decision cannot be replaced or notified again', async (
     assert.strictEqual(applications.get(applicationId)!.updatedAt, savedTime);
     assert.equal(updates.length, 1);
     assert.equal(notifications.length, 1);
+    assert.equal(emails.length, 1);
 });
 
 test('US-26: an insert-time outcome conflict skips status update and notification', async () => {
@@ -308,6 +343,7 @@ test('US-26: an insert-time outcome conflict skips status update and notificatio
     assert.equal(applications.get(applicationId)!.status, 'interview');
     assert.equal(outcomes.size, 0);
     assert.deepEqual(notifications, []);
+    assert.deepEqual(emails, []);
 });
 
 for (const stage of ['insert', 'update', 'commit'] as const) {
@@ -319,6 +355,7 @@ for (const stage of ['insert', 'update', 'commit'] as const) {
         assert.strictEqual(applications.get(applicationId)!.updatedAt, now);
         assert.equal(events.at(-1), 'rollback');
         assert.deepEqual(notifications, []);
+        assert.deepEqual(emails, []);
     });
 }
 
@@ -328,6 +365,7 @@ test('US-26: notification failure preserves both committed writes and sanitized 
     assert.deepEqual(await decide(), { applicationId, success: 'Decision sent to the applicant.' });
     assert.equal(outcomes.get(applicationId)!.status, 'offered');
     assert.equal(applications.get(applicationId)!.status, 'offered');
+    assert.deepEqual(emails, [{ to: 'applicant@example.com', url: 'https://careerconnect.example/applications' }]);
     assert.deepEqual(logs, [['Failed to create application-outcome notification', {
         applicationId, outcomeId, recipientId: applicantId, status: 'offered',
         dedupeKey: `application_outcome:${outcomeId}:${applicantId}`, errorName: 'Error'
@@ -339,6 +377,37 @@ test('US-26: notification failure preserves both committed writes and sanitized 
     assert.equal((await decide())?.status, 400);
     assert.equal(notifications.length, 1);
     assert.equal(logs.length, 1);
+    assert.equal(emails.length, 1);
+});
+
+for (const stage of ['lookup', 'delivery'] as const) {
+    test(`job offer: email ${stage} failure preserves the committed decision and in-app notification`, async (t) => {
+        const logs = captureErrors(t);
+        emailLookupShouldFail = stage === 'lookup';
+        emailShouldFail = stage === 'delivery';
+        assert.deepEqual(await decide(), { applicationId, success: 'Decision sent to the applicant.' });
+        assert.equal(outcomes.get(applicationId)!.status, 'offered');
+        assert.equal(applications.get(applicationId)!.status, 'offered');
+        assert.equal(notifications.length, 1);
+        assert.equal(emails.length, stage === 'delivery' ? 1 : 0);
+        assert.equal(logs.length, 1);
+        assert.equal(logs[0][0], 'Job offer email notification failed:');
+    });
+}
+
+test('job offer: both delivery failures are handled independently after commit', async (t) => {
+    const logs = captureErrors(t);
+    notifyResult = async () => { throw new Error('Notification unavailable'); };
+    emailShouldFail = true;
+    assert.deepEqual(await decide(), { applicationId, success: 'Decision sent to the applicant.' });
+    assert.equal(outcomes.get(applicationId)!.status, 'offered');
+    assert.equal(applications.get(applicationId)!.status, 'offered');
+    assert.equal(notifications.length, 1);
+    assert.equal(emails.length, 1);
+    assert.deepEqual(logs.map((entry) => entry[0]), [
+        'Failed to create application-outcome notification',
+        'Job offer email notification failed:'
+    ]);
 });
 
 test('US-26: non-Error notification failures are classified without exposing details', async (t) => {
@@ -356,6 +425,7 @@ test('US-26: notification dedupe returning null is not logged as a failure', asy
     assert.equal(notifications.length, 1);
     assert.equal(outcomes.size, 1);
     assert.deepEqual(logs, []);
+    assert.equal(emails.length, 1);
 });
 
 test('US-26: unexpected persisted status is caught after commit without sending an incorrect notification', async (t) => {
@@ -368,6 +438,7 @@ test('US-26: unexpected persisted status is caught after commit without sending 
     assert.equal(applications.get(applicationId)!.status, 'offered');
     assert.deepEqual(events, ['outcome-insert', 'application-update', 'commit']);
     assert.deepEqual(notifications, []);
+    assert.deepEqual(emails, []);
     assert.deepEqual(logs, [['Failed to create application-outcome notification', {
         applicationId, outcomeId, recipientId: applicantId, status: 'unexpected',
         dedupeKey: `application_outcome:${outcomeId}:${applicantId}`, errorName: 'Error'
@@ -379,6 +450,7 @@ test('US-26: notification type follows the returned persisted decision', async (
     await decide();
     assert.equal(notifications[0].type, 'application_rejected');
     assert.equal(notifications[0].message, `Your application for "${jobTitle}" was rejected.`);
+    assert.deepEqual(emails, []);
 });
 
 test('US-26: decisions for different applicants remain isolated', async () => {

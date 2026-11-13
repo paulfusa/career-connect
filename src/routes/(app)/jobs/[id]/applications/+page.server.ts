@@ -9,6 +9,7 @@ import { findOwnedApplication, saveOutcome } from '$lib/server/outcomes';
 import { needsReminder } from '$lib/server/reminders';
 import { notificationService } from '$lib/server/notifications-db';
 import type { Actions, PageServerLoad } from './$types';
+import { sendJobOfferEmail } from '$lib/server/email';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -76,7 +77,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 
 export const actions: Actions = {
     // US-03: the recruiter sends an offer or a rejection to one applicant
-    decide: async ({ request, locals }) => {
+    decide: async ({ request, locals, url }) => {
         const me = locals.user;
 
         if (!me || me.role !== 'recruiter') {
@@ -103,7 +104,10 @@ export const actions: Actions = {
         const saved = await saveOutcome(applicationId, parsed.values);
 
         if (!saved) {
-            return fail(400, { applicationId, error: 'A decision was already sent for this application.' });
+            return fail(400, {
+                applicationId,
+                error: 'A decision was already sent for this application.'
+            });
         }
 
         const dedupeKey = `application_outcome:${saved.id}:${owned.userId}`;
@@ -137,8 +141,31 @@ export const actions: Actions = {
             });
         }
 
+        // Send an email only when a job offer is created.
+        if (saved.status === 'offered') {
+            try {
+                const [applicant] = await db
+                    .select({ email: user.email })
+                    .from(application)
+                    .innerJoin(user, eq(application.userId, user.id))
+                    .where(eq(application.id, applicationId));
+
+                if (applicant) {
+                    const offerUrl = new URL('/applications', url.origin).toString();
+
+                    await sendJobOfferEmail(
+                        applicant.email,
+                        offerUrl
+                    );
+                }
+            } catch (err) {
+                console.error('Job offer email notification failed:', err);
+            }
+        }
+
         return { applicationId, success: 'Decision sent to the applicant.' };
     },
+
 
     // US-20: the recruiter moves an application to Under Review or Interview
     updateStatus: async ({ params, locals, request }) => {
