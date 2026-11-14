@@ -29,8 +29,8 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 	// open only is the opposite of isClosed: status is open, and there's no deadline or it hasn't passed yet
 	if (search.openOnly) conditions.push(and(eq(jobPosting.status, 'open'), or(isNull(jobPosting.applicationDeadline), gte(jobPosting.applicationDeadline, today))));
 
-	// what to sort by first, newest first is always the tie-breaker.
-	// For the deadline, upcoming ones come before passed ones, and jobs with no deadline go last
+	// what to sort by first, and if two jobs tie the newest comes first.
+	// By deadline: upcoming ones first, then passed ones, then jobs with no deadline
 	const sortBy =
 		search.sort === 'deadline'
 			? [sql`${jobPosting.applicationDeadline} < ${today}`, asc(jobPosting.applicationDeadline)]
