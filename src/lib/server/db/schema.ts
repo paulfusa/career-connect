@@ -182,6 +182,22 @@ export const notification = pgTable(
 	]
 );
 
+// US-19: who follows whom. One row per pair, and nobody can follow themselves
+export const follow = pgTable(
+	'follow',
+	{
+		id: uuid('id').primaryKey().defaultRandom(),
+		followerId: text('follower_id')
+			.notNull()
+			.references(() => user.id, { onDelete: 'cascade' }),
+		followingId: text('following_id')
+			.notNull()
+			.references(() => user.id, { onDelete: 'cascade' }),
+		createdAt: timestamp('created_at').defaultNow().notNull()
+	},
+	(t) => [unique('follow_pair_unique').on(t.followerId, t.followingId), index('follow_following_id_idx').on(t.followingId), check('follow_not_self', sql`${t.followerId} <> ${t.followingId}`)]
+);
+
 export type Profile = typeof profile.$inferSelect;
 export type Notification = typeof notification.$inferSelect;
 export type Resume = typeof resume.$inferSelect;
@@ -190,6 +206,7 @@ export type Education = typeof education.$inferSelect;
 export type JobPosting = typeof jobPosting.$inferSelect;
 export type Application = typeof application.$inferSelect;
 export type ApplicationOutcome = typeof applicationOutcome.$inferSelect;
+export type Follow = typeof follow.$inferSelect;
 
 export * from './auth.schema';
 export type CompanyProfile = typeof companyProfile.$inferSelect;

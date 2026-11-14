@@ -18,6 +18,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 		.select({
 			posting: jobPosting,
 			creatorName: user.name,
+			creatorImage: user.image,
 			companyProfile: companyProfile
 		})
 		.from(jobPosting)
