@@ -22,7 +22,7 @@ registerHooks({
 	load(url, context, next) {
 		const fakes: Record<string, string> = {
 			'fake:notification-ui:$app/forms': 'export const enhance = () => ({ destroy() {} });',
-			'fake:notification-ui:$app/navigation': 'export const invalidate = async () => {};',
+			'fake:notification-ui:$app/navigation': 'export const invalidate = async () => {}; export const afterNavigate = () => {}; export const preloadData = async () => { throw new Error("SSR must not load a preview"); };',
 			'fake:notification-ui:$app/state': 'export const page = { url: new URL("http://localhost/notifications") };'
 		};
 		if (url in fakes) return { format: 'module', source: fakes[url], shortCircuit: true };
@@ -83,10 +83,16 @@ test('notification time: uses Toronto rather than the machine timezone', () => {
 
 test('notification bell: zero, unread, capped and unavailable badges have semantic labels', () => {
 	for (const count of [0, 3, 123, null]) {
-		const html = render(Bell, { props: { unreadCount: count, current: true } }).body;
+		const html = render(Bell, { props: { unreadCount: count, ownerId: user.id } }).body;
 		assert.match(html, /href="\/notifications"/);
 		assert.match(html, /data-sveltekit-reload/);
-		assert.match(html, /aria-current="page"/);
+		assert.match(html, /<button[^>]*type="button"[^>]*aria-label="Notifications,/);
+		assert.match(html, /aria-expanded="false"/);
+		assert.match(html, /aria-controls="notification-preview-[^"]+"/);
+		assert.match(html, /<section[^>]*hidden[^>]*aria-label="Latest notifications"/);
+		assert.ok(html.includes('Close notifications'));
+		assert.ok(html.includes('View all notifications'));
+		assert.doesNotMatch(html, /<span>Notifications<\/span>/);
 		assert.match(html, /aria-hidden="true"/);
 		assert.match(html, /min-h-11/);
 		assert.ok(html.includes(count === null ? 'unread count unavailable' : `${count} unread`));
@@ -157,13 +163,18 @@ test('notification inbox: action failures are accessible without exposing intern
 	assert.ok(html.includes(item.message));
 });
 
-test('notification layout: both role navigations retain logout and expose the bell with mobile wrapping', () => {
+test('notification layout: both roles expose one header bell independently of wrapping navigation', () => {
 	const children = createRawSnippet(() => ({ render: () => '<p>INBOX_CHILD</p>' }));
 	for (const role of ['job_seeker', 'recruiter']) {
 		const html = render(Layout, { props: { data: data({ user: { ...user, role } }) as never, children, params: {} } }).body;
 		assert.ok(html.includes('Main navigation'));
 		assert.ok(html.includes('flex-wrap'));
 		assert.ok(html.includes('Notifications'));
+		const header = html.match(/<header[\s\S]*?<\/header>/)?.[0] ?? '';
+		const nav = html.match(/<nav[\s\S]*?<\/nav>/)?.[0] ?? '';
+		assert.match(header, /Career[\s\S]*aria-label="Notifications, 1 unread"/);
+		assert.doesNotMatch(nav, /Notifications|notification-preview/);
+		assert.equal((html.match(/aria-expanded="false"/g) ?? []).length, 1);
 		assert.ok(html.includes('action="/logout"'));
 		assert.ok(html.includes('INBOX_CHILD'));
 		assert.equal(html.includes('My Applications'), role === 'job_seeker');

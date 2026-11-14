@@ -50,11 +50,18 @@
 
 {#key data.user.id}
 <div class="mx-auto grid max-w-6xl gap-6 px-4 py-6 md:grid-cols-[17rem_minmax(0,1fr)] md:gap-8 md:py-10">
-	<aside class="app-sidebar md:sticky md:top-10 md:self-start">
-		<a href="/" class="mb-5 inline-block font-display text-2xl font-semibold tracking-tight">
+	<header class="relative z-20 col-span-full flex min-w-0 items-center justify-between gap-3">
+		<a href="/" class="min-w-0 font-display text-2xl font-semibold tracking-tight">
 			Career<span class="text-tide">Connect</span>
 		</a>
+		<NotificationBell
+			unreadCount={notificationContextValid ? data.notificationUnreadCount : null}
+			ownerId={data.user.id}
+			contextValid={notificationContextValid}
+		/>
+	</header>
 
+	<aside class="app-sidebar md:sticky md:top-10 md:self-start">
 		<section class="{glassPanel} p-5">
 			<div class="flex items-center gap-4 md:flex-col md:items-start">
 				<Avatar name={data.user.name} image={data.user.image} />
@@ -82,7 +89,6 @@
 						{item.label}
 					</a>
 				{/each}
-				<NotificationBell unreadCount={notificationContextValid ? data.notificationUnreadCount : null} current={page.url.pathname === '/notifications'} />
 			</nav>
 
 			<form method="post" action="/logout" onsubmit={() => { signingOutUserId = data.user.id; }} class="mt-4 border-t border-white/60 pt-4">
