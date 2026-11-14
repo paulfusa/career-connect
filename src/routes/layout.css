@@ -17,6 +17,13 @@
 
 body {
 	@apply bg-mist font-sans text-ink antialiased;
+	/* long words and links with no spaces go to the next line instead of spilling out of their box */
+	overflow-wrap: anywhere;
+}
+
+/* but buttons keep their words whole */
+button {
+	overflow-wrap: normal;
 }
 
 /* Page transitions: content fades and lifts slightly; the account card stays put */
