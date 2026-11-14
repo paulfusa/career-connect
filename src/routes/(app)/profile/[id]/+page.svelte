@@ -17,7 +17,8 @@
 			{data.followers === 1 ? 'follower' : 'followers'}
 		</p>
 		<form method="POST" action={data.following ? '?/unfollow' : '?/follow'} use:enhance>
-			<button type="submit" class={data.following ? secondaryButton : primaryButton}>
+			<!-- same width for Follow and Unfollow so the button doesn't jump when you click it -->
+			<button type="submit" class={data.following ? `${secondaryButton} min-w-28` : `${primaryButton} min-w-28 px-6`}>
 				{data.following ? 'Unfollow' : 'Follow'}
 			</button>
 		</form>
