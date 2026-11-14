@@ -47,7 +47,7 @@
 		<input name="keyword" value={data.search.keyword} placeholder="Job title or description" class={field} />
 	</label>
 
-	<!-- US-28: suggestions like on the posting form. {#key} makes a fresh box when the search changes, so Clear search empties it -->
+	<!-- US-28: same suggestions as the posting form. {#key} resets the box when the search changes, so Clear search empties it -->
 	<label class="block">
 		<span class={label}>Company</span>
 		{#key data.search.company}

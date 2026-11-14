@@ -20,7 +20,7 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 	if (search.employmentType) conditions.push(eq(jobPosting.employmentType, search.employmentType));
 	if (search.workMode) conditions.push(eq(jobPosting.workMode, search.workMode));
 
-	// US-28: the job's minimum salary has to be the same or higher than what you typed, jobs with no minimum salary drop out
+	// US-28: only jobs whose minimum salary is at least what you typed (no minimum salary = hidden)
 	if (search.minSalary) conditions.push(gte(jobPosting.salaryMin, Number(search.minSalary)));
 
 	const after = postedAfter(search.postedWithin, new Date());
@@ -29,14 +29,15 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 	// open only is the opposite of isClosed: status is open, and there's no deadline or it hasn't passed yet
 	if (search.openOnly) conditions.push(and(eq(jobPosting.status, 'open'), or(isNull(jobPosting.applicationDeadline), gte(jobPosting.applicationDeadline, today))));
 
-	// what to sort by first, and if two jobs tie the newest comes first.
-	// By deadline: upcoming ones first, then passed ones, then jobs with no deadline
-	const sortBy =
-		search.sort === 'deadline'
-			? [sql`${jobPosting.applicationDeadline} < ${today}`, asc(jobPosting.applicationDeadline)]
-			: search.sort === 'salary'
-				? [sql`coalesce(${jobPosting.salaryMax}, ${jobPosting.salaryMin}) desc nulls last`]
-				: [];
+	// sorting (if two jobs tie, the newest one still comes first)
+	let sortBy: SQL[] = [];
+	if (search.sort === 'deadline') {
+		// upcoming deadlines first, then the ones that passed, then jobs with no deadline
+		sortBy = [sql`${jobPosting.applicationDeadline} < ${today}`, asc(jobPosting.applicationDeadline)];
+	} else if (search.sort === 'salary') {
+		// highest salary first, jobs with no salary at the end
+		sortBy = [sql`coalesce(${jobPosting.salaryMax}, ${jobPosting.salaryMin}) desc nulls last`];
+	}
 
 	const postings = await db
 		.select()
