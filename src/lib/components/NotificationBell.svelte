@@ -74,7 +74,7 @@
 		aria-label={accessibleLabel}
 		aria-expanded={open}
 		aria-controls="notification-preview-{id}"
-		class="flex min-h-11 min-w-11 items-center justify-center gap-1.5 rounded-xl px-2 text-ink/70 transition hover:bg-white/60 hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tide"
+		class="flex min-h-11 min-w-11 items-center justify-center gap-1.5 rounded-xl px-2 text-ink/70 transition hover:bg-white/60 hover:text-ink dark:hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tide"
 	>
 		<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" class="size-5 shrink-0" aria-hidden="true">
 			<path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" stroke-linecap="round" stroke-linejoin="round" />
@@ -90,11 +90,11 @@
 		id="notification-preview-{id}"
 		hidden={!open}
 		aria-label="Latest notifications"
-		class="absolute right-0 top-full mt-2 max-h-[min(28rem,calc(100dvh-8rem))] w-[min(22rem,calc(100vw-2rem))] overflow-y-auto overscroll-contain rounded-2xl border border-ink/10 bg-white shadow-xl"
+		class="absolute right-0 top-full mt-2 max-h-[min(28rem,calc(100dvh-8rem))] w-[min(22rem,calc(100vw-2rem))] overflow-y-auto overscroll-contain rounded-2xl border border-ink/10 bg-white shadow-xl dark:border-white/15 dark:bg-[#1b1b20]"
 	>
 		<div class="flex items-center justify-between gap-2 border-b border-ink/10 px-4 py-2">
 			<h2 class="font-display font-semibold">Notifications</h2>
-			<button type="button" onclick={() => close(true)} aria-label="Close notifications" class="min-h-11 min-w-11 rounded-lg text-xl text-ink/60 hover:bg-mist focus-visible:outline-2 focus-visible:outline-tide">×</button>
+			<button type="button" onclick={() => close(true)} aria-label="Close notifications" class="min-h-11 min-w-11 rounded-lg text-xl text-ink/60 hover:bg-mist dark:hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-tide">×</button>
 		</div>
 		<div aria-live="polite" aria-busy={loading}>
 			{#if !contextValid}
@@ -122,6 +122,6 @@
 				</ul>
 			{/if}
 		</div>
-		<a href="/notifications" data-sveltekit-reload data-sveltekit-preload-data="off" class="flex min-h-11 items-center justify-center border-t border-ink/10 px-4 py-3 text-sm font-semibold text-tide hover:bg-mist focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-tide">View all notifications</a>
+		<a href="/notifications" data-sveltekit-reload data-sveltekit-preload-data="off" class="flex min-h-11 items-center justify-center border-t border-ink/10 px-4 py-3 text-sm font-semibold text-tide hover:bg-mist dark:hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-tide">View all notifications</a>
 	</section>
 </div>

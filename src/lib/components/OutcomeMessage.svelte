@@ -17,8 +17,12 @@
 	const formatDateTime = (value: Date) =>
 		`${value.toLocaleString('en-CA', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'America/Toronto' })} ET`;
 </script>
-
-<section class="{glassPanel} p-6">
+<section
+    class="{glassPanel} p-6
+        {status === 'offered'
+            ? 'border-emerald-200/70 dark:border-emerald-800/40 dark:bg-emerald-950/10'
+            : 'border-rose-200/70 dark:border-rose-800/40 dark:bg-rose-950/10'}"
+>
 	<div class="flex flex-wrap items-center justify-between gap-3">
 		{#if status === 'offered'}
 			<span

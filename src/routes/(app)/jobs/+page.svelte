@@ -15,7 +15,7 @@
 
 <div class="flex flex-wrap items-end justify-between gap-4 md:mt-14">
 	<div>
-		<p class="text-sm font-medium uppercase tracking-widest text-tide-deep">CareerConnect</p>
+		<p class="text-sm font-medium uppercase tracking-widest text-tide-deep dark:text-tide">CareerConnect</p>
 		<h1 class="mt-1 font-display text-3xl font-semibold tracking-tight">{data.mine ? 'Your job postings' : 'Job postings'}</h1>
 	</div>
 	{#if data.user.role === 'recruiter'}
@@ -158,12 +158,12 @@
 						{WORK_MODES[posting.workMode as keyof typeof WORK_MODES] ?? posting.workMode}
 					</span>
 					{#if !posting.closed}
-						<span class="rounded-full bg-emerald-100 px-3 py-1 font-medium text-emerald-800">Open</span>
+						<span class="rounded-full bg-emerald-100 px-3 py-1 font-medium text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300">Open</span>
 					{:else}
-						<span class="rounded-full bg-rose-100 px-3 py-1 font-medium text-rose-800">Closed</span>
+						<span class="rounded-full bg-rose-100 px-3 py-1 font-medium text-rose-800 dark:bg-rose-950/50 dark:text-rose-300">Closed</span>
 					{/if}
 					{#if !posting.published}
-						<span class="rounded-full bg-amber-100 px-3 py-1 font-medium text-amber-800">Draft</span>
+						<span class="rounded-full bg-amber-100 px-3 py-1 font-medium text-amber-800 dark:bg-amber-950/50 dark:text-amber-300">Draft</span>
 					{/if}
 					<!-- US-19: the recruiter's photo, click it to open their profile -->
 					{#if data.user.role === 'job_seeker'}
@@ -198,16 +198,16 @@
 			{#if searching}
 				<h2 class="font-display text-xl font-semibold">No jobs match your search</h2>
 				<p class="mt-2 text-ink/60">Try different words or fewer filters.</p>
-				<a href={data.mine ? '/jobs?mine' : '/jobs'} class="mt-5 inline-block font-semibold text-tide-deep underline underline-offset-4">Clear search</a>
+				<a href={data.mine ? '/jobs?mine' : '/jobs'} class="mt-5 inline-block font-semibold text-tide-deep dark:text-tide underline underline-offset-4">Clear search</a>
 			{:else if data.mine}
 				<h2 class="font-display text-xl font-semibold">You haven’t posted any jobs yet</h2>
 				<p class="mt-2 text-ink/60">Postings you create will be listed here.</p>
-				<a href="/jobs/new" class="mt-5 inline-block font-semibold text-tide-deep underline underline-offset-4">Create your first posting</a>
+				<a href="/jobs/new" class="mt-5 inline-block font-semibold text-tide-deep dark:text-tide underline underline-offset-4">Create your first posting</a>
 			{:else}
 				<h2 class="font-display text-xl font-semibold">No job postings yet</h2>
 				<p class="mt-2 text-ink/60">New opportunities will appear here when recruiters post them.</p>
 				{#if data.user.role === 'recruiter'}
-					<a href="/jobs/new" class="mt-5 inline-block font-semibold text-tide-deep underline underline-offset-4">Create the first posting</a>
+					<a href="/jobs/new" class="mt-5 inline-block font-semibold text-tide-deep dark:text-tide underline underline-offset-4">Create the first posting</a>
 				{/if}
 			{/if}
 		</div>

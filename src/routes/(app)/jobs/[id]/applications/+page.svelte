@@ -25,7 +25,7 @@
 <div class="md:mt-14">
     <a
         href="/jobs/{data.posting.id}"
-        class="text-sm font-medium text-tide-deep hover:underline"
+        class="text-sm font-medium text-tide-deep dark:text-tide hover:underline"
     >
         ← Back to job posting
     </a>
@@ -33,7 +33,7 @@
     <div class="{glassPanel} mt-5 p-6 sm:p-9">
         <div class="flex flex-wrap items-center justify-between gap-4">
             <div>
-                <p class="text-sm font-medium uppercase tracking-widest text-tide-deep">
+                <p class="text-sm font-medium uppercase tracking-widest text-tide-deep dark:text-tide">
                     {data.posting.company}
                 </p>
                 <h1 class="mt-2 font-display text-3xl font-semibold">
@@ -142,8 +142,23 @@
                                 Resume: {applicant.resumeName}
                             </p>
                         {/if}
-
-                        <p class="mt-3 text-sm font-medium">Status: {APPLICATION_STATUSES[applicant.status]}</p>
+                        <p class="mt-3 text-sm font-medium">
+                            Status:
+                            <span
+                                class="ml-1 inline-flex rounded-full px-3 py-1 text-xs font-semibold
+                                    {applicant.status === 'offered'
+                                        ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300'
+                                        : applicant.status === 'rejected'
+                                            ? 'bg-rose-100 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300'
+                                            : applicant.status === 'interview'
+                                                ? 'bg-sky-100 text-sky-800 dark:bg-sky-950/60 dark:text-sky-300'
+                                                : applicant.status === 'under_review'
+                                                    ? 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300'
+                                                    : 'bg-slate-100 text-slate-700 dark:bg-white/10 dark:text-zinc-300'}"
+                            >
+                                {APPLICATION_STATUSES[applicant.status]}
+                            </span>
+                        </p>
                         <!-- US-20: Under Review and Interview; offers and rejections go through the decision form below -->
                         {#if !applicant.outcome && applicant.status !== 'offered' && applicant.status !== 'rejected'}
                             <form method="POST" action="?/updateStatus" use:enhance class="mt-4 flex flex-wrap items-end gap-3">

@@ -70,8 +70,24 @@
 	{/if}
 
 	<p class="text-sm text-ink/60">Once sent, a decision can't be changed.</p>
-
-	<button type="submit" disabled={pending} class="{primaryButton} sm:w-auto sm:px-6">
-		{pending ? 'Sending…' : 'Send decision'}
+	<button
+		type="submit"
+		disabled={pending}
+		class="rounded-xl px-6 py-3 font-semibold transition
+			disabled:cursor-not-allowed disabled:opacity-50
+			{status === 'offered'
+				? 'bg-emerald-600 text-white hover:bg-emerald-700 dark:bg-emerald-700 dark:hover:bg-emerald-600'
+				: status === 'rejected'
+					? 'bg-rose-600 text-white hover:bg-rose-700 dark:bg-rose-700 dark:hover:bg-rose-600'
+					: primaryButton}
+			sm:w-auto"
+	>
+		{pending
+			? 'Sending…'
+			: status === 'offered'
+				? 'Send offer'
+				: status === 'rejected'
+					? 'Send rejection'
+					: 'Send decision'}
 	</button>
 </form>
