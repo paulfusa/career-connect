@@ -19,23 +19,24 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 	// same 404 for "not allowed" and "doesn't exist", so ids can't be probed
 	if (!row || !canSeeProfile(me.role, row.role)) error(404, 'Profile not found');
 
-	const [entries, [followers], [mine], jobs] = await Promise.all([
-		loadEntries(params.id),
-		db.select({ count: count() }).from(follow).where(eq(follow.followingId, params.id)),
-		db
-			.select({ id: follow.id })
-			.from(follow)
-			.where(and(eq(follow.followerId, me.id), eq(follow.followingId, params.id))),
-		// a recruiter's latest published jobs, so their followers can see what they post
+	const entries = await loadEntries(params.id);
+	const [followers] = await db.select({ count: count() }).from(follow).where(eq(follow.followingId, params.id));
+	// do I already follow them?
+	const [mine] = await db
+		.select({ id: follow.id })
+		.from(follow)
+		.where(and(eq(follow.followerId, me.id), eq(follow.followingId, params.id)));
+
+	// a recruiter's latest published jobs, so their followers can see what they post
+	const jobs =
 		row.role === 'recruiter'
-			? db
+			? await db
 					.select({ id: jobPosting.id, title: jobPosting.title, location: jobPosting.location, createdAt: jobPosting.createdAt })
 					.from(jobPosting)
 					.where(and(eq(jobPosting.createdBy, params.id), eq(jobPosting.published, true)))
 					.orderBy(desc(jobPosting.createdAt))
 					.limit(5)
-			: Promise.resolve([])
-	]);
+			: [];
 
 	const { profile: target, ...account } = row;
 	return { target: account, targetProfile: target, ...entries, followers: followers.count, following: !!mine, jobs };

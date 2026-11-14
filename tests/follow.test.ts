@@ -2,7 +2,7 @@ import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { registerHooks } from 'node:module';
 import { PgDialect } from 'drizzle-orm/pg-core';
-import { getTableName, type SQL } from 'drizzle-orm';
+import { getTableName, type SQL, type Table } from 'drizzle-orm';
 import { isHttpError, isRedirect } from '@sveltejs/kit';
 
 // US-19: tests the real profile and Following pages with a fake database, so nothing touches Supabase.
@@ -43,7 +43,7 @@ const db = {
         const call: Select = { table: '', fields: Object.keys(fields), joins: [] };
         selects.push(call);
         const query = {
-            from(table: Parameters<typeof getTableName>[0]) { call.table = getTableName(table); return query; },
+            from(table: Table) { call.table = getTableName(table); return query; },
             innerJoin() { return query; },
             leftJoin(_table: unknown, condition: SQL) { call.joins.push(condition); return query; },
             where(condition: SQL) { call.where = condition; return query; },
@@ -55,7 +55,7 @@ const db = {
         };
         return query;
     },
-    insert(table: Parameters<typeof getTableName>[0]) {
+    insert(table: Table) {
         const record: (typeof inserts)[number] = { table: getTableName(table), values: {} };
         const query = {
             values(values: Record<string, unknown>) { record.values = values; inserts.push(record); return query; },
@@ -64,7 +64,7 @@ const db = {
         };
         return query;
     },
-    delete(table: Parameters<typeof getTableName>[0]) {
+    delete(table: Table) {
         return { where(condition: SQL) { deletes.push({ table: getTableName(table), where: condition }); return Promise.resolve(); } };
     }
 };
