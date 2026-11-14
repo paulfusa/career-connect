@@ -10,6 +10,7 @@ export type JobSearch = {
     postedWithin: string;
     openOnly: string;
     sort: string;
+    following: string;
 };
 
 export function parseJobSearch(params: URLSearchParams): JobSearch {
@@ -31,6 +32,8 @@ export function parseJobSearch(params: URLSearchParams): JobSearch {
         minSalary: /^\d{1,7}$/.test(minSalary) ? minSalary : '',
         // a ticked checkbox sends 'on', an unticked one sends nothing
         openOnly: params.get('openOnly') === 'on' ? 'on' : '',
+        // US-19: only jobs from recruiters you follow
+        following: params.get('following') === 'on' ? 'on' : '',
     };
 }
 

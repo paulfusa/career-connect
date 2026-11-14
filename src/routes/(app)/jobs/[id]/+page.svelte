@@ -37,7 +37,15 @@
 				<div class="min-w-0">
 					<p class="text-sm font-medium uppercase tracking-widest text-tide-deep">{posting.company}</p>
 					<h1 class="mt-2 font-display text-3xl font-semibold tracking-tight">{posting.title}</h1>
-					<p class="mt-2 text-ink/65">{posting.location} <span aria-hidden="true">·</span> Posted by {data.creatorName}</p>
+					<p class="mt-2 text-ink/65">
+						{posting.location} <span aria-hidden="true">·</span> Posted by
+						<!-- US-19: job seekers open the recruiter's profile from here to follow them -->
+						{#if data.user.role === 'job_seeker'}
+							<a href="/profile/{posting.createdBy}" class="font-medium text-tide-deep hover:underline">{data.creatorName}</a>
+						{:else}
+							{data.creatorName}
+						{/if}
+					</p>
 				</div>
 			</div>
 	{#if data.isOwner}

@@ -113,6 +113,14 @@
 		<span class="text-sm font-medium">Open jobs only</span>
 	</label>
 
+	<!-- US-19: only job seekers follow recruiters, so only they get this filter -->
+	{#if data.user.role === 'job_seeker'}
+		<label class="flex items-center gap-2.5 self-end pb-3">
+			<input type="checkbox" name="following" checked={data.search.following === 'on'} class="size-5 rounded border-white text-tide focus:ring-tide/30" />
+			<span class="text-sm font-medium">From people I follow</span>
+		</label>
+	{/if}
+
 	<div class="flex items-end">
 		<button type="submit" class={primaryButton}>Search</button>
 	</div>

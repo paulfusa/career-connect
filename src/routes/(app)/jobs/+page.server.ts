@@ -1,6 +1,6 @@
 import { and, asc, desc, eq, gte, ilike, isNull, or, sql, type SQL } from 'drizzle-orm';
 import { db } from '$lib/server/db';
-import { jobPosting } from '$lib/server/db/schema';
+import { follow, jobPosting } from '$lib/server/db/schema';
 import type { PageServerLoad } from './$types';
 import { parseJobSearch, postedAfter } from '$lib/server/job-search';
 import { isClosed } from '$lib/server/job-posting';
@@ -28,6 +28,11 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 
 	// open only is the opposite of isClosed: status is open, and there's no deadline or it hasn't passed yet
 	if (search.openOnly) conditions.push(and(eq(jobPosting.status, 'open'), or(isNull(jobPosting.applicationDeadline), gte(jobPosting.applicationDeadline, today))));
+
+	// US-19: only jobs posted by people you follow
+	if (search.following) {
+		conditions.push(sql`${jobPosting.createdBy} in (select ${follow.followingId} from ${follow} where ${follow.followerId} = ${locals.user!.id})`);
+	}
 
 	// sorting (if two jobs tie, the newest one still comes first)
 	let sortBy: SQL[] = [];

@@ -80,7 +80,8 @@
                         <div class="flex flex-wrap items-start justify-between gap-4">
                             <div class="min-w-0">
                                 <h2 class="font-display text-lg font-semibold">
-                                    {applicant.applicantName}
+                                    <!-- US-19: recruiters open the applicant's profile from here to follow them -->
+                                    <a href="/profile/{applicant.applicantId}" class="text-tide-deep hover:underline">{applicant.applicantName}</a>
                                 </h2>
 
                                 <p class="mt-1 text-sm text-ink/65">

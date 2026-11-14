@@ -1,24 +1,66 @@
-import { error, redirect } from '@sveltejs/kit';
-import { eq } from 'drizzle-orm';
+import { error, fail, redirect } from '@sveltejs/kit';
+import { and, count, desc, eq } from 'drizzle-orm';
 import { db } from '$lib/server/db';
-import { profile, user } from '$lib/server/db/schema';
+import { follow, jobPosting, profile, user } from '$lib/server/db/schema';
+import { canSeeProfile, followProblem } from '$lib/server/follow';
 import { loadEntries } from '$lib/server/profile-data';
-import type { PageServerLoad } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 
-// US-04: recruiters can view job seekers' profiles; everyone else only has their own /profile.
+// US-04: recruiters can view job seekers' profiles. US-19: job seekers can also view recruiters', to follow them.
 export const load: PageServerLoad = async ({ params, locals }) => {
 	const me = locals.user!;
 	if (params.id === me.id) redirect(303, '/profile');
-	// same 404 for "not allowed" and "doesn't exist", so ids can't be probed
-	if (me.role !== 'recruiter') error(404, 'Profile not found');
 
 	const [row] = await db
 		.select({ name: user.name, email: user.email, image: user.image, role: user.role, profile })
 		.from(user)
 		.leftJoin(profile, eq(profile.userId, user.id))
 		.where(eq(user.id, params.id));
-	if (!row || row.role !== 'job_seeker') error(404, 'Profile not found');
+	// same 404 for "not allowed" and "doesn't exist", so ids can't be probed
+	if (!row || !canSeeProfile(me.role, row.role)) error(404, 'Profile not found');
+
+	const [entries, [followers], [mine], jobs] = await Promise.all([
+		loadEntries(params.id),
+		db.select({ count: count() }).from(follow).where(eq(follow.followingId, params.id)),
+		db
+			.select({ id: follow.id })
+			.from(follow)
+			.where(and(eq(follow.followerId, me.id), eq(follow.followingId, params.id))),
+		// a recruiter's latest published jobs, so their followers can see what they post
+		row.role === 'recruiter'
+			? db
+					.select({ id: jobPosting.id, title: jobPosting.title, location: jobPosting.location, createdAt: jobPosting.createdAt })
+					.from(jobPosting)
+					.where(and(eq(jobPosting.createdBy, params.id), eq(jobPosting.published, true)))
+					.orderBy(desc(jobPosting.createdAt))
+					.limit(5)
+			: Promise.resolve([])
+	]);
 
 	const { profile: target, ...account } = row;
-	return { target: account, targetProfile: target, ...(await loadEntries(params.id)) };
+	return { target: account, targetProfile: target, ...entries, followers: followers.count, following: !!mine, jobs };
+};
+
+export const actions: Actions = {
+	follow: async ({ params, locals }) => {
+		const me = locals.user!;
+		const [target] = await db.select({ id: user.id, role: user.role }).from(user).where(eq(user.id, params.id));
+		const problem = followProblem(me, target);
+		if (problem) return fail(400, { message: problem });
+
+		// the unique pair stops a double click from following twice
+		const [added] = await db
+			.insert(follow)
+			.values({ followerId: me.id, followingId: params.id })
+			.onConflictDoNothing({ target: [follow.followerId, follow.followingId] })
+			.returning({ id: follow.id });
+		if (!added) return fail(400, { message: 'You already follow this person.' });
+		return { success: 'You now follow this person.' };
+	},
+
+	// only ever removes your own follow
+	unfollow: async ({ params, locals }) => {
+		await db.delete(follow).where(and(eq(follow.followerId, locals.user!.id), eq(follow.followingId, params.id)));
+		return { success: 'You no longer follow this person.' };
+	}
 };

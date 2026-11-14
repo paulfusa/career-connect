@@ -1,9 +1,9 @@
 import { fail, redirect } from '@sveltejs/kit';
 import { APIError } from 'better-auth/api';
-import { and, desc, eq } from 'drizzle-orm';
+import { and, count, desc, eq } from 'drizzle-orm';
 import { auth } from '$lib/server/auth';
 import { db } from '$lib/server/db';
-import { education, experience, profile, resume, user } from '$lib/server/db/schema';
+import { education, experience, follow, profile, resume, user } from '$lib/server/db/schema';
 import { loadEntries } from '$lib/server/profile-data';
 import {
 	parseAbout,
@@ -32,8 +32,20 @@ const ownResumes = (userId: string) =>
 		.orderBy(desc(resume.updatedAt));
 
 export const load: PageServerLoad = async ({ locals }) => {
-	const [entries, resumes] = await Promise.all([loadEntries(locals.user!.id), ownResumes(locals.user!.id)]);
-	return { ...entries, resumes: resumes.map(({ id, fileName }) => ({ id, fileName })) };
+	const me = locals.user!.id;
+	const [entries, resumes, [followers], [following]] = await Promise.all([
+		loadEntries(me),
+		ownResumes(me),
+		// US-19: how many people follow you, and how many you follow
+		db.select({ count: count() }).from(follow).where(eq(follow.followingId, me)),
+		db.select({ count: count() }).from(follow).where(eq(follow.followerId, me))
+	]);
+	return {
+		...entries,
+		resumes: resumes.map(({ id, fileName }) => ({ id, fileName })),
+		followers: followers.count,
+		following: following.count
+	};
 };
 
 type ProfileFields = Partial<Omit<typeof profile.$inferInsert, 'userId' | 'updatedAt'>>;

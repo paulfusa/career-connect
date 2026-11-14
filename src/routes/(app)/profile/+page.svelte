@@ -58,6 +58,13 @@
 			</div>
 		</div>
 	{/if}
+	<!-- US-19 -->
+	<p class="mt-5 text-sm text-ink/70">
+		<span class="font-semibold text-ink">{data.followers}</span>
+		{data.followers === 1 ? 'follower' : 'followers'}
+		<span aria-hidden="true">·</span>
+		<a href="/following" class="hover:text-tide hover:underline"><span class="font-semibold text-ink">{data.following}</span> following</a>
+	</p>
 {/snippet}
 
 <div class="space-y-5 md:mt-14">
