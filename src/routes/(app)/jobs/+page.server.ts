@@ -1,8 +1,8 @@
-import { and, desc, eq, ilike, or, type SQL } from 'drizzle-orm';
+import { and, asc, desc, eq, gte, ilike, isNull, or, sql, type SQL } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import { jobPosting } from '$lib/server/db/schema';
 import type { PageServerLoad } from './$types';
-import { parseJobSearch } from '$lib/server/job-search';
+import { parseJobSearch, postedAfter } from '$lib/server/job-search';
 import { isClosed } from '$lib/server/job-posting';
 import { todayEastern } from '$lib/server/application';
 
@@ -10,6 +10,7 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 	// /jobs?mine shows a recruiter only the postings they created; job seekers always get the full list
 	const mine = locals.user!.role === 'recruiter' && url.searchParams.has('mine');
 	const search = parseJobSearch(url.searchParams);
+	const today = todayEastern();
 	const conditions: (SQL | undefined)[] = [
 		mine ? eq(jobPosting.createdBy, locals.user!.id) : or(eq(jobPosting.published, true), eq(jobPosting.createdBy, locals.user!.id))
 	];
@@ -18,12 +19,31 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 	if (search.location) conditions.push(ilike(jobPosting.location, `%${search.location}%`));
 	if (search.employmentType) conditions.push(eq(jobPosting.employmentType, search.employmentType));
 	if (search.workMode) conditions.push(eq(jobPosting.workMode, search.workMode));
+
+	// US-28: only jobs whose minimum salary is at least what you typed (no minimum salary = hidden)
+	if (search.minSalary) conditions.push(gte(jobPosting.salaryMin, Number(search.minSalary)));
+
+	const after = postedAfter(search.postedWithin, new Date());
+	if (after) conditions.push(gte(jobPosting.createdAt, after));
+
+	// open only is the opposite of isClosed: status is open, and there's no deadline or it hasn't passed yet
+	if (search.openOnly) conditions.push(and(eq(jobPosting.status, 'open'), or(isNull(jobPosting.applicationDeadline), gte(jobPosting.applicationDeadline, today))));
+
+	// sorting (if two jobs tie, the newest one still comes first)
+	let sortBy: SQL[] = [];
+	if (search.sort === 'deadline') {
+		// upcoming deadlines first, then the ones that passed, then jobs with no deadline
+		sortBy = [sql`${jobPosting.applicationDeadline} < ${today}`, asc(jobPosting.applicationDeadline)];
+	} else if (search.sort === 'salary') {
+		// highest salary first, jobs with no salary at the end
+		sortBy = [sql`coalesce(${jobPosting.salaryMax}, ${jobPosting.salaryMin}) desc nulls last`];
+	}
+
 	const postings = await db
 		.select()
 		.from(jobPosting)
 		.where(and(...conditions))
-		.orderBy(desc(jobPosting.createdAt));
-	const today = todayEastern();
+		.orderBy(...sortBy, desc(jobPosting.createdAt));
 	// US-05: past-deadline jobs show as Closed too
 	return { postings: postings.map((posting) => ({ ...posting, closed: isClosed(posting, today) })), mine, search };
 };

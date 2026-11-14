@@ -37,6 +37,18 @@ export const WORK_MODES = {
 	remote: 'Remote'
 } as const;
 
+// US-28: job search choices, the key is what goes in the URL (days for the date posted)
+export const POSTED_WITHIN = {
+	'1': 'Last 24 hours',
+	'7': 'Last 7 days',
+	'30': 'Last 30 days'
+} as const;
+
+export const JOB_SORTS = {
+	deadline: 'Closest deadline',
+	salary: 'Highest salary'
+} as const;
+
 // US-15/US-20: application statuses, new applications start as applied
 export const APPLICATION_STATUSES = {
 	applied: 'Applied',
