@@ -163,6 +163,25 @@ export const applicationOutcome = pgTable('application_outcome', {
 	createdAt: timestamp('created_at').defaultNow().notNull()
 });
 
+// US-26: persistent in-app notifications for job seekers and recruiters
+export const notification = pgTable(
+	'notification',
+	{
+		id: uuid('id').primaryKey().defaultRandom(),
+		userId: userId(),
+		type: text('type').notNull(),
+		title: text('title').notNull(),
+		message: text('message').notNull(),
+		link: text('link'),
+		readAt: timestamp('read_at'),
+		createdAt: timestamp('created_at').defaultNow().notNull(),
+		dedupeKey: text('dedupe_key').unique()
+	},
+	(t) => [
+		index('notification_user_id_created_at_idx').on(t.userId, t.createdAt.desc())
+	]
+);
+
 // US-19: who follows whom. One row per pair, and nobody can follow themselves
 export const follow = pgTable(
 	'follow',
@@ -180,6 +199,7 @@ export const follow = pgTable(
 );
 
 export type Profile = typeof profile.$inferSelect;
+export type Notification = typeof notification.$inferSelect;
 export type Resume = typeof resume.$inferSelect;
 export type Experience = typeof experience.$inferSelect;
 export type Education = typeof education.$inferSelect;

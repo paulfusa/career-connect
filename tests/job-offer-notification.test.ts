@@ -24,6 +24,9 @@ registerHooks({
         if (specifier === '$lib/server/email')
             return { url: 'fake:offer-email', shortCircuit: true };
 
+        if (specifier === '$lib/server/notifications-db')
+            return { url: 'fake:offer-notifications', shortCircuit: true };
+
         if (specifier === '$lib/server/outcomes')
             return { url: 'fake:offer-outcomes', shortCircuit: true };
 
@@ -52,6 +55,13 @@ registerHooks({
     },
 
     load(url, context, next) {
+        if (url === 'fake:offer-notifications') {
+            return {
+                format: 'module',
+                source: 'export const notificationService = { createNotification: async () => null };',
+                shortCircuit: true
+            };
+        }
         if (url === 'fake:offer-db') {
             return {
                 format: 'module',
@@ -97,7 +107,7 @@ registerHooks({
                 format: 'module',
                 source: `
                     export async function findOwnedApplication() {
-                        return { id: 'owned-application' };
+                        return { id: 'owned-application', userId: 'applicant-1', jobTitle: 'Developer' };
                     }
 
                     export async function saveOutcome(id, values) {
@@ -108,7 +118,7 @@ registerHooks({
                             return undefined;
                         }
 
-                        return { status: state.savedStatus };
+                        return { id: 'outcome-1', applicationId: id, status: state.savedStatus };
                     }
                 `,
                 shortCircuit: true
@@ -167,7 +177,7 @@ test('job offer: sends exactly one email', async () => {
         state.emails[0].url,
         'http://localhost:5173/applications'
     );
-    assert.equal(result?.success, 'Decision saved successfully.');
+    assert.equal(result?.success, 'Decision sent to the applicant.');
 });
 
 // TEST 2
@@ -178,7 +188,7 @@ test('job rejection: does not send an email', async () => {
 
     assert.equal(state.saveCalls, 1);
     assert.equal(state.emails.length, 0);
-    assert.equal(result?.success, 'Decision saved successfully.');
+    assert.equal(result?.success, 'Decision sent to the applicant.');
 });
 
 // TEST 3
@@ -200,5 +210,5 @@ test('email failure: does not undo the job offer', async () => {
 
     assert.equal(state.saveCalls, 1);
     assert.equal(state.emails.length, 1);
-    assert.equal(result?.success, 'Decision saved successfully.');
+    assert.equal(result?.success, 'Decision sent to the applicant.');
 });
