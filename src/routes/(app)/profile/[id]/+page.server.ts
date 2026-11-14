@@ -6,7 +6,7 @@ import { canSeeProfile, followProblem } from '$lib/server/follow';
 import { loadEntries } from '$lib/server/profile-data';
 import type { Actions, PageServerLoad } from './$types';
 
-// US-04: recruiters can view job seekers' profiles. US-19: job seekers can also view recruiters', to follow them.
+// US-04: recruiters can see job seekers' profiles. US-19: job seekers can now see recruiters' too, so they can follow them
 export const load: PageServerLoad = async ({ params, locals }) => {
 	const me = locals.user!;
 	if (params.id === me.id) redirect(303, '/profile');

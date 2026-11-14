@@ -1,4 +1,4 @@
-// US-19: job seekers can open (and follow) recruiters' profiles, and recruiters can open (and follow) job seekers'
+// US-19: job seekers can see and follow recruiters, and recruiters can see and follow job seekers
 export function canSeeProfile(viewerRole: string, targetRole: string): boolean {
 	return (
 		(viewerRole === 'recruiter' && targetRole === 'job_seeker') ||

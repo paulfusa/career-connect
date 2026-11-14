@@ -58,7 +58,7 @@
 			</div>
 		</div>
 	{/if}
-	<!-- US-19 -->
+	<!-- US-19: follower and following counts -->
 	<p class="mt-5 text-sm text-ink/70">
 		<span class="font-semibold text-ink">{data.followers}</span>
 		{data.followers === 1 ? 'follower' : 'followers'}

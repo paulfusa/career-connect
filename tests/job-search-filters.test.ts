@@ -122,6 +122,18 @@ test('job search filters: the new filters work together with keyword and work mo
     assert.ok(where.sql.includes('"job_posting"."status" = '));
 });
 
+// US-19
+test('job search filters: from people I follow only shows jobs from people you follow', async () => {
+    const { where } = await searchJobs('following=on');
+    assert.ok(where.sql.includes('"job_posting"."created_by" in (select "follow"."following_id" from "follow" where "follow"."follower_id" = $'));
+    assert.ok(where.params.includes('seeker-1'));
+});
+
+test('job search filters: all jobs show when from people I follow is not ticked', async () => {
+    const { where } = await searchJobs('');
+    assert.ok(!where.sql.includes('"follow"'));
+});
+
 test('job search filters: the form keeps the filters you picked', async () => {
     const { search } = await searchJobs('minSalary=60000&postedWithin=30&openOnly=on&sort=salary');
     assert.equal(search.minSalary, '60000');
