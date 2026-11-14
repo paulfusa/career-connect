@@ -1,5 +1,6 @@
 import { sql } from 'drizzle-orm';
-import { pgTable, serial, integer, text, timestamp, boolean, date, uuid, unique, index, check } from 'drizzle-orm/pg-core';
+import { pgTable, serial, integer, text, timestamp, boolean, date, uuid, unique, index, check, jsonb } from 'drizzle-orm/pg-core';
+import type { ParsedResume, ResumeReview } from '../resume-ai';
 import { user } from './auth.schema';
 
 export const task = pgTable('task', {
@@ -127,6 +128,11 @@ export const resume = pgTable(
 		fileName: text('file_name').notNull(),
 		sizeBytes: integer('size_bytes').notNull(),
 		storagePath: text('storage_path').notNull().unique(),
+		// AI results are saved so they aren't recomputed on every visit; both are cleared when the file is replaced
+		parsed: jsonb('parsed').$type<ParsedResume>(),
+		parsedAt: timestamp('parsed_at'),
+		review: jsonb('review').$type<StoredReview>(),
+		reviewedAt: timestamp('reviewed_at'),
 		createdAt: timestamp('created_at').defaultNow().notNull(),
 		updatedAt: timestamp('updated_at').defaultNow().notNull()
 	},
@@ -162,6 +168,8 @@ export const applicationOutcome = pgTable('application_outcome', {
 	nextSteps: text('next_steps'), // only for offers
 	createdAt: timestamp('created_at').defaultNow().notNull()
 });
+// a review plus what it was run against and by which model
+export type StoredReview = ResumeReview & { job: { id: string; title: string; company: string } | null; model: string };
 
 // US-26: persistent in-app notifications for job seekers and recruiters
 export const notification = pgTable(
