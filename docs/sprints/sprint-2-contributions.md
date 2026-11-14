@@ -6,19 +6,11 @@ This log is based on our GitHub history (commits, pull requests, reviews and iss
 
 | Member | GitHub | Commits | Merged PRs | Open PRs | Reviews approved | PRs merged for others | Issues created | Oct 1 meeting | Oct 8 meeting | Oct 22 meeting | Time spent |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-<<<<<<< HEAD
-| Mohamad Alosta | @MAlos616 | 37 | 13 (#85, #86, #87, #93, #98, #99, #100, #101, #112, #113, #116, #117, #121) | 1 (#123) | 2 (#114, #122) | 2 | 13 (#83, #94, #102 to #111, #120) | Present | Present | Present | 39.5 h |
-| Paul Fourment | @paulfusa | 4 | 2 (#89, #92) | 0 | 4 (#88, #96, #99, #119) | 5 | 5 (#79 to #82, #91) | Present | Present | Present |  4.5h |
-| Maher Waez | @Maherwaez01 | 9 | 3 (#96, #114, #118) | 0 | 9 (#89, #92, #93, #100, #101, #112, #113, #116, #117) | 9 | 2 (#90, #97) | Present | Present | Absent | ? h |
-| Michael Derocher | @MichaelDerocher1551 | 6 | 2 (#88, #119) | 0 | 6 (#85, #86, #87, #98, #118, #130) | 0 | 0 | Present | Present | Present | 12.5 h |
-| Kimia Karimiyeganeh | @kimiakarimiy | 1 | 1 (#122) | 0 | 1 (#121) | 1 | 2 (#131, #132) | Present | Present | Present | ? h |
-=======
 | Mohamad Alosta | @MAlos616 | 56 | 18 (#85, #86, #87, #93, #98, #99, #100, #101, #112, #113, #116, #117, #121, #123, #124, #125, #129, #133) | 1 (#148) | 4 (#114, #122, #130, #147) | 4 | 16 (#83, #94, #102 to #111, #120, #126 to #128) | Present | Present | Present | 39.5 h |
 | Paul Fourment | @paulfusa | 7 | 3 (#89, #92, #130) | 0 | 8 (#88, #96, #99, #119, #123, #124, #125, #129) | 9 | 9 (#79 to #82, #91, #134 to #137) | Present | Present | Present | 5.5 h |
 | Maher Waez | @Maherwaez01 | 11 | 4 (#96, #114, #118, #147) | 0 | 10 (#89, #92, #93, #100, #101, #112, #113, #116, #117, #133) | 10 | 11 (#90, #97, #138 to #146) | Present | Present | Absent | 44 h |
 | Michael Derocher | @MichaelDerocher1551 | 7 | 2 (#88, #119) | 0 | 6 (#85, #86, #87, #98, #118, #130) | 0 | 0 | Present | Present | Present | 12.5 h |
 | Kimia Karimiyeganeh | @kimiakarimiy | 3 | 1 (#122) | 0 | 1 (#121) | 1 | 2 (#131, #132) | Present | Present | Present | 8 h |
->>>>>>> 0ac6cd0becaec0526d12c25d1a9e22111bc1ce1c
 | Andrew Rowe (dropped the course) | @an-rowe54 | 0 | 0 | 0 | 0 | 0 | 0 | Present | Absent | - | - |
 
 Note: Commit counts don't include merge commits, and include commits on branches that are still in review. "PRs merged for others" counts teammates' pull requests that the member merged. Each member fills in their own time spent, in hours, here and next to each activity below.
