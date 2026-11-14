@@ -9,7 +9,15 @@
 
 <svelte:head><title>My Applications · CareerConnect</title></svelte:head>
 
-<h1 class="font-display text-3xl font-semibold tracking-tight md:mt-14">My Applications</h1>
+<div class="flex flex-wrap items-end justify-between gap-4 md:mt-14">
+    <h1 class="font-display text-3xl font-semibold tracking-tight">My Applications</h1>
+    <a
+        href="/applications/analytics"
+        class="rounded-xl border border-white/70 bg-white/60 px-4 py-2.5 text-center font-semibold text-ink transition hover:bg-white/85 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tide"
+    >
+        View analytics and history
+    </a>
+</div>
 
 {#if data.applications.length === 0}
     <section class="{glassPanel} mt-5 p-8 text-center">
