@@ -36,6 +36,9 @@
 		{ href: '/jobs', label: 'Jobs' },
 		...(data.user.role === 'job_seeker' ? [{ href: '/resumes', label: 'Resumes' }] : []),
 		...(data.user.role === 'job_seeker' ? [{ href: '/applications', label: 'My Applications' }] : []),
+		// US-19: job seekers find recruiters here and recruiters find job seekers
+		{ href: '/people', label: data.user.role === 'job_seeker' ? 'Recruiters' : 'Job seekers' },
+		{ href: '/following', label: 'Following' },
 		{ href: '/settings', label: 'Settings' }
 	]);
 

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import OrgLogo from '$lib/components/OrgLogo.svelte';
+	import ProfileAvatarLink from '$lib/components/ProfileAvatarLink.svelte';
 	import SuggestInput from '$lib/components/SuggestInput.svelte';
 	import { searchCities, searchCompanies } from '$lib/suggest.svelte';
 	import { EMPLOYMENT_TYPES, JOB_SORTS, POSTED_WITHIN, WORK_MODES } from '$lib/profile-options';
@@ -113,6 +114,14 @@
 		<span class="text-sm font-medium">Open jobs only</span>
 	</label>
 
+	<!-- US-19: only job seekers follow recruiters, so only they get this filter -->
+	{#if data.user.role === 'job_seeker'}
+		<label class="flex items-center gap-2.5 self-end pb-3">
+			<input type="checkbox" name="following" checked={data.search.following === 'on'} class="size-5 rounded border-white text-tide focus:ring-tide/30" />
+			<span class="text-sm font-medium">From people I follow</span>
+		</label>
+	{/if}
+
 	<div class="flex items-end">
 		<button type="submit" class={primaryButton}>Search</button>
 	</div>
@@ -133,7 +142,7 @@
 							<p class="mt-1 text-ink/70">{posting.company} <span aria-hidden="true">·</span> {posting.location}</p>
 						</div>
 					</div>
-					<div class="flex flex-wrap gap-2 text-sm text-ink/65">
+					<div class="flex flex-wrap items-center gap-2 text-sm text-ink/65">
 						<span class="rounded-full bg-white/65 px-3 py-1">{EMPLOYMENT_TYPES[posting.employmentType as keyof typeof EMPLOYMENT_TYPES] ?? posting.employmentType}</span>
 						<span class="rounded-full bg-white/65 px-3 py-1">{WORK_MODES[posting.workMode as keyof typeof WORK_MODES] ?? posting.workMode}</span>
 					{#if !posting.closed}
@@ -143,6 +152,10 @@
 					{/if}
 					{#if !posting.published}
 						<span class="rounded-full bg-amber-100 px-3 py-1 font-medium text-amber-800">Draft</span>
+					{/if}
+					<!-- US-19: the recruiter's photo, click it to open their profile -->
+					{#if data.user.role === 'job_seeker'}
+						<ProfileAvatarLink id={posting.createdBy} name={posting.creatorName} image={posting.creatorImage} />
 					{/if}
 					</div>
 				</div>

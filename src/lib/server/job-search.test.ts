@@ -36,6 +36,13 @@ test('job search: missing fields are returned as empty', () => {
     assert.equal(search.postedWithin, '');
     assert.equal(search.openOnly, '');
     assert.equal(search.sort, '');
+    assert.equal(search.following, '');
+});
+
+// US-19
+test('job search: from people I follow is on when the box is ticked', () => {
+    assert.equal(parseJobSearch(new URLSearchParams({ following: 'on' })).following, 'on');
+    assert.equal(parseJobSearch(new URLSearchParams({ following: 'yes' })).following, '');
 });
 
 // US-28

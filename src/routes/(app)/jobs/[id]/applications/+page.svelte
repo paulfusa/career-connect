@@ -3,6 +3,7 @@
     import { enhance } from '$app/forms';
     import OutcomeForm from '$lib/components/OutcomeForm.svelte';
     import OutcomeMessage from '$lib/components/OutcomeMessage.svelte';
+    import ProfileAvatarLink from '$lib/components/ProfileAvatarLink.svelte';
     import { APPLICATION_STATUSES } from '$lib/profile-options';
     import { errorBox, field, glassPanel, primaryButton, successBox } from '$lib/ui';
     import type { PageProps } from './$types';
@@ -80,7 +81,8 @@
                         <div class="flex flex-wrap items-start justify-between gap-4">
                             <div class="min-w-0">
                                 <h2 class="font-display text-lg font-semibold">
-                                    {applicant.applicantName}
+                                    <!-- US-19: recruiters open the applicant's profile from here to follow them -->
+                                    <a href="/profile/{applicant.applicantId}" class="text-tide-deep hover:underline">{applicant.applicantName}</a>
                                 </h2>
 
                                 <p class="mt-1 text-sm text-ink/65">
@@ -98,20 +100,24 @@
                                 {/if}
                             </div>
 
-                            {#if applicant.resumeId && applicant.resumeName}
-                                <a
-                                    href="/resumes/{applicant.resumeId}"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    class={primaryButton + ' px-5 text-center sm:w-auto'}
-                                >
-                                    View resume
-                                </a>
-                            {:else}
-                                <span class="text-sm text-ink/50">
-                                    Resume unavailable
-                                </span>
-                            {/if}
+                            <div class="flex items-center gap-3">
+                                {#if applicant.resumeId && applicant.resumeName}
+                                    <a
+                                        href="/resumes/{applicant.resumeId}"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class={primaryButton + ' px-5 text-center sm:w-auto'}
+                                    >
+                                        View resume
+                                    </a>
+                                {:else}
+                                    <span class="text-sm text-ink/50">
+                                        Resume unavailable
+                                    </span>
+                                {/if}
+                                <!-- US-19: the applicant's photo, click it to open their profile -->
+                                <ProfileAvatarLink id={applicant.applicantId} name={applicant.applicantName} image={applicant.applicantImage} />
+                            </div>
                         </div>
 
                         {#if applicant.resumeName}

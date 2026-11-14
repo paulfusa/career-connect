@@ -5,6 +5,7 @@
 	import AcceptanceRate from '$lib/components/AcceptanceRate.svelte';
 	import OrgLogo from '$lib/components/OrgLogo.svelte';
 	import OutcomeMessage from '$lib/components/OutcomeMessage.svelte';
+	import ProfileAvatarLink from '$lib/components/ProfileAvatarLink.svelte';
 	import { EMPLOYMENT_TYPES, WORK_MODES } from '$lib/profile-options';
 	import { glassPanel, primaryButton, successBox } from '$lib/ui';
 	import type { PageProps } from './$types';
@@ -37,7 +38,15 @@
 				<div class="min-w-0">
 					<p class="text-sm font-medium uppercase tracking-widest text-tide-deep">{posting.company}</p>
 					<h1 class="mt-2 font-display text-3xl font-semibold tracking-tight">{posting.title}</h1>
-					<p class="mt-2 text-ink/65">{posting.location} <span aria-hidden="true">·</span> Posted by {data.creatorName}</p>
+					<p class="mt-2 text-ink/65">
+						{posting.location} <span aria-hidden="true">·</span> Posted by
+						<!-- US-19: job seekers open the recruiter's profile from here to follow them -->
+						{#if data.user.role === 'job_seeker'}
+							<a href="/profile/{posting.createdBy}" class="font-medium text-tide-deep hover:underline">{data.creatorName}</a>
+						{:else}
+							{data.creatorName}
+						{/if}
+					</p>
 				</div>
 			</div>
 	{#if data.isOwner}
@@ -56,6 +65,9 @@
 				Edit posting
 			</a>
 		</div>
+	{:else if data.isJobSeeker}
+		<!-- US-19: the recruiter's photo, click it to open their profile -->
+		<ProfileAvatarLink id={posting.createdBy} name={data.creatorName} image={data.creatorImage} />
 	{/if}
 		</div>
 
