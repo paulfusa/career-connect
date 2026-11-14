@@ -1,11 +1,13 @@
 
 import { error, fail } from '@sveltejs/kit';
-import { and, desc, eq, exists, inArray } from 'drizzle-orm';
+import { randomUUID } from 'node:crypto';
+import { and, desc, eq, inArray, ne } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import { application, applicationOutcome, jobPosting, resume, user } from '$lib/server/db/schema';
 import { parseOutcome } from '$lib/server/application-outcome';
 import { findOwnedApplication, saveOutcome } from '$lib/server/outcomes';
 import { needsReminder } from '$lib/server/reminders';
+import { notificationService } from '$lib/server/notifications-db';
 import type { Actions, PageServerLoad } from './$types';
 import { sendJobOfferEmail } from '$lib/server/email';
 
@@ -76,9 +78,9 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 export const actions: Actions = {
     // US-03: the recruiter sends an offer or a rejection to one applicant
     decide: async ({ request, locals, url }) => {
-        const me = locals.user!;
+        const me = locals.user;
 
-        if (me.role !== 'recruiter') {
+        if (!me || me.role !== 'recruiter') {
             return fail(403, { error: 'Only recruiters can send decisions.' });
         }
 
@@ -86,7 +88,10 @@ export const actions: Actions = {
         const applicationId = data.get('applicationId')?.toString() ?? '';
 
         // Only the recruiter who posted the job can answer its applications.
-        if (!UUID.test(applicationId) || !(await findOwnedApplication(applicationId, me.id))) {
+        const owned = UUID.test(applicationId)
+            ? await findOwnedApplication(applicationId, me.id)
+            : undefined;
+        if (!owned) {
             return fail(404, { error: 'Application not found.' });
         }
 
@@ -102,6 +107,37 @@ export const actions: Actions = {
             return fail(400, {
                 applicationId,
                 error: 'A decision was already sent for this application.'
+            });
+        }
+
+        const dedupeKey = `application_outcome:${saved.id}:${owned.userId}`;
+
+        // saveOutcome has committed both writes. Notification failure cannot undo them.
+        try {
+            if (saved.status !== 'offered' && saved.status !== 'rejected') {
+                throw new Error('Unexpected persisted outcome status');
+            }
+            const offered = saved.status === 'offered';
+            await notificationService.createNotification({
+                userId: owned.userId,
+                type: offered ? 'job_offer' : 'application_rejected',
+                title: offered ? 'Job offer received' : 'Application rejected',
+                message: offered
+                    ? `You have received a job offer for "${owned.jobTitle}".`
+                    : `Your application for "${owned.jobTitle}" was rejected.`,
+                link: '/applications',
+                dedupeKey
+            });
+        } catch (notificationError) {
+            console.error('Failed to create application-outcome notification', {
+                applicationId: saved.applicationId,
+                outcomeId: saved.id,
+                recipientId: owned.userId,
+                status: saved.status,
+                dedupeKey,
+                errorName: notificationError instanceof Error
+                    ? notificationError.name
+                    : 'UnknownError'
             });
         }
 
@@ -127,10 +163,7 @@ export const actions: Actions = {
             }
         }
 
-        return {
-            applicationId,
-            success: 'Decision saved successfully.'
-        };
+        return { applicationId, success: 'Decision sent to the applicant.' };
     },
 
 
@@ -153,21 +186,71 @@ export const actions: Actions = {
             return fail(400, { message: 'Choose Under Review or Interview. Offers and rejections require an outcome message.' });
         }
 
+        const transitionId = randomUUID();
         const [updated] = await db.update(application)
             .set({ status, updatedAt: new Date() })
+            .from(jobPosting)
             .where(and(
                 eq(application.id, applicationId),
                 eq(application.jobPostingId, params.id),
+                eq(jobPosting.id, application.jobPostingId),
+                eq(jobPosting.createdBy, me.id),
                 inArray(application.status, ['applied', 'under_review', 'interview']),
-                exists(db.select({ id: jobPosting.id }).from(jobPosting).where(and(
-                    eq(jobPosting.id, application.jobPostingId),
-                    eq(jobPosting.createdBy, me.id)
-                )))
+                ne(application.status, status)
             ))
-            .returning({ id: application.id });
+            .returning({
+                id: application.id,
+                userId: application.userId,
+                jobPostingId: application.jobPostingId,
+                status: application.status,
+                jobTitle: jobPosting.title
+            });
 
         if (!updated) {
+            // An owned no-op keeps the existing success response without writing
+            // a timestamp or notifying. This read never authorizes another write.
+            const [unchanged] = await db
+                .select({ id: application.id })
+                .from(application)
+                .innerJoin(jobPosting, eq(jobPosting.id, application.jobPostingId))
+                .where(and(
+                    eq(application.id, applicationId),
+                    eq(application.jobPostingId, params.id),
+                    eq(jobPosting.createdBy, me.id),
+                    eq(application.status, status)
+                ))
+                .limit(1);
+
+            if (unchanged) return { success: 'Application status updated.' };
             return fail(404, { message: 'Application not found or cannot be updated.' });
+        }
+
+        const interview = updated.status === 'interview';
+        const dedupeKey = `application_status:${updated.id}:${updated.userId}:${updated.status}:${transitionId}`;
+
+        // The status is saved. Delivery is best effort and cannot undo it.
+        // Each genuine transition gets a key, including returns to an earlier status.
+        try {
+            await notificationService.createNotification({
+                userId: updated.userId,
+                type: interview ? 'interview_invitation' : 'application_update',
+                title: interview ? 'Application moved to interview' : 'Application under review',
+                message: interview
+                    ? `Your application for "${updated.jobTitle}" has moved to the interview stage. No interview date or time has been scheduled through CareerConnect.`
+                    : `Your application for "${updated.jobTitle}" is now under review.`,
+                link: '/applications',
+                dedupeKey
+            });
+        } catch (notificationError) {
+            console.error('Failed to create application-status notification', {
+                applicationId: updated.id,
+                recipientId: updated.userId,
+                status: updated.status,
+                dedupeKey,
+                errorName: notificationError instanceof Error
+                    ? notificationError.name
+                    : 'UnknownError'
+            });
         }
         return { success: 'Application status updated.' };
     }

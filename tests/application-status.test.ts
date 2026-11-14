@@ -8,9 +8,10 @@ import { isHttpError } from '@sveltejs/kit';
 registerHooks({
     resolve(specifier, context, next) {
         if (specifier === '$lib/server/db') return { url: 'fake:status-db', shortCircuit: true };
+        if (specifier === '$lib/server/notifications-db') return { url: 'fake:status-notifications', shortCircuit: true };
         if (specifier === '$lib/server/email') {
-             return { url: 'fake:email', shortCircuit: true };
-        } 
+            return { url: 'fake:email', shortCircuit: true };
+        }
         if (specifier === '$lib/server/db/schema') {
             return { url: new URL('../src/lib/server/db/schema.ts', import.meta.url).href, shortCircuit: true };
         }
@@ -24,16 +25,19 @@ registerHooks({
         return next(specifier, context);
     },
     load(url, context, next) {
-         if (url === 'fake:status-db') {
-             return { format: 'module', source: 'export const db = globalThis.__statusDb;', shortCircuit: true };
-         }
+        if (url === 'fake:status-db') {
+            return { format: 'module', source: 'export const db = globalThis.__statusDb;', shortCircuit: true };
+        }
+        if (url === 'fake:status-notifications') {
+            return { format: 'module', source: 'export const notificationService = { createNotification: async () => null };', shortCircuit: true };
+        }
         if (url === 'fake:email') {
-               return {
+            return {
                 format: 'module',
                 source: 'export async function sendJobOfferEmail() {}',
                 shortCircuit: true
             };
-            }
+        }
         return next(url, context);
     }
 });
@@ -53,18 +57,15 @@ const db = {
                 return query;
             },
             orderBy() { return Promise.resolve(returnedRows); },
-            // EXISTS needs a SQL wrapper; use the same real Drizzle SQL structure.
-            getSQL() { return conditionSql; }
+            limit() { return Promise.resolve(returnedRows); }
         };
-        let conditionSql: Parameters<PgDialect['sqlToQuery']>[0];
-        const originalWhere = query.where;
-        query.where = (condition) => { conditionSql = condition; return originalWhere(condition); };
         return query;
     },
     update() {
         let values: Record<string, unknown>;
         const query = {
             set(next: Record<string, unknown>) { values = next; return query; },
+            from() { return query; },
             where(condition: Parameters<PgDialect['sqlToQuery']>[0]) {
                 queries.push({ kind: 'update', ...dialect.sqlToQuery(condition), values });
                 return query;
@@ -106,7 +107,7 @@ test('US-20: schema defaults to applied and constrains all five stored statuses'
 
 test('US-20: owner can request either intermediate status with an updated timestamp', async () => {
     for (const status of ['under_review', 'interview']) {
-        returnedRows = [{ id: applicationId }];
+        returnedRows = [{ id: applicationId, userId: 'applicant-1', jobPostingId: jobId, status, jobTitle: 'Developer' }];
         assert.deepEqual(await update(status), { success: 'Application status updated.' });
         const saved = queries.findLast((query) => query.kind === 'update')!;
         assert.equal(saved.values?.status, status);
@@ -120,17 +121,17 @@ test('US-20: database write scopes application, URL job, recruiter ownership and
     const write = queries.find((query) => query.kind === 'update')!;
     assert.match(write.sql, /"application"\."id" = \$/);
     assert.match(write.sql, /"application"\."job_posting_id" = \$/);
-    assert.match(write.sql, /exists/);
     assert.match(write.sql, /"job_posting"\."id" = "application"\."job_posting_id"/);
     assert.match(write.sql, /"job_posting"\."created_by" = \$/);
     assert.match(write.sql, /"application"\."status" in/);
-    assert.deepEqual(write.params, [applicationId, jobId, 'applied', 'under_review', 'interview', owner.id]);
+    assert.match(write.sql, /"application"\."status" <> \$/);
+    assert.deepEqual(write.params, [applicationId, jobId, owner.id, 'applied', 'under_review', 'interview', 'interview']);
 });
 
 test('US-20: no matching owned application returns failure, not success', async () => {
     const result = await update('interview', { id: 'other-recruiter', role: 'recruiter' });
     assert.equal(result?.status, 404);
-    assert.equal(queries.find((query) => query.kind === 'update')!.params.at(-1), 'other-recruiter');
+    assert.equal(queries.find((query) => query.kind === 'update')!.params[2], 'other-recruiter');
 });
 
 test('US-20: job seekers and unauthenticated requests cannot write', async () => {
