@@ -5,6 +5,7 @@
 	import AcceptanceRate from '$lib/components/AcceptanceRate.svelte';
 	import OrgLogo from '$lib/components/OrgLogo.svelte';
 	import OutcomeMessage from '$lib/components/OutcomeMessage.svelte';
+	import ProfileAvatarLink from '$lib/components/ProfileAvatarLink.svelte';
 	import { EMPLOYMENT_TYPES, WORK_MODES } from '$lib/profile-options';
 	import { glassPanel, primaryButton, successBox } from '$lib/ui';
 	import type { PageProps } from './$types';
@@ -64,6 +65,9 @@
 				Edit posting
 			</a>
 		</div>
+	{:else if data.isJobSeeker}
+		<!-- US-19: the recruiter's photo, click it to open their profile -->
+		<ProfileAvatarLink id={posting.createdBy} name={data.creatorName} image={data.creatorImage} />
 	{/if}
 		</div>
 

@@ -1,6 +1,6 @@
-import { and, asc, desc, eq, gte, ilike, isNull, or, sql, type SQL } from 'drizzle-orm';
+import { and, asc, desc, eq, getTableColumns, gte, ilike, isNull, or, sql, type SQL } from 'drizzle-orm';
 import { db } from '$lib/server/db';
-import { follow, jobPosting } from '$lib/server/db/schema';
+import { follow, jobPosting, user } from '$lib/server/db/schema';
 import type { PageServerLoad } from './$types';
 import { parseJobSearch, postedAfter } from '$lib/server/job-search';
 import { isClosed } from '$lib/server/job-posting';
@@ -45,8 +45,10 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 	}
 
 	const postings = await db
-		.select()
+		// US-19: every job also brings the name and photo of the recruiter who posted it
+		.select({ ...getTableColumns(jobPosting), creatorName: user.name, creatorImage: user.image })
 		.from(jobPosting)
+		.innerJoin(user, eq(user.id, jobPosting.createdBy))
 		.where(and(...conditions))
 		.orderBy(...sortBy, desc(jobPosting.createdAt));
 	// US-05: past-deadline jobs show as Closed too

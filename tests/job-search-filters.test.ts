@@ -28,10 +28,14 @@ registerHooks({
 const dialect = new PgDialect();
 let where: SQL | undefined;
 let order: SQL[] = [];
+let fields: string[] = [];
+let join: SQL | undefined;
 const db = {
-    select() {
+    select(columns: Record<string, unknown>) {
+        fields = Object.keys(columns);
         const query = {
             from() { return query; },
+            innerJoin(_table: unknown, condition: SQL) { join = condition; return query; },
             where(condition: SQL) { where = condition; return query; },
             orderBy(...columns: SQL[]) { order = columns; return Promise.resolve([]); }
         };
@@ -43,7 +47,7 @@ const db = {
 const { load } = await import('../src/routes/(app)/jobs/+page.server.ts');
 const { todayEastern } = await import('../src/lib/server/application.ts');
 
-beforeEach(() => { where = undefined; order = []; });
+beforeEach(() => { where = undefined; order = []; fields = []; join = undefined; });
 
 // opens /jobs?<query> as a job seeker and gives back the SQL it would run
 async function searchJobs(query: string) {
@@ -127,6 +131,13 @@ test('job search filters: from people I follow only shows jobs from people you f
     const { where } = await searchJobs('following=on');
     assert.ok(where.sql.includes('"job_posting"."created_by" in (select "follow"."following_id" from "follow" where "follow"."follower_id" = $'));
     assert.ok(where.params.includes('seeker-1'));
+});
+
+test('jobs page: each job comes with the name and photo of the recruiter who posted it', async () => {
+    await searchJobs('');
+    assert.ok(fields.includes('creatorName'));
+    assert.ok(fields.includes('creatorImage'));
+    assert.equal(dialect.sqlToQuery(join!).sql, '"user"."id" = "job_posting"."created_by"');
 });
 
 test('job search filters: all jobs show when from people I follow is not ticked', async () => {

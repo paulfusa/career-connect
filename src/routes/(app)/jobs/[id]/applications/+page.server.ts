@@ -42,6 +42,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
             id: application.id,
             applicantId: user.id,
             applicantName: user.name,
+            applicantImage: user.image,
             applicantEmail: user.email,
             resumeId: application.resumeId,
             resumeName: resume.fileName,
