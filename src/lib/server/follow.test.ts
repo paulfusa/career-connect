@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { canSeeProfile, followProblem } from './follow.ts';
+import { canSeeProfile, followProblem, roleToFind } from './follow.ts';
 
 const seeker = { id: 'seeker-1', role: 'job_seeker' };
 const recruiter = { id: 'recruiter-1', role: 'recruiter' };
@@ -29,4 +29,18 @@ test('follow: an unknown user and a user with the same role get the same not fou
     assert.equal(followProblem(seeker, undefined), 'User not found.');
     assert.equal(followProblem(seeker, { id: 'seeker-2', role: 'job_seeker' }), 'User not found.');
     assert.equal(followProblem(recruiter, { id: 'recruiter-2', role: 'recruiter' }), 'User not found.');
+});
+
+test('follow: job seekers look through recruiters and recruiters through job seekers', () => {
+    assert.equal(roleToFind('job_seeker'), 'recruiter');
+    assert.equal(roleToFind('recruiter'), 'job_seeker');
+    assert.equal(roleToFind('admin'), null);
+});
+
+test('follow: the people you can look through are the ones whose profiles you can see', () => {
+    for (const viewer of ['job_seeker', 'recruiter']) {
+        for (const target of ['job_seeker', 'recruiter']) {
+            assert.equal(roleToFind(viewer) === target, canSeeProfile(viewer, target), `${viewer} -> ${target}`);
+        }
+    }
 });

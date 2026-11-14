@@ -29,7 +29,7 @@ registerHooks({
     }
 });
 
-type Select = { table: string; fields: string[]; where?: SQL };
+type Select = { table: string; fields: string[]; where?: SQL; joins: SQL[] };
 const dialect = new PgDialect();
 let selects: Select[] = [];
 let inserts: { table: string; values: Record<string, unknown>; onConflict?: { target: unknown[] } }[] = [];
@@ -40,12 +40,12 @@ let inserted: unknown[] = [{ id: 'follow-1' }];
 
 const db = {
     select(fields: Record<string, unknown> = {}) {
-        const call: Select = { table: '', fields: Object.keys(fields) };
+        const call: Select = { table: '', fields: Object.keys(fields), joins: [] };
         selects.push(call);
         const query = {
             from(table: Parameters<typeof getTableName>[0]) { call.table = getTableName(table); return query; },
             innerJoin() { return query; },
-            leftJoin() { return query; },
+            leftJoin(_table: unknown, condition: SQL) { call.joins.push(condition); return query; },
             where(condition: SQL) { call.where = condition; return query; },
             orderBy() { return query; },
             limit() { return query; },
@@ -72,6 +72,7 @@ const db = {
 
 const profilePage = await import('../src/routes/(app)/profile/[id]/+page.server.ts');
 const followingPage = await import('../src/routes/(app)/following/+page.server.ts');
+const peoplePage = await import('../src/routes/(app)/people/+page.server.ts');
 const { follow } = await import('../src/lib/server/db/schema.ts');
 
 const seeker = { id: 'seeker-1', role: 'job_seeker' };
@@ -191,4 +192,47 @@ test('following page: unfollow only removes your own follow and needs a user', a
     const missing = await runAction(followingPage, 'unfollow', seeker, '', {});
     assert.equal(missing.status, 400);
     assert.equal(deletes.length, 1);
+});
+
+// opens /people?<query> and gives back what the page got and the SQL it ran
+async function openPeople(me: { id: string; role: string }, query = '') {
+    const page = (await peoplePage.load({ url: new URL(`http://localhost/people?${query}`), locals: { user: me } } as never)) as { people: unknown[]; search: string; more: boolean };
+    const select = selects[0];
+    return { page, where: dialect.sqlToQuery(select.where!), joins: select.joins.map((join) => dialect.sqlToQuery(join)) };
+}
+
+test('people page: a job seeker only sees recruiters who verified their email', async () => {
+    const { where } = await openPeople(seeker);
+    assert.match(where.sql, /"user"\."role" = \$\d+ and "user"\."email_verified" = \$\d+/);
+    assert.deepEqual(where.params, ['recruiter', true]);
+});
+
+test('people page: a recruiter only sees job seekers', async () => {
+    const { where } = await openPeople(recruiter);
+    assert.deepEqual(where.params, ['job_seeker', true]);
+});
+
+test('people page: search looks at the name, headline, job title and company', async () => {
+    const { page, where } = await openPeople(seeker, 'q=%20shop%20');
+    for (const column of ['"user"."name"', '"profile"."headline"', '"profile"."job_title"', '"profile"."company"']) {
+        assert.ok(where.sql.includes(`${column} ilike $`), column);
+    }
+    assert.ok(where.params.includes('%shop%'));
+    assert.equal(page.search, 'shop');
+});
+
+test('people page: shows which people you already follow', async () => {
+    answer = () => [{ id: 'recruiter-1', name: 'Someone', followingSince: new Date() }];
+    const { page, joins } = await openPeople(seeker);
+    const followJoin = joins.find((join) => join.sql.includes('"follow"'));
+    assert.match(followJoin!.sql, /"follow"\."follower_id" = \$\d+ and "follow"\."following_id" = "user"\."id"/);
+    assert.deepEqual(followJoin!.params, ['seeker-1']);
+    assert.equal(page.people.length, 1);
+});
+
+test('people page: says when there are more people than the page shows', async () => {
+    answer = () => Array.from({ length: 50 }, (_, i) => ({ id: `recruiter-${i}` }));
+    assert.equal((await openPeople(seeker)).page.more, true);
+    answer = () => [{ id: 'recruiter-1' }];
+    assert.equal((await openPeople(seeker)).page.more, false);
 });

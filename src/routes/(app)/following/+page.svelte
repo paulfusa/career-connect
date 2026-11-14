@@ -24,9 +24,9 @@
 	<section class="{glassPanel} mt-5 p-8 text-center">
 		<p class="font-medium">You don't follow anyone yet.</p>
 		<p class="mt-2 text-sm text-ink/65">
-			{data.user.role === 'job_seeker'
-				? 'Open a job posting and click the recruiter’s name to follow them.'
-				: 'Open an applicant’s profile from your applicants list to follow them.'}
+			Look through
+			<a href="/people" class="font-semibold text-tide-deep underline underline-offset-4">{data.user.role === 'job_seeker' ? 'Recruiters' : 'Job seekers'}</a>
+			and follow someone from their profile.
 		</p>
 	</section>
 {:else}

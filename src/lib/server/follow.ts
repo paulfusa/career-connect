@@ -6,6 +6,13 @@ export function canSeeProfile(viewerRole: string, targetRole: string): boolean {
 	);
 }
 
+// who shows up on the Recruiters / Job seekers page, the same rule as canSeeProfile
+export function roleToFind(viewerRole: string): 'recruiter' | 'job_seeker' | null {
+	if (viewerRole === 'job_seeker') return 'recruiter';
+	if (viewerRole === 'recruiter') return 'job_seeker';
+	return null;
+}
+
 // the reason someone can't follow this person, or null if they can
 export function followProblem(
 	me: { id: string; role: string },
