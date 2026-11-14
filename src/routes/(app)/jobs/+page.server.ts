@@ -45,7 +45,7 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 	}
 
 	const postings = await db
-		// US-19: every job also brings the name and photo of the recruiter who posted it
+		// US-19: also get the name and photo of the recruiter who posted each job
 		.select({ ...getTableColumns(jobPosting), creatorName: user.name, creatorImage: user.image })
 		.from(jobPosting)
 		.innerJoin(user, eq(user.id, jobPosting.createdBy))

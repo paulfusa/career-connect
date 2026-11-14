@@ -1,8 +1,8 @@
 <script lang="ts">
 	import Avatar from './Avatar.svelte';
 
-	// US-19: someone's photo in a small circle, click it to open their profile.
-	// relative z-10 keeps it clickable on the job cards, where the title link covers the whole card
+	// US-19: small round photo that links to the person's profile.
+	// relative z-10 so it stays clickable on the job cards (the title link covers the whole card)
 	let { id, name, image }: { id: string; name: string; image?: string | null } = $props();
 </script>
 

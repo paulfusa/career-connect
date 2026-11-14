@@ -6,7 +6,7 @@
 	let { data }: PageProps = $props();
 	let seeker = $derived(data.user.role === 'job_seeker');
 	let title = $derived(seeker ? 'Recruiters' : 'Job seekers');
-	// recruiters show "Job title at Company", job seekers their headline, like on the Following page
+	// same as the Following page: "Job title at Company" for recruiters, the headline for job seekers
 	const tagline = (person: (typeof data.people)[number]) =>
 		seeker ? [person.jobTitle, person.company].filter(Boolean).join(' at ') : person.headline;
 </script>
@@ -21,12 +21,16 @@
 		<span class={label}>Search</span>
 		<input name="q" value={data.search} placeholder={seeker ? 'Name, company or job title' : 'Name or headline'} class={field} />
 	</label>
-	<button type="submit" class="{primaryButton} px-6 sm:w-auto">Search</button>
+	<button type="submit" class={primaryButton + ' px-6 sm:w-auto'}>Search</button>
 </form>
 
 {#if data.people.length === 0}
 	<section class="{glassPanel} mt-5 p-8 text-center">
-		<p class="font-medium">{data.search ? 'Nobody matches your search.' : `No ${title.toLowerCase()} yet.`}</p>
+		{#if data.search}
+			<p class="font-medium">Nobody matches your search.</p>
+		{:else}
+			<p class="font-medium">{seeker ? 'No recruiters yet.' : 'No job seekers yet.'}</p>
+		{/if}
 		{#if data.search}
 			<a href="/people" class="mt-3 inline-block font-semibold text-tide-deep underline underline-offset-4">Clear search</a>
 		{/if}

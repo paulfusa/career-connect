@@ -4,26 +4,19 @@ import { follow, profile, user } from '$lib/server/db/schema';
 import { roleToFind } from '$lib/server/follow';
 import type { PageServerLoad } from './$types';
 
+// how many people we show at once
 const LIMIT = 50;
 
 // US-19: job seekers can look through recruiters and recruiters through job seekers, to find people to follow
 export const load: PageServerLoad = async ({ url, locals }) => {
 	const me = locals.user!;
-	const role = roleToFind(me.role);
 	const search = (url.searchParams.get('q') ?? '').trim().slice(0, 100);
-	if (!role) return { people: [], search, more: false };
 
 	// only people who finished signing up (verified their email)
-	const conditions: (SQL | undefined)[] = [eq(user.role, role), eq(user.emailVerified, true)];
+	const conditions: (SQL | undefined)[] = [eq(user.role, roleToFind(me.role)), eq(user.emailVerified, true)];
 	if (search) {
-		conditions.push(
-			or(
-				ilike(user.name, `%${search}%`),
-				ilike(profile.headline, `%${search}%`),
-				ilike(profile.jobTitle, `%${search}%`),
-				ilike(profile.company, `%${search}%`)
-			)
-		);
+		const text = `%${search}%`;
+		conditions.push(or(ilike(user.name, text), ilike(profile.headline, text), ilike(profile.jobTitle, text), ilike(profile.company, text)));
 	}
 
 	const people = await db
@@ -35,7 +28,7 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 			jobTitle: profile.jobTitle,
 			company: profile.company,
 			location: profile.location,
-			// filled in when you already follow them
+			// null if you don't follow them
 			followingSince: follow.createdAt
 		})
 		.from(user)

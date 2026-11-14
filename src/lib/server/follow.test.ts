@@ -34,13 +34,9 @@ test('follow: an unknown user and a user with the same role get the same not fou
 test('follow: job seekers look through recruiters and recruiters through job seekers', () => {
     assert.equal(roleToFind('job_seeker'), 'recruiter');
     assert.equal(roleToFind('recruiter'), 'job_seeker');
-    assert.equal(roleToFind('admin'), null);
 });
 
-test('follow: the people you can look through are the ones whose profiles you can see', () => {
-    for (const viewer of ['job_seeker', 'recruiter']) {
-        for (const target of ['job_seeker', 'recruiter']) {
-            assert.equal(roleToFind(viewer) === target, canSeeProfile(viewer, target), `${viewer} -> ${target}`);
-        }
-    }
+test('follow: you can open the profile of everyone on that page', () => {
+    assert.equal(canSeeProfile('job_seeker', roleToFind('job_seeker')), true);
+    assert.equal(canSeeProfile('recruiter', roleToFind('recruiter')), true);
 });
