@@ -1,0 +1,36 @@
+name: Deadline reminders
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deadline-reminders
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    # Default off. The JSON check also rejects case variants of the literal true.
+    # Keep this job-wide gate if a schedule is approved in the future.
+    if: ${{ vars.DEADLINE_REMINDERS_ENABLED == 'true' && fromJSON(vars.DEADLINE_REMINDERS_ENABLED || 'false') == true && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: '12'
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Generate deadline reminders
+        run: pnpm reminders:deadlines
+        env:
+          REMINDER_DATABASE_URL: ${{ secrets.REMINDER_DATABASE_URL }}
