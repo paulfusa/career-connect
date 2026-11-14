@@ -20,8 +20,8 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 	if (search.employmentType) conditions.push(eq(jobPosting.employmentType, search.employmentType));
 	if (search.workMode) conditions.push(eq(jobPosting.workMode, search.workMode));
 
-	// US-28: the top of the salary range (or the only salary given) has to reach the minimum, jobs with no salary drop out
-	if (search.minSalary) conditions.push(gte(sql`coalesce(${jobPosting.salaryMax}, ${jobPosting.salaryMin})`, Number(search.minSalary)));
+	// US-28: the job's minimum salary has to be the same or higher than what you typed, jobs with no minimum salary drop out
+	if (search.minSalary) conditions.push(gte(jobPosting.salaryMin, Number(search.minSalary)));
 
 	const after = postedAfter(search.postedWithin, new Date());
 	if (after) conditions.push(gte(jobPosting.createdAt, after));

@@ -56,16 +56,17 @@ async function searchJobs(query: string) {
 
 const salary = 'coalesce("job_posting"."salary_max", "job_posting"."salary_min")';
 
-test('job search filters: minimum salary checks the top of the salary range', async () => {
+test('job search filters: minimum salary only shows jobs whose minimum is the same or higher', async () => {
     const { where } = await searchJobs('minSalary=50000');
-    assert.ok(where.sql.includes(`${salary} >= $`));
+    assert.match(where.sql, /"job_posting"\."salary_min" >= \$\d+/);
+    assert.ok(!where.sql.includes('"job_posting"."salary_max"'));
     assert.ok(where.params.includes(50000));
 });
 
 test('job search filters: no salary filter when the minimum salary is empty or wrong', async () => {
     for (const query of ['', 'minSalary=', 'minSalary=-5000', 'minSalary=abc']) {
         const { where } = await searchJobs(query);
-        assert.ok(!where.sql.includes('coalesce'), query);
+        assert.ok(!where.sql.includes('"job_posting"."salary_min"'), query);
     }
 });
 
@@ -116,7 +117,7 @@ test('job search filters: the new filters work together with keyword and work mo
     const { where } = await searchJobs('keyword=developer&workMode=remote&minSalary=60000&postedWithin=30&openOnly=on');
     assert.ok(where.sql.includes('"job_posting"."title" ilike'));
     assert.ok(where.sql.includes('"job_posting"."work_mode" = '));
-    assert.ok(where.sql.includes(`${salary} >= `));
+    assert.ok(where.sql.includes('"job_posting"."salary_min" >= '));
     assert.ok(where.sql.includes('"job_posting"."created_at" >= '));
     assert.ok(where.sql.includes('"job_posting"."status" = '));
 });
