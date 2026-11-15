@@ -79,7 +79,11 @@ test("applicants page: sends each applicant's id and photo for the link to their
         }
         return [];
     };
-    const page = (await applicantsPage.load({ params: { id: jobId }, locals: { user: { id: 'recruiter-1', role: 'recruiter' } } } as never)) as { applicants: Record<string, unknown>[] };
+    const page = (await applicantsPage.load({
+        params: { id: jobId },
+        locals: { user: { id: 'recruiter-1', role: 'recruiter' } },
+        url: new URL(`http://localhost/jobs/${jobId}/applications`)
+    } as never)) as { applicants: Record<string, unknown>[] };
     assert.equal(page.applicants[0].applicantId, 'seeker-1');
     assert.equal(page.applicants[0].applicantImage, photo);
 });
