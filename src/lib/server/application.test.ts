@@ -1,6 +1,12 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { applyProblem, parseApplication, withdrawProblem } from './application.ts';
+import {
+	applyProblem,
+	applicationsSubmittedAfter,
+	parseApplication,
+	parseApplicationFilters,
+	withdrawProblem
+} from './application.ts';
 
 const form = (fields: Record<string, string>) => {
 	const data = new FormData();
@@ -9,6 +15,37 @@ const form = (fields: Record<string, string>) => {
 };
 
 const resumeId = '6f1c2a4e-8b3d-4c5e-9f7a-1b2c3d4e5f60';
+
+test('application filters: parses supported status and date range values', () => {
+	assert.deepEqual(
+		parseApplicationFilters(new URLSearchParams({ status: 'interview', dateRange: '7' })),
+		{ status: 'interview', dateRange: '7' }
+	);
+	assert.deepEqual(
+		parseApplicationFilters(new URLSearchParams({ status: 'rejected', dateRange: '30' })),
+		{ status: 'rejected', dateRange: '30' }
+	);
+});
+
+test('application filters: ignores unsupported values and treats any time as unbounded', () => {
+	assert.deepEqual(
+		parseApplicationFilters(new URLSearchParams({ status: 'toString', dateRange: '365' })),
+		{ status: '', dateRange: '' }
+	);
+	assert.equal(applicationsSubmittedAfter('', new Date('2026-10-22T12:00:00Z')), null);
+});
+
+test('application filters: uses a rolling date cutoff', () => {
+	const now = new Date('2026-10-22T12:00:00Z');
+	assert.equal(
+		applicationsSubmittedAfter('7', now)?.toISOString(),
+		'2026-10-15T12:00:00.000Z'
+	);
+	assert.equal(
+		applicationsSubmittedAfter('30', now)?.toISOString(),
+		'2026-09-22T12:00:00.000Z'
+	);
+});
 
 test('application: accepts a resume id', () => {
 	const parsed = parseApplication(form({ resumeId }));
