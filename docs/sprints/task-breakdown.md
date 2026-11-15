@@ -14,15 +14,15 @@ Whoever owns a story owns its tasks, unless a task names someone else.
 | Paul Fourment | @paulfusa | US-01, US-02, US-16, US-04 | US-10, US-11 | US-24 | T4, T5 | T12, T14 | T19, T20, T24 |
 | Mohamad Alosta | @MAlos616 | - | US-03, US-05, US-14, US-15 (15.1) | US-28, US-19 | T1, T2, T3, T4, T5, T6, T7, T8 | T9, T10, T11, T12, T13, T14, T15, T16 | T17 to T25 |
 | Kimia Karimiyeganeh | @kimiakarimiy | - | US-20 | US-26 | T5 | T12, T14 | T19, T20, T24 |
-| Maher Waez | @Maherwaez01 | - | US-07, US-08, US-17, US-15 (15.2 to 15.5) | US-27, US-21 | T5 | T12, T14 | T19, T20, T24 |
-| Michael Derocher | @MichaelDerocher1551 | - | US-12, US-13 | US-25 | T5 | T12, T14 | T19, T20, T24 |
+| Maher Waez | @Maherwaez01 | - | US-07, US-08, US-17, US-15 (15.2 to 15.5) | US-27, US-21, US-29 | T5 | T12, T14 | T19, T20, T24 |
+| Michael Derocher | @MichaelDerocher1551 | - | US-12, US-13 | US-25, US-30 | T5 | T12, T14 | T19, T20, T24 |
 | Andrew Rowe (dropped the course) | @an-rowe54 | - | - | - | T5 | - | - |
 
 Some stories changed hands during Sprint 2. US-05 and US-14 went from Michael to Mohamad, US-12 and US-13 from Andrew to Michael, and US-10 and US-11 from Kimia to Paul. US-15 was split: Mohamad built the application table (15.1) and Maher built the rest (15.2 to 15.5), including the job seeker side that Michael was first assigned. Andrew Rowe dropped the course during Sprint 2, and Maher took over US-21.
 
-In Sprint 3, US-19 went from Kimia to Mohamad and US-22 from Paul to Kimia. The AI feature (#91) became US-24.
+In Sprint 3, US-19 went from Kimia to Mohamad and US-22 from Paul to Kimia. The AI feature (#91) became US-24. US-30 and US-29 came in on November 15. Michael took US-30, and US-29 is Maher's.
 
-Not planned for a sprint yet: US-06 (Mohamad), US-09 (Maher), US-22 (Kimia) and US-23 (Michael).
+Not planned for a sprint yet: US-06 (Mohamad), US-09 and US-18 (Maher), US-22 (Kimia) and US-23 (Michael).
 
 ## Sprint 1 Documentation Tasks
 
@@ -226,7 +226,7 @@ Status: Completed in PR #123. Acceptance tests: #126, #127.
 | T19 | Sprint 3 acceptance tests, two per story (#162) | Task | Everyone | High | Nov 15 | In Progress |
 | T20 | Unit tests for every Sprint 3 story, running in CI | Task | Everyone | High | Nov 15 | In Progress |
 | T21 | GitHub project board for the backlog and Sprint 3 | Task | Mohamad | High | Nov 14 | Completed |
-| T22 | Sprint 3 plan, task breakdown and contribution log (#168) | Task | Mohamad | High | Nov 15 | In Progress |
+| T22 | Sprint 3 plan, task breakdown and contribution log (#168) | Task | Mohamad | High | Nov 15 | Completed |
 | T23 | Update the README for Sprint 3 | Task | Mohamad | Medium | Nov 15 | Completed |
 | T24 | Sprint 3 AI usage logs (#169) | Task | Everyone | High | Nov 16 | In Progress |
 | T25 | Sprint 3 summary report, one page (#170) | Task | Mohamad | High | Nov 16 | Completed |
@@ -236,7 +236,15 @@ Status: Completed in PR #123. Acceptance tests: #126, #127.
 Each heading is written as **Title - Priority - Assignee - Sprint**.
 
 ### US-24: Resume AI Autofill & Review (#91) - High - Paul - Sprint 3
-This is our AI feature. Paul built it on the `feature/ai-resume` branch, and it was merged in PR #176 on November 14. We finish it in Sprint 4. The issue doesn't list separate tasks yet.
+| Task | Description | Owner | Status |
+|---|---|---|---|
+| 24.1 | Build the AI client (local Ollama or a free hosted tier, chosen in `.env`) and write the setup steps for the team | Paul | Completed |
+| 24.2 | Get the text out of uploaded PDF resumes | Paul | Completed |
+| 24.3 | Build the AI resume review, which can be tailored to a job posting and is saved per resume | Paul | Completed |
+| 24.4 | Fill in the profile from a resume, with a checklist before anything is added | Paul | Completed |
+| 24.5 | Write tests for the AI client, the checks on what the AI returns and the import rules | Paul | Completed |
+
+This is our AI feature. Paul built it on the `feature/ai-resume` branch, and it was merged in PR #176 on November 14. We finish it in Sprint 4. The tasks only got added to the issue on November 15. Acceptance tests: #192, #193.
 
 ### US-25: Application Analytics and History Dashboard (#160) - High - Michael - Sprint 3
 | Task | Description | Owner | Status |
@@ -246,7 +254,7 @@ This is our AI feature. Paul built it on the `feature/ai-resume` branch, and it 
 | 25.3 | Show the status breakdown and a chart of applications sent over time | Michael | Completed |
 | 25.4 | Test the history and numbers, access control, and the empty page | Michael | Completed |
 
-Status: Completed in PR #173, merged November 14. Acceptance tests: #171, #172.
+Status: Completed. Michael's PR #173 was merged on November 14. Acceptance tests: #171, #172.
 
 ### US-26: Notifications and Reminders (#161) - High - Kimia - Sprint 3
 | Task | Description | Owner | Status |
@@ -264,7 +272,16 @@ Status: Completed in PR #173, merged November 14. Acceptance tests: #171, #172.
 Status: Merged in PR #167 on November 14. The reminders for applications waiting for an answer (26.7) and the acceptance tests are still left.
 
 ### US-27: Job Offer Emails (#163) - High - Maher - Sprint 3
-Done in PR #165, merged November 12. When a recruiter sends an offer, the applicant gets an email with a link to see it on CareerConnect. The PR also has tests. The issue doesn't have separate tasks.
+| Task | Description | Owner | Status |
+|---|---|---|---|
+| 27.1 | Write the job offer email: congratulations and a link to the application, with no offer details | Maher | Completed |
+| 27.2 | Send the email to the applicant's registered address when the recruiter sends an offer | Maher | Completed |
+| 27.3 | Send no email for rejections, and never a second one for the same offer | Maher | Completed |
+| 27.4 | Keep the offer saved even if the email fails to send | Maher | Completed |
+| 27.5 | Write unit tests for the email and the sending rules | Maher | Completed |
+| 27.6 | Write the acceptance test | Maher | Completed |
+
+Status: Completed in PR #165, merged November 12. When a recruiter sends an offer, the applicant gets an email with a link to see it on CareerConnect. The tasks were added to the issue on November 15, based on what PR #165 built. Acceptance test: #186.
 
 ### US-28: Job Filter Additions (#166) - Medium - Mohamad - Sprint 3
 | Task | Description | Owner | Status |
@@ -278,7 +295,7 @@ Done in PR #165, merged November 12. When a recruiter sends an offer, the applic
 
 It builds on US-14, so it's a sub-issue of #19.
 
-Status: Completed in PR #175, merged November 14. A small fix for long words with no spaces, which used to run past the edge of their boxes, went in with it (also PR #177). Acceptance tests: #180, #181.
+Status: Completed in PR #175, merged November 14. A small fix for long words with no spaces, which used to run past the edge of their boxes, went in right after it in PR #177. Acceptance tests: #180, #181.
 
 ### US-19: Recruiters And Job Seekers can Follow Each Other (#80) - Low - Mohamad - Sprint 3
 | Task | Description | Owner | Status |
@@ -292,7 +309,7 @@ Status: Completed in PR #175, merged November 14. A small fix for long words wit
 | 19.7 | Show profile photos on job postings and the applicants list, linked to the profile | Mohamad | Completed |
 | 19.8 | Write the acceptance tests | Mohamad | Completed |
 
-Status: Completed in PR #174, merged November 14. Acceptance tests: #178, #179.
+Status: Completed, merged on November 14 in PR #174. Acceptance tests: #178, #179.
 
 ### US-21: Dark Mode (#82) - Low - Maher - Sprint 3
 | Task | Description | Owner | Status |
@@ -300,9 +317,39 @@ Status: Completed in PR #174, merged November 14. Acceptance tests: #178, #179.
 | 21.1 | Define dark versions of the app's colours | Maher | Completed |
 | 21.2 | Add the theme toggle to the navigation bar | Maher | Completed |
 | 21.3 | Save the user's choice and apply it when a page loads | Maher | Completed |
-| 21.4 | Check every page in both themes for readability | Maher | In Progress |
+| 21.4 | Check every page in both themes for readability | Maher | Completed |
 
-Status: Maher is building it on the `feature/dark-mode` branch, and there's no PR yet. The Light, Dark and System choice went on the Settings page instead of the navigation bar. It's saved in the browser, and most pages have dark styles now. He's still going through the rest of the pages.
+Status: Completed in PR #183, merged November 15. The Light, Dark and System choice went on the Settings page instead of the navigation bar, and it's saved in the browser. Acceptance test: #185.
+
+### US-30: Archive Postings and Filter Applications (#188) - High - Michael - Sprint 3
+| Task | Description | Owner | Status |
+|---|---|---|---|
+| 30.1 | Add an archived flag to job postings | Michael | Completed |
+| 30.2 | Add Archive and Unarchive buttons to the recruiter's postings | Michael | Completed |
+| 30.3 | Hide archived postings from job seekers and block new applications to them | Michael | Completed |
+| 30.4 | Add an Active / Archived switch and the number of applications to "Your postings" | Michael | Completed |
+| 30.5 | Add the status and date filters to the applicants page | Michael | Completed |
+| 30.6 | Write unit tests and run them in CI | Michael | Completed |
+| 30.7 | Write the acceptance tests | Michael | Completed |
+
+It's a sub-story of US-13 (#18) for the parts of feature 1 we didn't have yet. Status: Completed. Michael's PR #191 was merged on November 15, the same day the story was written. Recruiters can filter a posting's applications by status and by when they were sent (last 7 days, last 30 days or any time). Acceptance tests: #189, #190.
+
+### US-29: Personalized Home Dashboard (#184) - No priority yet - Maher - Sprint 3
+| Task | Description | Owner | Status |
+|---|---|---|---|
+| 29.1 | Show a dashboard on the Home page that depends on the user's role | Maher | Not Started |
+| 29.2 | Get the dashboard numbers and recent activity from the database | Maher | Not Started |
+| 29.3 | Build shared pieces for the stat cards, recent applications and quick actions | Maher | Not Started |
+| 29.4 | Build the job seeker dashboard: application numbers, recent applications and links | Maher | Not Started |
+| 29.5 | Build the recruiter dashboard: posting numbers, new applicants and applications waiting for review | Maher | Not Started |
+| 29.6 | Add a section for things that need attention, like waiting applications and close deadlines | Maher | Not Started |
+| 29.7 | Add quick-action buttons that lead to the rest of the site | Maher | Not Started |
+| 29.8 | Show messages for empty, loading and error states | Maher | Not Started |
+| 29.9 | Make it work in light and dark mode and on small screens | Maher | Not Started |
+| 29.10 | Keep onboarding working, and only show each user their own data | Maher | Not Started |
+| 29.11 | Test the numbers, recent activity, links, access rules, empty states, screen sizes and themes | Maher | Not Started |
+
+Maher wrote this story on November 15, and it went into Sprint 3 the same day. Status: In Progress. He's building it now, but there's no PR yet.
 
 ## Not Planned Yet - Remaining User Stories
 
