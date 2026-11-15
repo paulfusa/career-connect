@@ -9,18 +9,20 @@ Whoever owns a story owns its tasks, unless a task names someone else.
 
 ## Summary by Member
 
-| Member | GitHub | Sprint 1 Stories | Sprint 2 Stories | Sprint 1 Tasks | Sprint 2 Tasks |
-|---|---|---|---|---|---|
-| Paul Fourment | @paulfusa | US-01, US-02, US-16, US-04 | US-10, US-11, Generative AI feature (#91) | T4, T5 | T12, T14 |
-| Mohamad Alosta | @MAlos616 | - | US-03, US-05, US-14, US-15 (15.1) | T1, T2, T3, T4, T5, T6, T7, T8 | T9, T10, T11, T12, T13, T14, T15, T16 |
-| Kimia Karimiyeganeh | @kimiakarimiy | - | US-20 | T5 | T12, T14 |
-| Maher Waez | @Maherwaez01 | - | US-07, US-08, US-17, US-15 (15.2 to 15.5) | T5 | T12, T14 |
-| Andrew Rowe (dropped the course) | @an-rowe54 | - | - | T5 | - |
-| Michael Derocher | @MichaelDerocher1551 | - | US-12, US-13 | T5 | T12, T14 |
+| Member | GitHub | Sprint 1 Stories | Sprint 2 Stories | Sprint 3 Stories | Sprint 1 Tasks | Sprint 2 Tasks | Sprint 3 Tasks |
+|---|---|---|---|---|---|---|---|
+| Paul Fourment | @paulfusa | US-01, US-02, US-16, US-04 | US-10, US-11 | US-24 | T4, T5 | T12, T14 | T19, T20, T24 |
+| Mohamad Alosta | @MAlos616 | - | US-03, US-05, US-14, US-15 (15.1) | US-28, US-19 | T1, T2, T3, T4, T5, T6, T7, T8 | T9, T10, T11, T12, T13, T14, T15, T16 | T17 to T25 |
+| Kimia Karimiyeganeh | @kimiakarimiy | - | US-20 | US-26 | T5 | T12, T14 | T19, T20, T24 |
+| Maher Waez | @Maherwaez01 | - | US-07, US-08, US-17, US-15 (15.2 to 15.5) | US-27, US-21 | T5 | T12, T14 | T19, T20, T24 |
+| Michael Derocher | @MichaelDerocher1551 | - | US-12, US-13 | US-25 | T5 | T12, T14 | T19, T20, T24 |
+| Andrew Rowe (dropped the course) | @an-rowe54 | - | - | - | T5 | - | - |
 
 Some stories changed hands during Sprint 2. US-05 and US-14 went from Michael to Mohamad, US-12 and US-13 from Andrew to Michael, and US-10 and US-11 from Kimia to Paul. US-15 was split: Mohamad built the application table (15.1) and Maher built the rest (15.2 to 15.5), including the job seeker side that Michael was first assigned. Andrew Rowe dropped the course during Sprint 2, and Maher took over US-21.
 
-Not planned for a sprint yet: US-06 (Mohamad), US-09 (Maher), US-19 (Kimia), US-21 (Maher), US-22 (Paul) and US-23 (Michael).
+In Sprint 3, US-19 went from Kimia to Mohamad and US-22 from Paul to Kimia. The AI feature (#91) became US-24.
+
+Not planned for a sprint yet: US-06 (Mohamad), US-09 (Maher), US-22 (Kimia) and US-23 (Michael).
 
 ## Sprint 1 Documentation Tasks
 
@@ -47,6 +49,8 @@ Each heading is written as **Title - Priority - Assignee - Sprint**.
 | 1.3 | Build the registration page UI in SvelteKit with client-side validation | Paul | Completed |
 | 1.4 | Write tests for valid signup, duplicate email, and weak password | Paul | Completed |
 
+Acceptance tests: #153, #154.
+
 ### US-02: Login and logout (#6) - High - Paul - Sprint 1
 | Task | Description | Owner | Status |
 |---|---|---|---|
@@ -54,6 +58,8 @@ Each heading is written as **Title - Priority - Assignee - Sprint**.
 | 2.2 | Build the login page and logout action | Paul | Completed |
 | 2.3 | Add route guards for authenticated pages and role-based pages | Paul | Completed |
 | 2.4 | Write tests for login success, login failure, and protected-route redirects | Paul | Completed |
+
+Acceptance tests: #155, #156.
 
 ### US-16: First-login onboarding (#29) - Medium - Paul - Sprint 1
 | Task | Description | Owner | Status |
@@ -70,6 +76,8 @@ Each heading is written as **Title - Priority - Assignee - Sprint**.
 | 4.2 | Implement loading and updating the signed-in user’s profile | Paul | Completed |
 | 4.3 | Build the profile view and edit form | Paul | Completed |
 | 4.4 | Test saving, validation, and access control | Paul | Completed |
+
+Acceptance tests: #157, #158.
 
 ## Sprint 2 Documentation and Setup Tasks
 
@@ -128,6 +136,8 @@ Acceptance tests: #136, #137.
 | 12.3 | Create backend API | Michael | Completed |
 | 12.4 | Add input validation | Michael | Completed |
 
+Acceptance tests: #149, #150.
+
 ### US-13: Recruiter Job Posting Management (#18) - High - Michael - Sprint 2
 | Task | Description | Owner | Status |
 |---|---|---|---|
@@ -135,6 +145,8 @@ Acceptance tests: #136, #137.
 | 13.2 | Implement delete functionality | Michael | Completed |
 | 13.3 | Add authorization checks | Michael | Completed |
 | 13.4 | Write tests | Michael | Completed |
+
+Acceptance tests: #151, #152.
 
 ### US-17: Forgot password (#90) - Medium - Maher - Sprint 2
 Done in PR #96: the forgot-password and reset-password pages, the email with the reset code, and tests. The issue doesn't have separate tasks yet. Acceptance tests: #144, #145, #146.
@@ -205,22 +217,92 @@ Acceptance tests: #138, #139.
 
 Status: Completed in PR #123. Acceptance tests: #126, #127.
 
-### US-18: Recruiter Verification and Approval (#97) - Medium - Maher - Sprint 3
+## Sprint 3 Documentation and Setup Tasks
+
+| ID | Task | Type | Owner | Priority | Due | Status |
+|---|---|---|---|---|---|---|
+| T17 | Sprint 3 meeting minutes, November 5 (#159) | Task | Mohamad | Medium | Nov 6 | Completed |
+| T18 | Sprint 3 meeting minutes, November 12 (#164) | Task | Mohamad | Medium | Nov 13 | Completed |
+| T19 | Sprint 3 acceptance tests, two per story (#162) | Task | Everyone | High | Nov 15 | In Progress |
+| T20 | Unit tests for every Sprint 3 story, running in CI | Task | Everyone | High | Nov 15 | In Progress |
+| T21 | GitHub project board for the backlog and Sprint 3 | Task | Mohamad | High | Nov 14 | Completed |
+| T22 | Sprint 3 plan, task breakdown and contribution log (#168) | Task | Mohamad | High | Nov 15 | In Progress |
+| T23 | Update the README for Sprint 3 | Task | Mohamad | Medium | Nov 15 | Completed |
+| T24 | Sprint 3 AI usage logs (#169) | Task | Everyone | High | Nov 16 | In Progress |
+| T25 | Sprint 3 summary report, one page (#170) | Task | Mohamad | High | Nov 16 | Completed |
+
+## Sprint 3 - User Stories
+
+Each heading is written as **Title - Priority - Assignee - Sprint**.
+
+### US-24: Resume AI Autofill & Review (#91) - High - Paul - Sprint 3
+This is our AI feature. Paul built it on the `feature/ai-resume` branch, and it was merged in PR #176 on November 14. We finish it in Sprint 4. The issue doesn't list separate tasks yet.
+
+### US-25: Application Analytics and History Dashboard (#160) - High - Michael - Sprint 3
 | Task | Description | Owner | Status |
 |---|---|---|---|
-| 18.1 | Create a database table to store recruiter verification requests and their status | Maher | Not Started |
-| 18.2 | Add a Request Verification button to recruiter profiles | Maher | Not Started |
-| 18.3 | Create an admin-only Verification Requests section with a pending request counter | Maher | Not Started |
-| 18.4 | Allow admins to open and review recruiter profiles from the requests list | Maher | Not Started |
-| 18.5 | Implement Approve and Reject functionality with appropriate access restrictions | Maher | Not Started |
-| 18.6 | Display a blue verified badge on approved recruiter profiles | Maher | Not Started |
+| 25.1 | Get the signed-in job seeker's applications with their job and company details | Michael | Completed |
+| 25.2 | Build a page with the application history and current statuses | Michael | Completed |
+| 25.3 | Show the status breakdown and a chart of applications sent over time | Michael | Completed |
+| 25.4 | Test the history and numbers, access control, and the empty page | Michael | Completed |
 
-Status: Postponed. It was the story we said we'd drop first if we ran out of time, and Maher will build it in Sprint 3.
-| 18.7 | Allow recruiters to view their status and resubmit rejected requests | Maher | Not Started |
-| 18.8 | Test verification requests, approval, rejection, database updates, and authorization | Maher | Not Started |
+Status: Completed in PR #173, merged November 14. Acceptance tests: #171, #172.
 
-### Generative AI feature: Resume AI autofill and review (#91) - High - Paul - Sprint 2
-Being built on the `feature/ai-resume` branch. The issue doesn't have separate tasks yet.
+### US-26: Notifications and Reminders (#161) - High - Kimia - Sprint 3
+| Task | Description | Owner | Status |
+|---|---|---|---|
+| 26.1 | Design the notification table | Kimia | Completed |
+| 26.2 | Create, load and mark notifications as read on the server | Kimia | Completed |
+| 26.3 | Notify recruiters about new applications | Kimia | Completed |
+| 26.4 | Notify applicants about status changes and interview invitations | Kimia | Completed |
+| 26.5 | Notify applicants about offers and rejections | Kimia | Completed |
+| 26.6 | Remind users about upcoming deadlines | Kimia | Completed |
+| 26.7 | Remind recruiters about applications waiting for an answer | Kimia | In Progress |
+| 26.8 | Build the notification bell and inbox | Kimia | Completed |
+| 26.9 | Write the acceptance tests and unit tests | Kimia | In Progress |
+
+Status: Merged in PR #167 on November 14. The reminders for applications waiting for an answer (26.7) and the acceptance tests are still left.
+
+### US-27: Job Offer Emails (#163) - High - Maher - Sprint 3
+Done in PR #165, merged November 12. When a recruiter sends an offer, the applicant gets an email with a link to see it on CareerConnect. The PR also has tests. The issue doesn't have separate tasks.
+
+### US-28: Job Filter Additions (#166) - Medium - Mohamad - Sprint 3
+| Task | Description | Owner | Status |
+|---|---|---|---|
+| 28.1 | Read the new filters and sort option from the URL and ignore bad values | Mohamad | Completed |
+| 28.2 | Add the new filters and sort options to the job list query | Mohamad | Completed |
+| 28.3 | Add the new fields to the search form | Mohamad | Completed |
+| 28.4 | Add company and city suggestions to the search form | Mohamad | Completed |
+| 28.5 | Write unit tests for the new filters and run them in CI | Mohamad | Completed |
+| 28.6 | Write the acceptance tests | Mohamad | Completed |
+
+It builds on US-14, so it's a sub-issue of #19.
+
+Status: Completed in PR #175, merged November 14. A small fix for long words with no spaces, which used to run past the edge of their boxes, went in with it (also PR #177). Acceptance tests: #180, #181.
+
+### US-19: Recruiters And Job Seekers can Follow Each Other (#80) - Low - Mohamad - Sprint 3
+| Task | Description | Owner | Status |
+|---|---|---|---|
+| 19.1 | Create a follow table (follower, followed user, date) | Mohamad | Completed |
+| 19.2 | Add the Follow / Unfollow button to profile pages | Mohamad | Completed |
+| 19.3 | Build the Following page | Mohamad | Completed |
+| 19.4 | Add a "From people I follow" filter to the job list | Mohamad | Completed |
+| 19.5 | Test following, unfollowing, and the duplicate and self-follow rules | Mohamad | Completed |
+| 19.6 | Build the Recruiters / Job seekers page with a search | Mohamad | Completed |
+| 19.7 | Show profile photos on job postings and the applicants list, linked to the profile | Mohamad | Completed |
+| 19.8 | Write the acceptance tests | Mohamad | Completed |
+
+Status: Completed in PR #174, merged November 14. Acceptance tests: #178, #179.
+
+### US-21: Dark Mode (#82) - Low - Maher - Sprint 3
+| Task | Description | Owner | Status |
+|---|---|---|---|
+| 21.1 | Define dark versions of the app's colours | Maher | Completed |
+| 21.2 | Add the theme toggle to the navigation bar | Maher | Completed |
+| 21.3 | Save the user's choice and apply it when a page loads | Maher | Completed |
+| 21.4 | Check every page in both themes for readability | Maher | In Progress |
+
+Status: Maher is building it on the `feature/dark-mode` branch, and there's no PR yet. The Light, Dark and System choice went on the Settings page instead of the navigation bar. It's saved in the browser, and most pages have dark styles now. He's still going through the rest of the pages.
 
 ## Not Planned Yet - Remaining User Stories
 
@@ -245,31 +327,28 @@ These stories are in the backlog but haven't been planned for a sprint yet. Thei
 | 9.5 | Allow users to edit or delete their own reviews | Maher | Not Started |
 | 9.6 | Test review submission, ownership, and validation | Maher | Not Started |
 
-### US-19: Recruiters And Job Seekers can Follow Eachother (#80) - Low - Kimia - Not planned yet
+### US-18: Recruiter Verification and Approval (#97) - Medium - Maher - Not planned yet
 | Task | Description | Owner | Status |
 |---|---|---|---|
-| 19.1 | Create a follow table (follower, followed user, date) | Kimia | Not Started |
-| 19.2 | Add the Follow / Unfollow button to profile pages | Kimia | Not Started |
-| 19.3 | Build the Following page | Kimia | Not Started |
-| 19.4 | Add a "From people I follow" filter to the job list | Kimia | Not Started |
-| 19.5 | Test following, unfollowing, and the duplicate and self-follow rules | Kimia | Not Started |
+| 18.1 | Create a database table to store recruiter verification requests and their status | Maher | Not Started |
+| 18.2 | Add a Request Verification button to recruiter profiles | Maher | Not Started |
+| 18.3 | Create an admin-only Verification Requests section with a pending request counter | Maher | Not Started |
+| 18.4 | Allow admins to open and review recruiter profiles from the requests list | Maher | Not Started |
+| 18.5 | Implement Approve and Reject functionality with appropriate access restrictions | Maher | Not Started |
+| 18.6 | Display a blue verified badge on approved recruiter profiles | Maher | Not Started |
+| 18.7 | Allow recruiters to view their status and resubmit rejected requests | Maher | Not Started |
+| 18.8 | Test verification requests, approval, rejection, database updates, and authorization | Maher | Not Started |
 
-### US-21: Dark Mode (#82) - Low - Maher - Not planned yet
-| Task | Description | Owner | Status |
-|---|---|---|---|
-| 21.1 | Define dark versions of the app's colours | Maher | Not Started |
-| 21.2 | Add the theme toggle to the navigation bar | Maher | Not Started |
-| 21.3 | Save the user's choice and apply it when a page loads | Maher | Not Started |
-| 21.4 | Check every page in both themes for readability | Maher | Not Started |
+Status: Not started yet. We postponed it in Sprint 2 because it was the story we said we'd drop first if we ran out of time. It was supposed to be in Sprint 3, but Maher worked on US-27 and US-21 instead.
 
-### US-22: Messaging between Job Seekers & Recruiters (#81) - Low - Paul - Not planned yet
+### US-22: Messaging between Job Seekers & Recruiters (#81) - Low - Kimia - Not planned yet
 | Task | Description | Owner | Status |
 |---|---|---|---|
-| 22.1 | Create the conversation and message tables | Paul | Not Started |
-| 22.2 | Build the inbox page | Paul | Not Started |
-| 22.3 | Build the conversation page with a send form | Paul | Not Started |
-| 22.4 | Restrict conversations to their two participants | Paul | Not Started |
-| 22.5 | Test sending, privacy, the unread marker, and validation | Paul | Not Started |
+| 22.1 | Create the conversation and message tables | Kimia | Not Started |
+| 22.2 | Build the inbox page | Kimia | Not Started |
+| 22.3 | Build the conversation page with a send form | Kimia | Not Started |
+| 22.4 | Restrict conversations to their two participants | Kimia | Not Started |
+| 22.5 | Test sending, privacy, the unread marker, and validation | Kimia | Not Started |
 
 ### US-23: Search Job Seekers as Recruiter (#79) - Low - Michael - Not planned yet
 | Task | Description | Owner | Status |

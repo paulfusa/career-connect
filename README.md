@@ -16,7 +16,7 @@ Project for **SOEN 341 LAB FM** - *Fall 2026*
 ## Project description 
 CareerConnect is a web application designed to connect job seekers and recruiters. It allows both to manage the hiring process in a single place. Job seekers will have the ability to create their own profile, manage their resumes, browse for job postings, save their favorite opportunities to dive into later, submit applications, follow the application's status, and more. Recruiters, on the other hand, will be able to publish openings, review applications, and update decision status and communicate outcomes with applicants.
 
-The project aims to make applying easier by keeping everything organized and clear. Its outcome-message feature tries to cut down on "ghosting" by companies, so applicants get real feedback and a way to improve. They get a clear explanation of either how to move on to the next step or how to improve their applications. The team will also add generative AI features, and will document how AI is used throughout development.
+The project aims to make applying easier by keeping everything organized and clear. Its outcome-message feature tries to cut down on "ghosting" by companies, so applicants get real feedback and a way to improve. They get a clear explanation of either how to move on to the next step or how to improve their applications. We also added a generative AI feature that reviews resumes and fills in profiles from them, and we log how we use AI during development in `AI_Log/`.
 
 ## Problem and Proposed Solution
 Job seekers often try to get opportunities throughout websites, emails, and personal documents. That makes it hard to stay organized and remember where each application stands. Recruiters also need a way to post openings and respond to applications.
@@ -28,12 +28,12 @@ CareerConnect aims to gather all this into one platform that tries to satisfy bo
 - **Node.js**: v22 or higher
 - **pnpm**: v9 or higher
 1. Clone the repository: `git clone https://github.com/paulfusa/career-connect.git`
-2. In Project Terminal, run `pnpm install` to install the Node dependencies,
+2. In Project Terminal, run `pnpm install` to install the Node dependencies.
 3. Duplicate the `.env.example` and rename to `.env`, and paste the required keys.
 4. Optional: to use the AI features (resume review and profile autofill), follow [docs/ai-setup.md](docs/ai-setup.md). It works with a free local model (Ollama) or a free hosted tier (Gemini, Groq).
 
 ## Run Dev
-Sync schema changes to your development database with `pnpm db:push`.
+The team shares one Supabase database, so changes to the database go through a pull request first and are then run in the Supabase SQL editor. Only use `pnpm db:push` on a database of your own.
 
 ### VS Code
 - Go to **Run and Debug** and choose `Web`
@@ -50,23 +50,19 @@ Our CI pipeline on GitHub Actions ([`.github/workflows/ci.yml`](.github/workflow
 
 Acceptance tests are GitHub issues with the `Acceptance Test` label, linked to the user story they test.
 
-# Current Sprint 2 Scope
-Sprint 2 runs from September 29 to October 26, 2026. The status of each story is in the [Sprint 2 plan](docs/sprints/sprint-2.md).
-- US-08: Account email verification
-- US-17: Forgot password
-- US-10: Resume upload
-- US-11: Resume management
-- US-12: Recruiter job posting creation
-- US-13: Recruiter job posting management
-- US-05: Browse and view job offers
-- US-14: Job search filters
-- US-15: Apply for a job
-- US-20: Application status tracking
-- US-07: Recruiter company profile
-- US-03: Clear application outcome message
-- Generative AI feature: resume AI autofill and review
+# Current Sprint 3 Scope
+Sprint 3 runs from October 27 to November 16, 2026. The status of each story is in the [Sprint 3 plan](docs/sprints/sprint-3.md).
+- US-24: Resume AI autofill and review (our generative AI feature)
+- US-25: Application analytics and history dashboard
+- US-26: Notifications and reminders
+- US-27: Job offer emails
+- US-28: Job filter additions
+- US-19: Recruiters and job seekers can follow each other
+- US-21: Dark mode
 
 Completed in Sprint 1: US-01 (account registration), US-02 (login and logout), US-16 (first-login onboarding) and US-04 (profile management).
+
+Completed in Sprint 2: US-08 (email verification), US-17 (forgot password), US-10 and US-11 (resumes), US-12 and US-13 (job postings), US-05 (browsing jobs), US-14 (job search), US-15 (applying for a job), US-20 (application status), US-07 (company profiles) and US-03 (outcome messages).
 
 # Implemented So Far
 - Signing up, email verification, logging in and out, resetting a forgotten password, and a first-login setup.
@@ -75,115 +71,41 @@ Completed in Sprint 1: US-01 (account registration), US-02 (login and logout), U
 - Recruiters can create, edit and delete job postings, with company and city suggestions as they type.
 - A job list with Open, Closed and Draft badges, and a details page with the requirements, deadline, salary and acceptance rate.
 - Searching jobs by keyword, company or location, and filtering by employment type and work mode.
+- More job filters: minimum salary, date posted and open jobs only, sorting by the closest deadline or the highest salary, and company and city suggestions while typing.
 - Company profiles, shown on each recruiter's postings.
 - Applying to a job with one of your resumes, and withdrawing before the deadline.
 - A page where recruiters see who applied to each posting and open their resumes.
 - Offer and rejection messages with the recruiter's reasons and next steps, plus reminders when an application waits too long.
 - Application statuses: recruiters can mark an application Under Review or Interview, and job seekers see every status on My Applications.
+- An application history page for job seekers, with a breakdown by status and a chart of the applications they sent over time.
+- A notification bell with an unread count and an inbox. Recruiters hear about new applications, and job seekers about status changes, interviews, offers and rejections.
+- Deadline reminders for recruiters, as a separate job that is off by default (see [docs/deadline-reminders.md](docs/deadline-reminders.md)).
+- An email to the applicant when a recruiter sends an offer, with a link to see it on CareerConnect.
+- AI resume review and profile autofill on the Resumes page.
+- Following: job seekers and recruiters can follow each other and find people on the Recruiters / Job seekers page, and job seekers can show only the jobs of people they follow. Job postings and the applicants list show a profile photo that links to the person's profile.
 
-# Planned Features
-
-## Job-seeker and account features:
-- Account registration, email verification, login/logout.
-- Job seeker profile creation and management.
-- Resume upload and update/edit.
-- Job search, monitoring job application status, and job acceptance rate.
-- Job browsing filters and application submission.
-- History tracking
-
-## Recruiter/Company Features:
-- Recruiter company profiles and descriptions.
-- Job posting creation and management.
-- Application review and status updates.
-- Company reviews that users can read and submit.
-
-## Additional Ideas:
-- **Clear application outcomes:** Recruiters can send an offer with details on how to proceed or a rejection with a recruiter-made feedback on how to improve applications.
-- **Feature suggestions:** Users can send feature suggestions to improve the workflow and provide benefits to explain to the team the reason for implementing them.
-
-**Generative AI feature:** AI-assisted resume autofill and review, which suggests how to improve a resume's clarity and relevance (issue #91, in progress).
+# Still to Do
+- Recruiter dashboard: archiving postings and filtering applications by status or date.
+- Dark mode (US-21), in progress.
+- Finishing the AI feature in Sprint 4.
+- Not planned yet: recruiter verification (US-18), messaging (US-22), searching job seekers as a recruiter (US-23), company reviews (US-09) and feature suggestions (US-06).
 
 # Technologies
-The repository is set up with SvelteKit, Svelte, TypeScript, Tailwind CSS, PostgreSQL on Supabase, Drizzle ORM, Better Auth, and pnpm. GitHub Actions runs our CI pipeline.
-
-## Deadline reminders (US-26, Task 26.6)
-
-The standalone `pnpm reminders:deadlines` job creates persistent in-app reminders
-for verified recruiters about their own open, published postings. It does not send
-pre-application reminders to job seekers: saved jobs and reminder subscriptions
-are not implemented. Existing overdue-decision indicators are separate.
-
-Eligibility uses PostgreSQL's statement time converted to `America/Toronto`, from
-today through today plus three calendar days, inclusive. Applications remain valid
-through the entire deadline day. Wording says applications are accepted through
-the stated date in Toronto time; it does not treat a date-only deadline as UTC
-midnight or a 72-hour window.
-
-One atomic insert-from-select checks eligibility and inserts reminders. A unique
-key includes the posting, recipient, deadline date and `within_3_days` window.
-Repeated or overlapping executions cannot insert the same key twice. A deadline
-edit permits a reminder for the new date; reverting to an already-reminded date
-does not create another reminder. Later job closure does not retract notifications
-already created from an eligible statement snapshot. No notification UI is added.
-
-### Default-off activation and credentials
-
-`.github/workflows/deadline-reminders.yml` supports **manual dispatch only**. The
-entire job is gated on the repository variable `DEADLINE_REMINDERS_ENABLED` being
-set to the literal JSON boolean `true` and the selected ref being the repository's
-default branch. An unset or false value keeps it disabled. Other values fail
-closed; a malformed boolean can fail condition evaluation without running the job.
-The same job gate must remain in place for any future automatic schedule.
-
-The runner reads only `REMINDER_DATABASE_URL`, with no `DATABASE_URL` fallback and
-no automatic `.env` loading. Missing credentials cause a nonzero exit before any
-connection is created. The workflow exposes the dedicated secret only to its
-execution step, never to dependency installation, ordinary CI or unit tests.
-Credentials and raw database errors must never be written to source or logs.
-
-Use a dedicated least-privilege PostgreSQL role where practical: SELECT on the
-required `job_posting` fields (`id`, `created_by`, `title`, `status`, `published`,
-`application_deadline`) and `user` fields (`id`, `role`, `email_verified`), INSERT
-on `notification`, and SELECT on returned notification IDs. Verify actual grants
-and any RLS policies in an isolated database. The runner requires TLS and uses
-one connection with bounded connection, statement and shutdown timeouts.
-
-Before anyone enables execution, the team must confirm the required schema is
-deployed, pass isolated PostgreSQL integration tests, verify dedicated credentials
-and permissions, and explicitly approve activation. Only then may maintainers
-configure the secret and activation variable and authorize a manual run. These
-settings are not configured by this implementation.
-
-**Automatic scheduling remains disabled.** A later, separately approved change may
-add `17 * * * *` (minute 17 hourly, UTC) while retaining the activation gate. GitHub
-schedules run from the default branch and may be delayed or dropped; public-repo
-schedules can be disabled after inactivity. Until that change, this feature is
-not automatically operational. After activation, retrying within the window is
-safe; outages beyond it can miss reminders. Expired reminders are not backfilled.
-
-### Validation before activation
-
-`pnpm test` covers actual SQL construction with nonconnecting Drizzle mocks and
-runner lifecycle with injected I/O. Tests never use live database credentials.
-The CLI safety check removes both database variables and verifies missing-secret
-failure without a connection. Run `pnpm check` as well.
-
-Before activation, use a disposable PostgreSQL database, never shared Supabase,
-to verify today/+1/+3/+4/expired/null deadlines, Toronto midnight and DST,
-month/year boundaries, closed/unpublished jobs, unverified/non-recruiter owners,
-repeat/concurrent execution, edited deadlines, rollback/retry, and least-privilege
-access. Unit tests do not establish PostgreSQL date or concurrency behavior.
-Observe aggregate inserted counts and workflow failure status after approved
-runs; no external monitoring or automatic retry infrastructure is provisioned.
+The repository is set up with SvelteKit, Svelte, TypeScript, Tailwind CSS, PostgreSQL on Supabase, Drizzle ORM, Better Auth, and pnpm. Emails are sent with Resend, and the AI features work with any OpenAI-compatible model, like Ollama on your own computer or Google Gemini. GitHub Actions runs our CI pipeline.
 
 # Project documentation
 - [Sprint 1 plan](docs/sprints/sprint-1.md)
 - [Sprint 2 plan](docs/sprints/sprint-2.md)
+- [Sprint 3 plan](docs/sprints/sprint-3.md)
 - [Task breakdown](docs/sprints/task-breakdown.md)
 - [Sprint 1 contribution log](docs/sprints/sprint-1-contributions.md)
 - [Sprint 2 contribution log](docs/sprints/sprint-2-contributions.md)
+- [Sprint 3 contribution log](docs/sprints/sprint-3-contributions.md)
 - [Team process](docs/process/team-process.md)
 - [Team-generated user stories](docs/user-stories/team-generated-stories.md)
 - [Meeting minutes](docs/meeting-minutes/)
+- [Sprint submissions and summary reports](docs/submissions/)
+- [AI setup](docs/ai-setup.md)
+- [Deadline reminders](docs/deadline-reminders.md)
 - [AI usage logs](AI_Log/)
 - User stories and acceptance tests: GitHub Issues
