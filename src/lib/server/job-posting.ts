@@ -91,6 +91,17 @@ export function parseJobPosting(data: FormData): JobPostingParse {
 }
 
 // US-05: a job shows as Closed once the recruiter closes it or its deadline has passed (the deadline day still counts as open)
-export function isClosed(job: { status: string; applicationDeadline: string | null }, today: string): boolean {
-	return job.status !== 'open' || (!!job.applicationDeadline && today > job.applicationDeadline);
+export function isClosed(job: { status: string; applicationDeadline: string | null; archived?: boolean }, today: string): boolean {
+	return job.archived === true || job.status !== 'open' || (!!job.applicationDeadline && today > job.applicationDeadline);
+}
+
+export function canViewJobPosting(
+	posting: { createdBy: string; published: boolean; archived: boolean },
+	viewer: { id: string; role: string },
+	hasApplied: boolean
+): boolean {
+	if (posting.createdBy === viewer.id) return true;
+	if (!posting.published) return false;
+	if (!posting.archived) return true;
+	return viewer.role === 'job_seeker' && hasApplied;
 }

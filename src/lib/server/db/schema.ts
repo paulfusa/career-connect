@@ -1,12 +1,11 @@
 import { sql } from 'drizzle-orm';
-import { pgTable, serial, integer, text, timestamp, boolean, date, uuid, unique, index, check, jsonb } from 'drizzle-orm/pg-core';
+import { pgTable, integer, text, timestamp, boolean, date, uuid, unique, index, check, jsonb } from 'drizzle-orm/pg-core';
 import type { ParsedResume, ResumeReview } from '../resume-ai';
 import { user } from './auth.schema';
 
-export const task = pgTable('task', {
-	id: serial('id').primaryKey(),
-	title: text('title').notNull(),
-	priority: integer('priority').notNull().default(1)
+export const passwordResetCooldown = pgTable('password_reset_cooldown', {
+	emailHash: text('email_hash').primaryKey(),
+	lastRequestedAt: timestamp('last_requested_at', { withTimezone: true }).defaultNow().notNull()
 });
 
 const userId = () =>
@@ -109,6 +108,7 @@ export const jobPosting = pgTable(
 		description: text('description').notNull(),
 		status: text('status').default('open').notNull(),
 		published: boolean('published').default(true).notNull(),
+		archived: boolean('archived').default(false).notNull(),
 		requirements: text('requirements'),
 		applicationDeadline: date('application_deadline'),
 		salaryMin: integer('salary_min'),
@@ -208,6 +208,7 @@ export const follow = pgTable(
 
 export type Profile = typeof profile.$inferSelect;
 export type Notification = typeof notification.$inferSelect;
+export type PasswordResetCooldown = typeof passwordResetCooldown.$inferSelect;
 export type Resume = typeof resume.$inferSelect;
 export type Experience = typeof experience.$inferSelect;
 export type Education = typeof education.$inferSelect;

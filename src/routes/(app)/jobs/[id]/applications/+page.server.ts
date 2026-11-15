@@ -1,10 +1,11 @@
 
 import { error, fail } from '@sveltejs/kit';
 import { randomUUID } from 'node:crypto';
-import { and, desc, eq, inArray, ne } from 'drizzle-orm';
+import { and, desc, eq, gte, inArray, ne } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import { application, applicationOutcome, jobPosting, resume, user } from '$lib/server/db/schema';
 import { parseOutcome } from '$lib/server/application-outcome';
+import { applicationsSubmittedAfter, parseApplicationFilters } from '$lib/server/application';
 import { findOwnedApplication, saveOutcome } from '$lib/server/outcomes';
 import { needsReminder } from '$lib/server/reminders';
 import { notificationService } from '$lib/server/notifications-db';
@@ -13,7 +14,7 @@ import { sendJobOfferEmail } from '$lib/server/email';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-export const load: PageServerLoad = async ({ params, locals }) => {
+export const load: PageServerLoad = async ({ params, locals, url }) => {
     const me = locals.user!;
 
     if (me.role !== 'recruiter' || !UUID.test(params.id)) {
@@ -39,6 +40,13 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         error(404, 'Job posting not found.');
     }
 
+    const filters = parseApplicationFilters(url.searchParams);
+    const now = new Date();
+    const conditions = [eq(application.jobPostingId, posting.id)];
+    if (filters.status) conditions.push(eq(application.status, filters.status));
+    const submittedAfter = applicationsSubmittedAfter(filters.dateRange, now);
+    if (submittedAfter) conditions.push(gte(application.createdAt, submittedAfter));
+
     const applicants = await db
         .select({
             id: application.id,
@@ -63,13 +71,13 @@ export const load: PageServerLoad = async ({ params, locals }) => {
             )
         )
         .leftJoin(applicationOutcome, eq(applicationOutcome.applicationId, application.id))
-        .where(eq(application.jobPostingId, posting.id))
+        .where(and(...conditions))
         .orderBy(desc(application.createdAt));
-
-    const now = new Date();
 
     return {
         posting,
+        filters,
+        hasFilters: filters.status !== '' || filters.dateRange !== '',
         applicants: applicants.map((applicant) => ({
             ...applicant,
             needsReminder: needsReminder(applicant.appliedAt, !!applicant.outcome, now)

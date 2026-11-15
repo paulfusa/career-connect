@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { isClosed, parseJobPosting } from './job-posting.ts';
+import { canViewJobPosting, isClosed, parseJobPosting } from './job-posting.ts';
 
 const form = (fields: Record<string, string>) => {
 	const data = new FormData();
@@ -96,6 +96,46 @@ test('job posting: an open job before its deadline shows as open', () => {
 
 test('job posting: a job the recruiter closed shows as closed', () => {
 	assert.equal(isClosed({ status: 'closed', applicationDeadline: '2026-10-31' }, '2026-10-25'), true);
+});
+
+test('job posting: an archived job shows as closed', () => {
+	assert.equal(isClosed({ status: 'open', applicationDeadline: null, archived: true }, '2026-10-25'), true);
+});
+
+test('job posting: an existing job-seeker applicant can view an archived posting', () => {
+	assert.equal(
+		canViewJobPosting(
+			{ createdBy: 'recruiter-1', published: true, archived: true },
+			{ id: 'seeker-1', role: 'job_seeker' },
+			true
+		),
+		true
+	);
+});
+
+test('job posting: archived postings stay hidden from non-applicants and other recruiters', () => {
+	const posting = { createdBy: 'recruiter-1', published: true, archived: true };
+	assert.equal(canViewJobPosting(posting, { id: 'seeker-1', role: 'job_seeker' }, false), false);
+	assert.equal(canViewJobPosting(posting, { id: 'recruiter-2', role: 'recruiter' }, true), false);
+});
+
+test('job posting: owners can view archived postings and unpublished jobs remain private', () => {
+	assert.equal(
+		canViewJobPosting(
+			{ createdBy: 'recruiter-1', published: false, archived: true },
+			{ id: 'recruiter-1', role: 'recruiter' },
+			false
+		),
+		true
+	);
+	assert.equal(
+		canViewJobPosting(
+			{ createdBy: 'recruiter-1', published: false, archived: true },
+			{ id: 'seeker-1', role: 'job_seeker' },
+			true
+		),
+		false
+	);
 });
 
 test('job posting: a job shows as closed the day after its deadline', () => {

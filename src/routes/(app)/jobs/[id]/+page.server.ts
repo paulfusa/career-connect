@@ -4,7 +4,7 @@ import { db } from '$lib/server/db';
 import { application, applicationOutcome, companyProfile, jobPosting, resume, user } from '$lib/server/db/schema';
 import type { Actions, PageServerLoad } from './$types';
 import { applyProblem, parseApplication, todayEastern, withdrawProblem } from '$lib/server/application';
-import { isClosed } from '$lib/server/job-posting';
+import { canViewJobPosting, isClosed } from '$lib/server/job-posting';
 import { acceptanceRate } from '$lib/server/acceptance-rate';
 import { decisionCounts, submittedCount } from '$lib/server/outcomes';
 import { notificationService } from '$lib/server/notifications-db';
@@ -29,18 +29,8 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 		)
 		.where(eq(jobPosting.id, params.id));
 
-	if (!result || (!result.posting.published && result.posting.createdBy !== locals.user!.id)) {
-		error(404, 'Job posting not found.');
-	}
+	if (!result) error(404, 'Job posting not found.');
 	const isJobSeeker = locals.user!.role === 'job_seeker';
-
-	const resumes = isJobSeeker
-		? await db
-				.select()
-				.from(resume)
-				.where(eq(resume.userId, locals.user!.id))
-				.orderBy(desc(resume.updatedAt))
-		: [];
 
 	const [existingApplication] = isJobSeeker
 		? await db
@@ -55,6 +45,19 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 					)
 				)
 		: [];
+
+	if (!canViewJobPosting(result.posting, locals.user!, !!existingApplication)) {
+		error(404, 'Job posting not found.');
+	}
+
+	const resumes = isJobSeeker
+		? await db
+				.select()
+				.from(resume)
+				.where(eq(resume.userId, locals.user!.id))
+				.orderBy(desc(resume.updatedAt))
+		: [];
+
 	const deadline = result.posting.applicationDeadline;
 	const today = todayEastern();
 
@@ -123,6 +126,7 @@ export const actions: Actions = {
                 title: jobPosting.title,
                 status: jobPosting.status,
                 published: jobPosting.published,
+                archived: jobPosting.archived,
                 applicationDeadline: jobPosting.applicationDeadline
             })
             .from(jobPosting)

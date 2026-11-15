@@ -183,7 +183,7 @@ test('US-26: application SQL retains ownership, lookup, insert values and confli
     assert.match(selects[1].sql, /"job_posting"\."id" = \$/);
     assert.deepEqual(selects[1].params, [jobId]);
     assert.deepEqual(Object.keys(selects[1].fields), [
-        'id', 'createdBy', 'title', 'status', 'published', 'applicationDeadline'
+        'id', 'createdBy', 'title', 'status', 'published', 'archived', 'applicationDeadline'
     ]);
     assert.deepEqual(selects[2].params, [jobId, seeker.id]);
     assert.match(selects[2].sql, /"application"\."job_posting_id" = \$/);

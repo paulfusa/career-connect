@@ -46,9 +46,44 @@
                     dark:bg-[#303034] dark:text-zinc-200
                     dark:ring-1 dark:ring-white/10"
             >
-                {data.applicants.length} applicants
+                {#if data.hasFilters}
+                    {data.applicants.length} matching applications
+                {:else}
+                    {data.applicants.length} applicants
+                {/if}
             </span>
         </div>
+
+        <form method="GET" class="{glassPanel} mt-6 grid gap-4 p-5 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto]">
+            <label class="block">
+                <span class="mb-1.5 block text-sm font-medium">Status</span>
+                <select name="status" value={data.filters.status} class={field}>
+                    <option value="">All statuses</option>
+                    {#each Object.entries(APPLICATION_STATUSES) as [value, label] (value)}
+                        <option {value}>{label}</option>
+                    {/each}
+                </select>
+            </label>
+
+            <label class="block">
+                <span class="mb-1.5 block text-sm font-medium">Date submitted</span>
+                <select name="dateRange" value={data.filters.dateRange} class={field}>
+                    <option value="">Any time</option>
+                    <option value="7">Last 7 days</option>
+                    <option value="30">Last 30 days</option>
+                </select>
+            </label>
+
+            <button type="submit" class={primaryButton + ' h-10 self-center px-5 !py-0'}>Filter</button>
+            {#if data.hasFilters}
+                <a
+                    href="/jobs/{data.posting.id}/applications"
+                    class="self-center text-sm font-semibold text-tide-deep underline underline-offset-4 dark:text-tide"
+                >
+                    Clear filters
+                </a>
+            {/if}
+        </form>
 
         {#if waitingCount > 0}
             <p
@@ -79,10 +114,22 @@
                 class="mt-8 rounded-2xl bg-white/60 p-6 text-center
                     dark:bg-[#242427] dark:ring-1 dark:ring-white/10"
             >
-                <p class="font-medium">No applications yet</p>
-                <p class="mt-2 text-sm text-ink/65">
-                    Applications will appear here when job seekers apply.
+                <p class="font-medium">
+                    {data.hasFilters ? 'No applications match these filters' : 'No applications yet'}
                 </p>
+                <p class="mt-2 text-sm text-ink/65">
+                    {data.hasFilters
+                        ? 'Try changing or clearing the filters.'
+                        : 'Applications will appear here when job seekers apply.'}
+                </p>
+                {#if data.hasFilters}
+                    <a
+                        href="/jobs/{data.posting.id}/applications"
+                        class="mt-4 inline-block text-sm font-semibold text-tide-deep underline underline-offset-4 dark:text-tide"
+                    >
+                        Clear filters
+                    </a>
+                {/if}
             </div>
         {:else}
             <div class="mt-8 space-y-4">

@@ -25,7 +25,11 @@
 
 {#if data.user.role === 'recruiter'}
 	<nav class="mt-5 inline-flex gap-1 rounded-2xl bg-white/45 p-1 ring-1 ring-white/60 dark:bg-[#242427] dark:ring-white/10">
-		{#each [{ href: '/jobs', label: 'All postings', current: !data.mine }, { href: '/jobs?mine', label: 'Your postings', current: data.mine }] as tab (tab.href)}
+		{#each [
+			{ href: '/jobs', label: 'All postings', current: !data.mine },
+			{ href: '/jobs?mine', label: 'Active postings', current: data.mine && !data.archivedView },
+			{ href: '/jobs?mine&archived=1', label: 'Archived postings', current: data.archivedView }
+		] as tab (tab.href)}
 			<a
 				href={tab.href}
 				aria-current={tab.current ? 'page' : undefined}
@@ -41,6 +45,7 @@
 	
 	{#if data.mine}
 		<input type="hidden" name="mine" />
+		{#if data.archivedView}<input type="hidden" name="archived" value="1" />{/if}
 	{/if}
 
 	<label class="block">
@@ -157,7 +162,9 @@
 					>
 						{WORK_MODES[posting.workMode as keyof typeof WORK_MODES] ?? posting.workMode}
 					</span>
-					{#if !posting.closed}
+					{#if posting.archived}
+						<span class="rounded-full bg-slate-200 px-3 py-1 font-medium text-slate-800 dark:bg-slate-800 dark:text-slate-200">Archived</span>
+					{:else if !posting.closed}
 						<span class="rounded-full bg-emerald-100 px-3 py-1 font-medium text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300">Open</span>
 					{:else}
 						<span class="rounded-full bg-rose-100 px-3 py-1 font-medium text-rose-800 dark:bg-rose-950/50 dark:text-rose-300">Closed</span>
@@ -173,20 +180,33 @@
 				</div>
 				<p class="mt-4 line-clamp-3 whitespace-pre-line text-sm leading-6 text-ink/70">{posting.description}</p>
 				<div class="mt-4 flex items-center justify-between gap-3">
-					<p class="text-xs text-ink/50">Posted {posting.createdAt.toLocaleDateString()}</p>
-					{#if posting.createdBy === data.user.id}	
-					<a
-						href="/jobs/{posting.id}/edit"
-						aria-label="Edit {posting.title}"
-						class="relative z-10 rounded-lg border border-white/70
-							bg-white/70 px-3.5 py-1.5 text-sm font-semibold
-							text-tide-deep transition hover:bg-white
-							focus-visible:outline-2 focus-visible:outline-tide
-							dark:border-white/15 dark:bg-[#303034]
-							dark:text-[#7dd3df] dark:hover:bg-[#404044]"
-					>
-						Edit
-					</a>
+					<div class="flex flex-wrap items-center gap-x-4 gap-y-1">
+						<p class="text-xs text-ink/50">Posted {posting.createdAt.toLocaleDateString()}</p>
+						{#if data.mine}
+							<p class="text-xs font-medium text-ink/60">
+								{posting.applicationCount ?? 0} {(posting.applicationCount ?? 0) === 1 ? 'application' : 'applications'}
+							</p>
+						{/if}
+					</div>
+					{#if posting.createdBy === data.user.id}
+						<div class="relative z-10 flex flex-wrap gap-2">
+							<a
+								href="/jobs/{posting.id}/edit"
+								aria-label="Edit {posting.title}"
+								class="rounded-lg border border-white/70 bg-white/70 px-3.5 py-1.5 text-sm font-semibold text-tide-deep transition hover:bg-white focus-visible:outline-2 focus-visible:outline-tide dark:border-white/15 dark:bg-[#303034] dark:text-[#7dd3df] dark:hover:bg-[#404044]"
+							>
+								Edit
+							</a>
+							<form method="POST" action={posting.archived ? '?/unarchive' : '?/archive'}>
+								<input type="hidden" name="id" value={posting.id} />
+								<button
+									type="submit"
+									class="rounded-lg border border-white/70 bg-white/70 px-3.5 py-1.5 text-sm font-semibold text-tide-deep transition hover:bg-white focus-visible:outline-2 focus-visible:outline-tide dark:border-white/15 dark:bg-[#303034] dark:text-[#7dd3df] dark:hover:bg-[#404044]"
+								>
+									{posting.archived ? 'Unarchive' : 'Archive'}
+								</button>
+							</form>
+						</div>
 					{/if}
 				</div>
 			</article>
@@ -198,11 +218,17 @@
 			{#if searching}
 				<h2 class="font-display text-xl font-semibold">No jobs match your search</h2>
 				<p class="mt-2 text-ink/60">Try different words or fewer filters.</p>
-				<a href={data.mine ? '/jobs?mine' : '/jobs'} class="mt-5 inline-block font-semibold text-tide-deep dark:text-tide underline underline-offset-4">Clear search</a>
+				<a href={data.archivedView ? '/jobs?mine&archived=1' : data.mine ? '/jobs?mine' : '/jobs'} class="mt-5 inline-block font-semibold text-tide-deep dark:text-tide underline underline-offset-4">Clear search</a>
 			{:else if data.mine}
-				<h2 class="font-display text-xl font-semibold">You haven’t posted any jobs yet</h2>
-				<p class="mt-2 text-ink/60">Postings you create will be listed here.</p>
-				<a href="/jobs/new" class="mt-5 inline-block font-semibold text-tide-deep dark:text-tide underline underline-offset-4">Create your first posting</a>
+				{#if data.archivedView}
+					<h2 class="font-display text-xl font-semibold">No archived postings</h2>
+					<p class="mt-2 text-ink/60">Postings you archive will be listed here.</p>
+					<a href="/jobs?mine" class="mt-5 inline-block font-semibold text-tide-deep dark:text-tide underline underline-offset-4">View active postings</a>
+				{:else}
+					<h2 class="font-display text-xl font-semibold">You haven’t posted any active jobs</h2>
+					<p class="mt-2 text-ink/60">Active postings you create will be listed here.</p>
+					<a href="/jobs/new" class="mt-5 inline-block font-semibold text-tide-deep dark:text-tide underline underline-offset-4">Create your first posting</a>
+				{/if}
 			{:else}
 				<h2 class="font-display text-xl font-semibold">No job postings yet</h2>
 				<p class="mt-2 text-ink/60">New opportunities will appear here when recruiters post them.</p>

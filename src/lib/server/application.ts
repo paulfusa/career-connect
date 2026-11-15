@@ -1,4 +1,31 @@
+import { APPLICATION_STATUSES } from '../profile-options.ts';
+
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+export type ApplicationStatus = keyof typeof APPLICATION_STATUSES;
+export type ApplicationDateRange = '' | '7' | '30';
+export type ApplicationFilters = {
+	status: ApplicationStatus | '';
+	dateRange: ApplicationDateRange;
+};
+
+const isApplicationStatus = (value: string): value is ApplicationStatus =>
+	Object.hasOwn(APPLICATION_STATUSES, value);
+
+export function parseApplicationFilters(params: URLSearchParams): ApplicationFilters {
+	const status = params.get('status') ?? '';
+	const dateRange = params.get('dateRange') ?? '';
+
+	return {
+		status: isApplicationStatus(status) ? status : '',
+		dateRange: dateRange === '7' || dateRange === '30' ? dateRange : ''
+	};
+}
+
+export function applicationsSubmittedAfter(dateRange: ApplicationDateRange, now: Date): Date | null {
+	if (!dateRange) return null;
+	return new Date(now.getTime() - Number(dateRange) * 24 * 60 * 60 * 1000);
+}
 
 export type ApplicationInput = {
 	resumeId: string;
@@ -31,11 +58,12 @@ export function todayEastern(): string {
 }
 
 export function applyProblem(
-	job: { status: string; published: boolean; applicationDeadline: string | null } | undefined,
+	job: { status: string; published: boolean; archived?: boolean; applicationDeadline: string | null } | undefined,
 	alreadyApplied: boolean,
 	today: string
 ): string | null {
 	if (!job || !job.published) return 'Job posting not found.';
+	if (job.archived) return 'This job is no longer receiving applications.';
 	if (job.status !== 'open') return 'This job is no longer receiving applications.';
 	if (job.applicationDeadline && today > job.applicationDeadline) return 'The application deadline has passed.';
 	if (alreadyApplied) return 'You have already applied to this job.';

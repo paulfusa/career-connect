@@ -1,18 +1,27 @@
-import { and, asc, desc, eq, getTableColumns, gte, ilike, isNull, or, sql, type SQL } from 'drizzle-orm';
+import { fail, redirect } from '@sveltejs/kit';
+import { and, asc, count, desc, eq, getTableColumns, gte, ilike, inArray, isNull, or, sql, type SQL } from 'drizzle-orm';
 import { db } from '$lib/server/db';
-import { follow, jobPosting, user } from '$lib/server/db/schema';
-import type { PageServerLoad } from './$types';
+import { application, follow, jobPosting, user } from '$lib/server/db/schema';
+import type { Actions, PageServerLoad } from './$types';
 import { parseJobSearch, postedAfter } from '$lib/server/job-search';
 import { isClosed } from '$lib/server/job-posting';
 import { todayEastern } from '$lib/server/application';
 
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export const load: PageServerLoad = async ({ url, locals }) => {
 	// /jobs?mine shows a recruiter only the postings they created; job seekers always get the full list
 	const mine = locals.user!.role === 'recruiter' && url.searchParams.has('mine');
+	const archivedView = mine && url.searchParams.get('archived') === '1';
 	const search = parseJobSearch(url.searchParams);
 	const today = todayEastern();
 	const conditions: (SQL | undefined)[] = [
-		mine ? eq(jobPosting.createdBy, locals.user!.id) : or(eq(jobPosting.published, true), eq(jobPosting.createdBy, locals.user!.id))
+		mine
+			? and(eq(jobPosting.createdBy, locals.user!.id), eq(jobPosting.archived, archivedView))
+			: and(
+					eq(jobPosting.archived, false),
+					or(eq(jobPosting.published, true), eq(jobPosting.createdBy, locals.user!.id))
+				)
 	];
 	if (search.keyword) conditions.push(or(ilike(jobPosting.title, `%${search.keyword}%`), ilike(jobPosting.description, `%${search.keyword}%`)));
 	if (search.company) conditions.push(ilike(jobPosting.company, `%${search.company}%`));
@@ -51,6 +60,57 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 		.innerJoin(user, eq(user.id, jobPosting.createdBy))
 		.where(and(...conditions))
 		.orderBy(...sortBy, desc(jobPosting.createdAt));
+	const applicationCounts = mine && postings.length
+		? await db
+				.select({ jobPostingId: application.jobPostingId, total: count() })
+				.from(application)
+				.where(inArray(application.jobPostingId, postings.map((posting) => posting.id)))
+				.groupBy(application.jobPostingId)
+		: [];
+	const countsByPosting = new Map(applicationCounts.map(({ jobPostingId, total }) => [jobPostingId, total]));
+
 	// US-05: past-deadline jobs show as Closed too
-	return { postings: postings.map((posting) => ({ ...posting, closed: isClosed(posting, today) })), mine, search };
+	return {
+		postings: postings.map((posting) => ({
+			...posting,
+			closed: isClosed(posting, today),
+			applicationCount: mine ? countsByPosting.get(posting.id) ?? 0 : null
+		})),
+		mine,
+		archivedView,
+		search
+	};
+};
+
+export const actions: Actions = {
+	archive: async ({ request, locals }) => {
+		const me = locals.user!;
+		if (me.role !== 'recruiter') return fail(403, { message: 'Only recruiters can archive job postings.' });
+
+		const id = (await request.formData()).get('id')?.toString() ?? '';
+		if (!UUID.test(id)) return fail(400, { message: 'Invalid job posting.' });
+
+		const [posting] = await db
+			.update(jobPosting)
+			.set({ archived: true, updatedAt: new Date() })
+			.where(and(eq(jobPosting.id, id), eq(jobPosting.createdBy, me.id)))
+			.returning({ id: jobPosting.id });
+		if (!posting) return fail(404, { message: 'Job posting not found.' });
+		redirect(303, '/jobs?mine&archived=1');
+	},
+	unarchive: async ({ request, locals }) => {
+		const me = locals.user!;
+		if (me.role !== 'recruiter') return fail(403, { message: 'Only recruiters can unarchive job postings.' });
+
+		const id = (await request.formData()).get('id')?.toString() ?? '';
+		if (!UUID.test(id)) return fail(400, { message: 'Invalid job posting.' });
+
+		const [posting] = await db
+			.update(jobPosting)
+			.set({ archived: false, updatedAt: new Date() })
+			.where(and(eq(jobPosting.id, id), eq(jobPosting.createdBy, me.id)))
+			.returning({ id: jobPosting.id });
+		if (!posting) return fail(404, { message: 'Job posting not found.' });
+		redirect(303, '/jobs?mine');
+	}
 };
