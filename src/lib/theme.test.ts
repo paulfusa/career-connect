@@ -137,3 +137,33 @@ test('returns system when running without a browser', () => {
     // In Node's test environment, window is normally undefined.
     assert.equal(getTheme(), 'system');
 });
+
+test('saved theme persists across a simulated page reload', () => {
+    setupBrowser();
+
+    setTheme('dark');
+    assert.equal(savedTheme, 'dark');
+
+    // Simulate a new page using the same saved preference.
+    darkEnabled = false;
+
+    const restoredTheme = getTheme();
+    applyTheme(restoredTheme);
+
+    assert.equal(restoredTheme, 'dark');
+    assert.equal(darkEnabled, true);
+});
+
+test('restored system preference uses current device appearance', () => {
+    setupBrowser();
+
+    savedTheme = 'system';
+    systemDark = true;
+
+    applyTheme(getTheme());
+    assert.equal(darkEnabled, true);
+
+    systemDark = false;
+    applyTheme(getTheme());
+    assert.equal(darkEnabled, false);
+});
