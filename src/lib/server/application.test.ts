@@ -36,6 +36,10 @@ test('application: cannot apply to a closed job', () => {
 	assert.equal(applyProblem({ ...openJob, status: 'closed' }, false, today), 'This job is no longer receiving applications.');
 });
 
+test('application: cannot apply to an archived job', () => {
+	assert.equal(applyProblem({ ...openJob, archived: true }, false, today), 'This job is no longer receiving applications.');
+});
+
 test('application: cannot apply twice to the same job', () => {
 	assert.equal(applyProblem(openJob, true, today), 'You have already applied to this job.');
 });

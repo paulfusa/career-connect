@@ -31,11 +31,12 @@ export function todayEastern(): string {
 }
 
 export function applyProblem(
-	job: { status: string; published: boolean; applicationDeadline: string | null } | undefined,
+	job: { status: string; published: boolean; archived?: boolean; applicationDeadline: string | null } | undefined,
 	alreadyApplied: boolean,
 	today: string
 ): string | null {
 	if (!job || !job.published) return 'Job posting not found.';
+	if (job.archived) return 'This job is no longer receiving applications.';
 	if (job.status !== 'open') return 'This job is no longer receiving applications.';
 	if (job.applicationDeadline && today > job.applicationDeadline) return 'The application deadline has passed.';
 	if (alreadyApplied) return 'You have already applied to this job.';

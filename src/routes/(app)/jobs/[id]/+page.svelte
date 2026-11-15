@@ -82,7 +82,9 @@
 						dark:bg-white/12 dark:text-zinc-200 dark:ring-1 dark:ring-white/10">
 				{WORK_MODES[posting.workMode as keyof typeof WORK_MODES] ?? posting.workMode}
 			</span>
-			{#if !data.closed}
+			{#if posting.archived}
+				<span class="rounded-full bg-slate-200 px-3 py-1 font-medium text-slate-800 dark:bg-slate-800 dark:text-slate-200">Archived</span>
+			{:else if !data.closed}
 				<span class="rounded-full bg-emerald-100 px-3 py-1 font-medium text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300">Open</span>
 			{:else}
 				<span class="rounded-full bg-rose-100 px-3 py-1 font-medium text-rose-800 dark:bg-rose-950/50 dark:text-rose-300">Closed</span>
@@ -247,7 +249,7 @@
 							</button>
 						</form>
 					{/if}
-				{:else if posting.status !== 'open' || !posting.published}
+				{:else if posting.archived || posting.status !== 'open' || !posting.published}
 					<p class="mt-4 text-ink/65">This job is not accepting applications.</p>
 				{:else if data.deadlinePassed}
 					<p class="mt-4 text-ink/65">The application deadline has passed.</p>
