@@ -25,7 +25,7 @@
 <div class="md:mt-14">
     <a
         href="/jobs/{data.posting.id}"
-        class="text-sm font-medium text-tide-deep hover:underline"
+        class="text-sm font-medium text-tide-deep dark:text-tide hover:underline"
     >
         ← Back to job posting
     </a>
@@ -33,7 +33,7 @@
     <div class="{glassPanel} mt-5 p-6 sm:p-9">
         <div class="flex flex-wrap items-center justify-between gap-4">
             <div>
-                <p class="text-sm font-medium uppercase tracking-widest text-tide-deep">
+                <p class="text-sm font-medium uppercase tracking-widest text-tide-deep dark:text-tide">
                     {data.posting.company}
                 </p>
                 <h1 class="mt-2 font-display text-3xl font-semibold">
@@ -41,14 +41,23 @@
                 </h1>
                 <p class="mt-2 text-ink/65">{data.posting.title}</p>
             </div>
-
-            <span class="rounded-full bg-white/70 px-4 py-2 text-sm font-medium">
+            <span
+                class="rounded-full bg-white/70 px-4 py-2 text-sm font-medium
+                    dark:bg-[#303034] dark:text-zinc-200
+                    dark:ring-1 dark:ring-white/10"
+            >
                 {data.applicants.length} applicants
             </span>
         </div>
 
         {#if waitingCount > 0}
-            <p role="status" class="mt-6 rounded-2xl bg-amber-100 px-4 py-3 font-medium text-amber-800">
+            <p
+                role="status"
+                class="mt-6 rounded-2xl bg-amber-100 px-4 py-3
+                    font-medium text-amber-800
+                    dark:bg-amber-950/50 dark:text-amber-300
+                    dark:ring-1 dark:ring-amber-800/40"
+            >
                 {waitingCount === 1 ? '1 application is' : `${waitingCount} applications are`} still waiting for your decision.
             </p>
         {/if}
@@ -66,7 +75,10 @@
         <p class="mt-5 text-sm text-ink/65">Offers and rejections require an outcome message.</p>
 
         {#if data.applicants.length === 0}
-            <div class="mt-8 rounded-2xl bg-white/60 p-6 text-center">
+            <div
+                class="mt-8 rounded-2xl bg-white/60 p-6 text-center
+                    dark:bg-[#242427] dark:ring-1 dark:ring-white/10"
+            >
                 <p class="font-medium">No applications yet</p>
                 <p class="mt-2 text-sm text-ink/65">
                     Applications will appear here when job seekers apply.
@@ -77,7 +89,7 @@
                 {#each data.applicants as applicant (applicant.id)}
                     <!-- the last form result is only shown on the applicant it was for -->
                     {@const formResult = form?.applicationId === applicant.id ? form : null}
-                    <article class="rounded-2xl border border-white/60 bg-white/60 p-5">
+                    <article class="rounded-2xl border border-white/60 bg-white/60 p-5 dark:border-white/10 dark:bg-[#1c1c1f]">
                         <div class="flex flex-wrap items-start justify-between gap-4">
                             <div class="min-w-0">
                                 <h2 class="font-display text-lg font-semibold">
@@ -94,7 +106,12 @@
                                 </p>
 
                                 {#if applicant.needsReminder}
-                                    <span class="mt-2 inline-block rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-amber-800">
+                                    <span
+                                        class="mt-2 inline-block rounded-full
+                                            bg-amber-100 px-3 py-1 text-xs font-medium text-amber-800
+                                            dark:bg-amber-950/50 dark:text-amber-300
+                                            dark:ring-1 dark:ring-amber-800/40"
+                                    >
                                         Waiting for a decision
                                     </span>
                                 {/if}
@@ -125,8 +142,23 @@
                                 Resume: {applicant.resumeName}
                             </p>
                         {/if}
-
-                        <p class="mt-3 text-sm font-medium">Status: {APPLICATION_STATUSES[applicant.status]}</p>
+                        <p class="mt-3 text-sm font-medium">
+                            Status:
+                            <span
+                                class="ml-1 inline-flex rounded-full px-3 py-1 text-xs font-semibold
+                                    {applicant.status === 'offered'
+                                        ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300'
+                                        : applicant.status === 'rejected'
+                                            ? 'bg-rose-100 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300'
+                                            : applicant.status === 'interview'
+                                                ? 'bg-sky-100 text-sky-800 dark:bg-sky-950/60 dark:text-sky-300'
+                                                : applicant.status === 'under_review'
+                                                    ? 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300'
+                                                    : 'bg-slate-100 text-slate-700 dark:bg-white/10 dark:text-zinc-300'}"
+                            >
+                                {APPLICATION_STATUSES[applicant.status]}
+                            </span>
+                        </p>
                         <!-- US-20: Under Review and Interview; offers and rejections go through the decision form below -->
                         {#if !applicant.outcome && applicant.status !== 'offered' && applicant.status !== 'rejected'}
                             <form method="POST" action="?/updateStatus" use:enhance class="mt-4 flex flex-wrap items-end gap-3">
@@ -145,7 +177,7 @@
                         {/if}
 
                         <!-- US-03: the decision the applicant sees, or the form to send one -->
-                        <div class="mt-5 border-t border-white/60 pt-5">
+                        <div class="mt-5 border-t border-white/60 pt-5 dark:border-white/15">
                             {#if formResult?.success}
                                 <p role="status" class="{successBox} mb-4">{formResult.success}</p>
                             {/if}

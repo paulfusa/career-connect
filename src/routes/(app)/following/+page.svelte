@@ -25,7 +25,12 @@
 		<p class="font-medium">You don't follow anyone yet.</p>
 		<p class="mt-2 text-sm text-ink/65">
 			Look through
-			<a href="/people" class="font-semibold text-tide-deep underline underline-offset-4">{data.user.role === 'job_seeker' ? 'Recruiters' : 'Job seekers'}</a>
+			<a
+				href="/people"
+				class="font-semibold text-tide-deep dark:text-tide underline underline-offset-4"
+			>
+				{data.user.role === 'job_seeker' ? 'Recruiters' : 'Job seekers'}
+			</a>
 			and follow someone from their profile.
 		</p>
 	</section>
@@ -35,7 +40,12 @@
 			<article class="{glassPanel} flex flex-wrap items-center justify-between gap-4 p-6">
 				<div class="min-w-0">
 					<h2 class="font-display text-xl font-semibold">
-						<a href="/profile/{person.id}" class="text-tide-deep hover:underline">{person.name}</a>
+						<a
+							href="/profile/{person.id}"
+							class="text-tide-deep dark:text-tide hover:underline"
+						>
+							{person.name}
+						</a>
 					</h2>
 					{#if tagline(person)}
 						<p class="mt-1 text-ink/65">{tagline(person)}</p>

@@ -32,7 +32,13 @@
 			type="button"
 			onclick={() => (show = !show)}
 			aria-pressed={show}
-			class="absolute inset-y-0 right-2 my-auto h-8 rounded-lg px-2.5 text-sm font-medium text-tide hover:bg-white/60 focus-visible:outline-2 focus-visible:outline-tide"
+			class="absolute inset-y-0 right-2 my-auto h-8 rounded-lg px-2.5
+				text-sm font-medium text-tide transition
+				hover:bg-white/60
+				dark:text-[#7dd3df]
+				dark:hover:bg-[#303034]
+				dark:hover:text-[#a5e5ee]
+				focus-visible:outline-2 focus-visible:outline-tide"
 		>
 			{show ? 'Hide' : 'Show'}
 		</button>

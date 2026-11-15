@@ -123,11 +123,21 @@
 								id="notification-{notification.id}"
 								tabindex="-1"
 								aria-labelledby="notification-title-{notification.id}"
-								class="min-w-0 rounded-2xl border p-4 focus:outline-2 focus:outline-offset-2 focus:outline-tide sm:p-5 {notification.readAt === null ? 'border-tide/35 bg-white/75' : 'border-white/60 bg-white/35'}"
+								class="min-w-0 rounded-2xl border p-4 transition-colors
+									focus:outline-2 focus:outline-offset-2 focus:outline-tide sm:p-5
+									{notification.readAt === null
+										? 'border-tide/35 bg-white/75 dark:border-tide/40 dark:bg-tide/10'
+										: 'border-white/60 bg-white/35 dark:border-white/10 dark:bg-white/5'}"
 							>
 								<div class="flex flex-wrap items-start justify-between gap-2">
 									<h2 id="notification-title-{notification.id}" class="min-w-0 break-words font-display text-lg font-semibold [overflow-wrap:anywhere]">{notification.title}</h2>
-									<span class="shrink-0 rounded-full bg-white/75 px-2.5 py-1 text-xs font-semibold text-ink/75">{notification.readAt === null ? 'Unread' : 'Read'}</span>
+									<span
+										class="shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold
+											{notification.readAt === null
+												? 'bg-tide/10 text-tide-deep dark:bg-tide/20 dark:text-tide'
+												: 'bg-white/75 text-ink/75 dark:bg-white/10 dark:text-ink/70'}"
+									>
+								{notification.readAt === null ? 'Unread' : 'Read'}</span>
 								</div>
 								<p class="mt-2 whitespace-pre-wrap break-words text-ink/80 [overflow-wrap:anywhere]">{notification.message}</p>
 								<time datetime={notification.createdAt.toISOString()} class="mt-3 block text-xs text-ink/60">{formatNotificationTime(notification.createdAt)}</time>

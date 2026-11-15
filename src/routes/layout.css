@@ -1,6 +1,8 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
+/* Use the .dark class to control Tailwind dark variants */
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
 	--font-sans: 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif;
@@ -14,6 +16,20 @@
 	--color-lilac: #c7c1f0;
 	--color-sky: #a6d6ec;
 }
+
+/* US-21: Dark theme colour palette */
+:root.dark {
+    color-scheme: dark;
+
+    --color-mist: #0d0d0f;
+    --color-ink: #f5f5f5;
+    --color-tide: #43a9b8;
+    --color-tide-deep: #238998;
+    --color-peach: #e9ad87;
+    --color-lilac: #b8aff0;
+    --color-sky: #8bc5e2;
+}
+
 
 body {
 	@apply bg-mist font-sans text-ink antialiased;

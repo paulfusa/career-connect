@@ -26,7 +26,7 @@
 <svelte:head><title>{posting.title} · CareerConnect</title></svelte:head>
 
 <div class="md:mt-14">
-	<a href="/jobs" class="text-sm font-medium text-tide-deep hover:underline">← All job postings</a>
+	<a href="/jobs" class="text-sm font-medium text-tide-deep dark:text-tide hover:underline">← All job postings</a>
 	{#if page.url.searchParams.has('saved')}
 		<p role="status" class="{successBox} mt-4">Job posting updated.</p>
 	{/if}
@@ -36,7 +36,7 @@
 			<div class="flex min-w-0 items-start gap-4">
 				<OrgLogo name={posting.company} domain={posting.companyDomain} />
 				<div class="min-w-0">
-					<p class="text-sm font-medium uppercase tracking-widest text-tide-deep">{posting.company}</p>
+					<p class="text-sm font-medium uppercase tracking-widest text-tide-deep dark:text-tide">{posting.company}</p>
 					<h1 class="mt-2 font-display text-3xl font-semibold tracking-tight">{posting.title}</h1>
 					<p class="mt-2 text-ink/65">
 						{posting.location} <span aria-hidden="true">·</span> Posted by
@@ -57,10 +57,12 @@
 			>
 				View Applications
 			</a>
-
 			<a
 				href="/jobs/{posting.id}/edit"
-				class="rounded-xl border border-white/60 bg-white/70 px-5 py-3 text-center font-medium text-tide-deep hover:bg-white"
+				class="rounded-xl border border-white/60 bg-white/70 px-5 py-3 text-center
+					font-medium text-tide-deep hover:bg-white
+					dark:border-white/15 dark:bg-[#303034]
+					dark:text-[#7dd3df] dark:hover:bg-[#404044]"
 			>
 				Edit posting
 			</a>
@@ -71,21 +73,32 @@
 	{/if}
 		</div>
 
-		<div class="mt-5 flex flex-wrap gap-2 text-sm">
-			<span class="rounded-full bg-white/65 px-3 py-1">{EMPLOYMENT_TYPES[posting.employmentType as keyof typeof EMPLOYMENT_TYPES] ?? posting.employmentType}</span>
-			<span class="rounded-full bg-white/65 px-3 py-1">{WORK_MODES[posting.workMode as keyof typeof WORK_MODES] ?? posting.workMode}</span>
+		<div class="mt-5 flex flex-wrap gap-2 text-sm">	
+			<span class="rounded-full bg-white/65 px-3 py-1 text-ink/75
+						dark:bg-white/12 dark:text-zinc-200 dark:ring-1 dark:ring-white/10">
+				{EMPLOYMENT_TYPES[posting.employmentType as keyof typeof EMPLOYMENT_TYPES] ?? posting.employmentType}
+			</span>
+			<span class="rounded-full bg-white/65 px-3 py-1 text-ink/75
+						dark:bg-white/12 dark:text-zinc-200 dark:ring-1 dark:ring-white/10">
+				{WORK_MODES[posting.workMode as keyof typeof WORK_MODES] ?? posting.workMode}
+			</span>
 			{#if !data.closed}
-				<span class="rounded-full bg-emerald-100 px-3 py-1 font-medium text-emerald-800">Open</span>
+				<span class="rounded-full bg-emerald-100 px-3 py-1 font-medium text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300">Open</span>
 			{:else}
-				<span class="rounded-full bg-rose-100 px-3 py-1 font-medium text-rose-800">Closed</span>
+				<span class="rounded-full bg-rose-100 px-3 py-1 font-medium text-rose-800 dark:bg-rose-950/50 dark:text-rose-300">Closed</span>
 			{/if}
 			{#if !posting.published}
-				<span class="rounded-full bg-amber-100 px-3 py-1 font-medium text-amber-800">Draft</span>
+				<span class="rounded-full bg-amber-100 px-3 py-1 font-medium text-amber-800 dark:bg-amber-950/50 dark:text-amber-300">Draft</span>
 			{/if}
 		</div>
 
 		{#if data.closed}
-			<p role="status" class="mt-5 rounded-2xl bg-rose-50 px-4 py-3 font-medium text-rose-800">This job is no longer receiving applications.</p>
+			<p
+				role="status"
+				class="mt-5 rounded-2xl bg-rose-50 px-4 py-3 font-medium text-rose-800 dark:bg-rose-950/40 dark:text-rose-300 dark:ring-1 dark:ring-rose-800/50"
+			>
+				This job is no longer receiving applications.
+			</p>
 		{/if}
 
 		{#if posting.applicationDeadline}
@@ -104,13 +117,13 @@
 
 		<AcceptanceRate rate={data.acceptanceRate} />
 
-		<section class="mt-8 border-t border-white/60 pt-6">
+		<section class="mt-8 border-t border-white/60 dark:border-white/15 pt-6">
 			<h2 class="font-display text-xl font-semibold">About the role</h2>
 			<p class="mt-3 whitespace-pre-line leading-7 text-ink/75">{posting.description}</p>
 		</section>
 
 		{#if posting.requirements}
-			<section class="mt-8 border-t border-white/60 pt-6">
+			<section class="mt-8 border-t border-white/60 dark:border-white/15 pt-6">
 				<h2 class="font-display text-xl font-semibold">Requirements</h2>
 				<p class="mt-3 whitespace-pre-line leading-7 text-ink/75">
 					{posting.requirements}
@@ -119,7 +132,7 @@
 		{/if}
 		
 		{#if data.companyProfile}
-			<section class="mt-8 border-t border-white/60 pt-6">
+			<section class="mt-8 border-t border-white/60 dark:border-white/15 pt-6">
 				<h2 class="font-display text-xl font-semibold">
 					About {data.companyProfile.name}
 				</h2>
@@ -137,7 +150,7 @@
 						href={data.companyProfile.website}
 						target="_blank"
 						rel="noopener noreferrer"
-						class="mt-3 inline-block font-medium text-tide-deep hover:underline"
+						class="mt-3 inline-block font-medium text-tide-deep dark:text-tide hover:underline"
 					>
 						Visit company website →
 					</a>
@@ -146,17 +159,29 @@
 		{/if}
 
 		{#if data.isJobSeeker}
-			<section class="mt-8 border-t border-white/60 pt-6">
+			<section class="mt-8 border-t border-white/60 dark:border-white/15 pt-6">
 				<h2 class="font-display text-xl font-semibold">Apply for this job</h2>
 				<!-- checked first so the success message stays after the page reloads -->
 				{#if applicationMessage}
-					<p role="status" class="mt-4 rounded-xl bg-emerald-100 p-4 text-emerald-800">
+					<p
+						role="status"
+						class="mt-4 rounded-xl bg-emerald-100 p-4 text-emerald-800
+							dark:border dark:border-emerald-500/25
+							dark:bg-emerald-950/40 dark:text-emerald-300"
+					>
 						{applicationMessage}
 					</p>
 				{:else if data.alreadyApplied}
-					<p role="status" class="mt-4 rounded-xl bg-emerald-100 p-4 text-emerald-800">
-						You have already applied to this job.
-					</p>
+					<div
+						role="status"
+						class="mt-4 flex items-center gap-3 rounded-xl
+							border border-tide/20 bg-tide/10 px-4 py-3
+							text-ink dark:border-tide/30 dark:bg-tide/10"
+					>
+						<span class="font-medium">
+							You have already applied to this job.
+						</span>
+					</div>
 				{/if}
 
 				{#if data.outcome}
@@ -204,7 +229,7 @@
 							}}
 						>
 							{#if applicationError}
-								<p role="alert" class="mb-3 text-sm text-rose-700">
+								<p role="alert" class="mb-3 text-sm text-rose-700 dark:text-rose-300">
 									{applicationError}
 								</p>
 							{/if}
@@ -212,7 +237,11 @@
 							<button
 								type="submit"
 								disabled={submitting}
-								class="rounded-xl border border-rose-300 px-5 py-3 font-medium text-rose-700 hover:bg-rose-50"
+								class="rounded-xl border border-rose-300 px-5 py-3 font-medium
+								text-rose-700 hover:bg-rose-50
+								dark:border-rose-500/40 dark:text-rose-300
+								dark:hover:bg-rose-950/40
+								disabled:cursor-not-allowed disabled:opacity-50"
 							>
 								{submitting ? 'Withdrawing...' : 'Withdraw application'}
 							</button>
@@ -225,7 +254,7 @@
 				{:else if data.resumes.length === 0}
 					<p class="mt-4 text-ink/65">
 						You need to upload a resume before applying.
-						<a href="/resumes" class="font-medium text-tide-deep hover:underline">
+						<a href="/resumes" class="font-medium text-tide-deep dark:text-tide hover:underline">
 							Upload a resume
 						</a>
 					</p>
@@ -266,7 +295,8 @@
 							name="resumeId"
 							bind:value={selectedResumeId}
 							required
-							class="w-full rounded-xl border border-white/60 bg-white/70 px-4 py-3"
+							class="w-full rounded-xl border border-white/60 bg-white/70 px-4 py-3 text-ink
+    						dark:border-white/15 dark:bg-[#242427] dark:text-[#f5f5f5]"
 						>
 							<option value="" disabled>Select a resume</option>
 							{#each data.resumes as resume}
@@ -275,7 +305,7 @@
 						</select>
 
 						{#if applicationError}
-							<p role="alert" class="text-sm text-rose-700">
+							<p role="alert" class="text-sm text-rose-700 dark:text-rose-300">
 								{applicationError}
 							</p>
 						{/if}

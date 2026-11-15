@@ -48,23 +48,34 @@
 
 {#snippet below()}
 	{#if score.percent < 100}
-		<div class="mt-6 border-t border-white/60 pt-5">
+		<div class="mt-6 border-t border-white/60 pt-5 dark:border-white/15">
 			<div class="flex items-center justify-between text-sm">
 				<span class="font-medium">Profile {score.percent}% complete</span>
 				{#if score.next}<span class="text-ink/55">Next: {score.next}</span>{/if}
 			</div>
-			<div class="mt-2 h-2 overflow-hidden rounded-full bg-white/60" role="progressbar" aria-valuenow={score.percent} aria-valuemin={0} aria-valuemax={100} aria-label="Profile completeness">
+			<div class="mt-2 h-2 overflow-hidden rounded-full bg-white/60 dark:bg-white/10" role="progressbar" aria-valuenow={score.percent} aria-valuemin={0} aria-valuemax={100} aria-label="Profile completeness">
 				<div class="h-full rounded-full bg-tide transition-[width] duration-500" style="width: {score.percent}%"></div>
 			</div>
 		</div>
 	{/if}
 	<!-- US-19: follower and following counts -->
-	<p class="mt-5 text-sm text-ink/70">
-		<span class="font-semibold text-ink">{data.followers}</span>
-		{data.followers === 1 ? 'follower' : 'followers'}
-		<span aria-hidden="true">·</span>
-		<a href="/following" class="hover:text-tide hover:underline"><span class="font-semibold text-ink">{data.following}</span> following</a>
-	</p>
+		<p class="mt-5 text-sm text-ink/70">
+			<span class="font-semibold text-ink">{data.followers}</span>
+			{data.followers === 1 ? 'follower' : 'followers'}
+
+			<span aria-hidden="true">·</span>
+
+			<a
+				href="/following"
+				class="group font-medium transition hover:text-tide-deep
+					dark:hover:text-tide hover:underline"
+			>
+				<span class="font-semibold text-ink group-hover:text-tide-deep dark:group-hover:text-tide">
+					{data.following}
+				</span>
+				following
+			</a>
+		</p>
 {/snippet}
 
 <div class="space-y-5 md:mt-14">
@@ -115,7 +126,7 @@
 	{#snippet deleteForm()}
 		{@const r = resultFor('delete')}
 		<details class="{glassPanel} group p-6" open={!!r}>
-			<summary class="cursor-pointer font-semibold text-rose-700 marker:text-rose-400">Delete account</summary>
+			<summary class="cursor-pointer font-semibold text-rose-700 marker:text-rose-400 dark:text-rose-400">Delete account</summary>
 			<form method="post" action="?/deleteAccount" class="mt-4 max-w-md space-y-4" use:enhance={track('delete')}>
 				<p class="text-sm text-ink/70">
 					This permanently deletes your account, profile, experience and education. It can’t be undone.
@@ -128,7 +139,10 @@
 				{#if r && 'message' in r}<p role="alert" class={errorBox}>{r.message}</p>{/if}
 				<button
 					disabled={pending === 'delete'}
-					class="rounded-xl bg-rose-600 px-4 py-2.5 font-semibold text-white transition hover:bg-rose-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600 disabled:opacity-70"
+					class="rounded-xl bg-rose-600 px-4 py-2.5 font-semibold text-white transition
+					hover:bg-rose-700 dark:bg-rose-700 dark:hover:bg-rose-600
+					focus-visible:outline-2 focus-visible:outline-offset-2
+					focus-visible:outline-rose-600 disabled:opacity-70"
 				>
 					{pending === 'delete' ? 'Deleting…' : 'Delete my account'}
 				</button>
