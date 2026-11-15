@@ -180,7 +180,14 @@
 				</div>
 				<p class="mt-4 line-clamp-3 whitespace-pre-line text-sm leading-6 text-ink/70">{posting.description}</p>
 				<div class="mt-4 flex items-center justify-between gap-3">
-					<p class="text-xs text-ink/50">Posted {posting.createdAt.toLocaleDateString()}</p>
+					<div class="flex flex-wrap items-center gap-x-4 gap-y-1">
+						<p class="text-xs text-ink/50">Posted {posting.createdAt.toLocaleDateString()}</p>
+						{#if data.mine}
+							<p class="text-xs font-medium text-ink/60">
+								{posting.applicationCount ?? 0} {(posting.applicationCount ?? 0) === 1 ? 'application' : 'applications'}
+							</p>
+						{/if}
+					</div>
 					{#if posting.createdBy === data.user.id}
 						<div class="relative z-10 flex flex-wrap gap-2">
 							<a

@@ -1,7 +1,7 @@
 import { fail, redirect } from '@sveltejs/kit';
-import { and, asc, desc, eq, getTableColumns, gte, ilike, isNull, or, sql, type SQL } from 'drizzle-orm';
+import { and, asc, count, desc, eq, getTableColumns, gte, ilike, inArray, isNull, or, sql, type SQL } from 'drizzle-orm';
 import { db } from '$lib/server/db';
-import { follow, jobPosting, user } from '$lib/server/db/schema';
+import { application, follow, jobPosting, user } from '$lib/server/db/schema';
 import type { Actions, PageServerLoad } from './$types';
 import { parseJobSearch, postedAfter } from '$lib/server/job-search';
 import { isClosed } from '$lib/server/job-posting';
@@ -60,9 +60,22 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 		.innerJoin(user, eq(user.id, jobPosting.createdBy))
 		.where(and(...conditions))
 		.orderBy(...sortBy, desc(jobPosting.createdAt));
+	const applicationCounts = mine && postings.length
+		? await db
+				.select({ jobPostingId: application.jobPostingId, total: count() })
+				.from(application)
+				.where(inArray(application.jobPostingId, postings.map((posting) => posting.id)))
+				.groupBy(application.jobPostingId)
+		: [];
+	const countsByPosting = new Map(applicationCounts.map(({ jobPostingId, total }) => [jobPostingId, total]));
+
 	// US-05: past-deadline jobs show as Closed too
 	return {
-		postings: postings.map((posting) => ({ ...posting, closed: isClosed(posting, today) })),
+		postings: postings.map((posting) => ({
+			...posting,
+			closed: isClosed(posting, today),
+			applicationCount: mine ? countsByPosting.get(posting.id) ?? 0 : null
+		})),
 		mine,
 		archivedView,
 		search
