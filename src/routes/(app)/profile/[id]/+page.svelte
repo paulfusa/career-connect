@@ -11,7 +11,7 @@
 
 <!-- US-19: follower count and the Follow / Unfollow button, under the profile card -->
 {#snippet below()}
-	<div class="mt-6 flex flex-wrap items-center gap-4 border-t border-white/60 pt-5">
+	<div class="mt-6 flex flex-wrap items-center gap-4 border-t border-white/60 pt-5 dark:border-white/15">
 		<p class="text-sm text-ink/70">
 			<span class="font-semibold text-ink">{data.followers}</span>
 			{data.followers === 1 ? 'follower' : 'followers'}
@@ -40,7 +40,12 @@
 				<ul class="mt-3 space-y-2">
 					{#each data.jobs as job (job.id)}
 						<li>
-							<a href="/jobs/{job.id}" class="font-medium text-tide-deep hover:underline">{job.title}</a>
+							<a
+								href="/jobs/{job.id}"
+								class="font-medium text-tide-deep dark:text-tide hover:underline"
+							>
+								{job.title}
+							</a>
 							<span class="text-sm text-ink/60">· {job.location} · Posted {job.createdAt.toLocaleDateString()}</span>
 						</li>
 					{/each}

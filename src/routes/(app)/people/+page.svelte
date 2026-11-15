@@ -32,7 +32,12 @@
 			<p class="font-medium">{seeker ? 'No recruiters yet.' : 'No job seekers yet.'}</p>
 		{/if}
 		{#if data.search}
-			<a href="/people" class="mt-3 inline-block font-semibold text-tide-deep underline underline-offset-4">Clear search</a>
+			<a
+				href="/people"
+				class="mt-3 inline-block font-semibold text-tide-deep dark:text-tide underline underline-offset-4"
+			>
+				Clear search
+			</a>
 		{/if}
 	</section>
 {:else}
@@ -43,7 +48,12 @@
 					<Avatar name={person.name} image={person.image} />
 					<div class="min-w-0">
 						<h2 class="font-display text-xl font-semibold">
-							<a href="/profile/{person.id}" class="text-tide-deep hover:underline">{person.name}</a>
+							<a
+								href="/profile/{person.id}"
+								class="text-tide-deep dark:text-tide hover:underline"
+							>
+								{person.name}
+							</a>
 						</h2>
 						{#if tagline(person)}
 							<p class="mt-1 text-ink/65">{tagline(person)}</p>
@@ -55,7 +65,13 @@
 				</div>
 				<div class="flex items-center gap-3">
 					{#if person.followingSince}
-						<span class="rounded-full bg-tide/10 px-3 py-1 text-sm font-medium text-tide-deep">Following</span>
+						<span
+							class="rounded-full bg-tide/10 px-3 py-1 text-sm font-medium
+								text-tide-deep dark:bg-tide/15 dark:text-tide
+								dark:ring-1 dark:ring-tide/25"
+						>
+							Following
+						</span>
 					{/if}
 					<a href="/profile/{person.id}" class={secondaryButton}>View profile</a>
 				</div>
