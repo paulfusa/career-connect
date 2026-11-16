@@ -8,7 +8,7 @@ This log is based on our GitHub history (commits, pull requests, reviews and iss
 | ------------------- | -------------------- | ------- | -------------------- | -------- | -------------------------------------- | --------------------- | --------------------------------------------------- | ------------- | -------------- | ---------- |
 | Mohamad Alosta      | @MAlos616            | 15      | 3 (#174, #175, #177) | 0        | 1 (#165)                               | 1                     | 14 (#159 to #164, #166, #168 to #170, #178 to #181) | Present       | Present        | ? h        |
 | Paul Fourment       | @paulfusa            | 4       | 1 (#176)             | 0        | 0                                      | 0                     | 6 (#153 to #158)                                    | Absent        | Present        | ? h        |
-| Maher Waez          | @Maherwaez01         | 5       | 1 (#165)             | 0        | 6 (#167, #173, #174, #175, #176, #177) | 5                     | 0                                                   | Present       | Present        | ? h        |
+| Maher Waez          | @Maherwaez01         | 5       | 1 (#165)             | 0        | 6 (#167, #173, #174, #175, #176, #177) | 5                     | 0                                                   | Present       | Present        | 21 h       |
 | Michael Derocher    | @MichaelDerocher1551 | 5       | 1 (#173)             | 0        | 0                                      | 0                     | 6 (#149 to #152, #171, #172)                        | Present       | Absent         | ? h        |
 | Kimia Karimiyeganeh | @kimiakarimiy        | 8       | 1 (#167)             | 0        | 0                                      | 0                     | 0                                                   | Present       | Present        | ? h        |
 
@@ -34,9 +34,17 @@ Note: The counts are from November 15. Commit counts don't include merge commits
 
 ## Maher Waez
 
-- **Implemented US-27 (job offer emails)** in PR #165, merged November 12. When a recruiter sends an offer, the applicant gets an email with a link to see it on CareerConnect. Added tests and his AI log for it. (? h)
-- **Working on US-21 (dark mode)** on the `feature/dark-mode` branch. Users can pick Light, Dark or System on the Settings page, and the choice is saved in the browser. Most pages have dark styles now, including the profile, jobs, applications and AI pages. Added tests and his AI log for it. (? h)
-- Reviewed and approved six pull requests on November 14: Kimia's notifications (#167), Michael's analytics (#173), Paul's AI feature (#176) and Mohamad's job filters (#175), long words fix (#177) and following (#174). He merged all of them except #174. (? h)
+- **Implemented US-27 (job offer email notifications)** in PR #165, merged November 12. Added automatic congratulatory emails when recruiters send job offers, including a secure link to view the offer on CareerConnect. Added safeguards against duplicate notifications and ensured email failures do not prevent offers from being saved. Added unit tests and documented AI usage. (**5 h**)
+
+- **Completed acceptance testing for US-27 (job offer email notifications)**. Verified that emails are triggered when recruiters submit job offers, delivered to the correct applicants, and contain the appropriate notification and secure link. Tested authentication requirements, duplicate notification prevention, rejected applications, and email delivery failure handling. Documented the test procedures and expected results. (**2 h**)
+
+- **Implemented US-21 (dark mode)** on the `feature/dark-mode` branch. Added Light, Dark and System appearance settings with browser-based preference persistence. Updated styling across major pages, including profiles, job listings, applications, settings and AI-related features. Added tests and documented AI usage. (**10 h**)
+
+- **Worked on dark mode integration and rebasing** to incorporate newly merged Sprint 3 features. Addressed merge conflicts and styling inconsistencies, adapted the interface to updated components, and checked compatibility with new notifications, analytics, job filters and AI functionality. Retested affected pages after integration. (**3 h**)
+
+- **Reviewed and approved six pull requests** on November 14: Kimia's notifications (#167), Michael's application analytics (#173), Paul's AI feature (#176), and Mohamad's job filters (#175), long-word layout fix (#177) and following feature (#174). Merged five of these pull requests. (**1 h**)
+
+**Total time spent: 21 h**
 
 ## Michael Derocher
 
