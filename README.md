@@ -59,6 +59,8 @@ Sprint 3 runs from October 27 to November 16, 2026. The status of each story is 
 - US-28: Job filter additions
 - US-19: Recruiters and job seekers can follow each other
 - US-21: Dark mode
+- US-30: Archive postings and filter applications
+- US-29: Personalized home dashboard (in progress)
 
 Completed in Sprint 1: US-01 (account registration), US-02 (login and logout), US-16 (first-login onboarding) and US-04 (profile management).
 
@@ -75,6 +77,7 @@ Completed in Sprint 2: US-08 (email verification), US-17 (forgot password), US-1
 - Company profiles, shown on each recruiter's postings.
 - Applying to a job with one of your resumes, and withdrawing before the deadline.
 - A page where recruiters see who applied to each posting and open their resumes.
+- Recruiters can archive old postings and bring them back later, see how many applications each posting has, and filter applicants by status or date. Job seekers don't see archived postings.
 - Offer and rejection messages with the recruiter's reasons and next steps, plus reminders when an application waits too long.
 - Application statuses: recruiters can mark an application Under Review or Interview, and job seekers see every status on My Applications.
 - An application history page for job seekers, with a breakdown by status and a chart of the applications they sent over time.
@@ -82,11 +85,12 @@ Completed in Sprint 2: US-08 (email verification), US-17 (forgot password), US-1
 - Deadline reminders for recruiters, as a separate job that is off by default (see [docs/deadline-reminders.md](docs/deadline-reminders.md)).
 - An email to the applicant when a recruiter sends an offer, with a link to see it on CareerConnect.
 - AI resume review and profile autofill on the Resumes page.
+- Dark mode: pick Light, Dark or System on the Settings page, and the choice is remembered in the browser.
 - Following: job seekers and recruiters can follow each other and find people on the Recruiters / Job seekers page, and job seekers can show only the jobs of people they follow. Job postings and the applicants list show a profile photo that links to the person's profile.
 
 # Still to Do
-- Recruiter dashboard: archiving postings and filtering applications by status or date.
-- Dark mode (US-21), in progress.
+- Notification reminders for recruiters when an application has been waiting too long for an answer (US-26, task 26.7).
+- The personalized home dashboard (US-29), which Maher is working on now.
 - Finishing the AI feature in Sprint 4.
 - Not planned yet: recruiter verification (US-18), messaging (US-22), searching job seekers as a recruiter (US-23), company reviews (US-09) and feature suggestions (US-06).
 

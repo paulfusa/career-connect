@@ -90,8 +90,6 @@ To prepare for the lab, I asked the AI to walk me through the US-28 code block b
 
 > what do u mean by key
 
-> do the unit tests cover everything that has been added
-
 > before we test there is another problem when we write without spaces in a textebox the text usually exceeds the textboxes dimensions
 
 > shouldnt the min salary provide a min slary job with = or higher minimum?
