@@ -9,7 +9,7 @@ This log is based on our GitHub history (commits, pull requests, reviews and iss
 | Mohamad Alosta      | @MAlos616            | 17      | 5 (#174, #175, #177, #182, #187) | 1 (#199) | 4 (#165, #183, #191, #198)                               | 4                     | 15 (#159 to #164, #166, #168 to #170, #178 to #181, #188) | Present       | Present        | 34 h and 10 mins |
 | Paul Fourment       | @paulfusa            | 6       | 2 (#176, #194)                   | 0        | 0                                                        | 0                     | 8 (#153 to #158, #192, #193)                              | Absent        | Present        | 5 h and 15 mins  |
 | Maher Waez          | @Maherwaez01         | 9       | 2 (#165, #183)                   | 1 (#195) | 9 (#167, #173, #174, #175, #176, #177, #182, #187, #194) | 8                     | 3 (#184 to #186)                                          | Present       | Present        | 22 h             |
-| Michael Derocher    | @MichaelDerocher1551 | 11      | 2 (#173, #191)                   | 0        | 0                                                        | 0                     | 8 (#149 to #152, #171, #172, #189, #190)                  | Present       | Absent         | 21 h             |
+| Michael Derocher    | @MichaelDerocher1551 | 11      | 2 (#173, #191)                   | 0        | 0                                                        | 0                     | 8 (#149 to #152, #171, #172, #189, #190)                  | Present       | Absent         | 16 h             |
 | Kimia Karimiyeganeh | @kimiakarimiy        | 10      | 2 (#167, #198)                   | 0        | 1 (#195)                                                 | 0                     | 2 (#196, #197)                                            | Present       | Present        | 30 h             |
 
 Note: The counts are from November 16. Commit counts don't include merge commits, and include commits on branches that are still in review. "PRs merged for others" counts teammates' pull requests that the member merged. Each member fills in their own time spent, in hours, here and next to each activity below.
@@ -55,11 +55,11 @@ Note: The counts are from November 16. Commit counts don't include merge commits
 
 ## Michael Derocher
 
-- **Implemented US-25 (application analytics and history)** in PR #173, merged November 14. Job seekers get a page with their application history, a breakdown of their applications by status and a chart of the applications they sent over time. Added unit tests, his AI log and acceptance tests #171 and #172. (11 h)
-- **Implemented US-30 (archiving postings and filtering applications)** in PR #191, merged November 15. Recruiters can now archive a posting and bring it back later, see their active and archived postings separately with how many applications each one has, and filter a posting's applicants by status or by how recently they applied. Job seekers don't see archived postings and can't apply to them. Added unit tests, his AI log and acceptance tests #189 and #190. (9 h)
+- **Implemented US-25 (application analytics and history)** in PR #173, merged November 14. Job seekers get a page with their application history, a breakdown of their applications by status and a chart of the applications they sent over time. Added unit tests, his AI log and acceptance tests #171 and #172. (8 h)
+- **Implemented US-30 (archiving postings and filtering applications)** in PR #191, merged November 15. Recruiters can now archive a posting and bring it back later, see their active and archived postings separately with how many applications each one has, and filter a posting's applicants by status or by how recently they applied. Job seekers don't see archived postings and can't apply to them. Added unit tests, his AI log and acceptance tests #189 and #190. (7 h)
 - Wrote acceptance tests #149 to #152 for the Sprint 2 stories US-12 and US-13. (1 h)
 
-**Total time spent: 21 h**
+**Total time spent: 16 h**
 
 ## Kimia Karimiyeganeh
 
