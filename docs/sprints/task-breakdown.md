@@ -11,18 +11,18 @@ Whoever owns a story owns its tasks, unless a task names someone else.
 
 | Member | GitHub | Sprint 1 Stories | Sprint 2 Stories | Sprint 3 Stories | Sprint 1 Tasks | Sprint 2 Tasks | Sprint 3 Tasks |
 |---|---|---|---|---|---|---|---|
-| Paul Fourment | @paulfusa | US-01, US-02, US-16, US-04 | US-10, US-11 | US-24 | T4, T5 | T12, T14 | T19, T20, T24 |
-| Mohamad Alosta | @MAlos616 | - | US-03, US-05, US-14, US-15 (15.1) | US-28, US-19 | T1, T2, T3, T4, T5, T6, T7, T8 | T9, T10, T11, T12, T13, T14, T15, T16 | T17 to T25 |
+| Paul Fourment | @paulfusa | US-01, US-02, US-16, US-04 | US-10, US-11 | US-24 | T4, T5 | T12, T14 | T19, T20, T21, T24 |
+| Mohamad Alosta | @MAlos616 | - | US-03, US-05, US-14, US-15 (15.1) | US-28, US-19 | T1, T2, T3, T4, T5, T6, T7, T8 | T9, T10, T11, T12, T13, T14, T15, T16 | T17 to T20, T22 to T25 |
 | Kimia Karimiyeganeh | @kimiakarimiy | - | US-20 | US-26 | T5 | T12, T14 | T19, T20, T24 |
-| Maher Waez | @Maherwaez01 | - | US-07, US-08, US-17, US-15 (15.2 to 15.5) | US-27, US-21, US-29 | T5 | T12, T14 | T19, T20, T24 |
+| Maher Waez | @Maherwaez01 | - | US-07, US-08, US-17, US-15 (15.2 to 15.5) | US-27, US-21 | T5 | T12, T14 | T19, T20, T24 |
 | Michael Derocher | @MichaelDerocher1551 | - | US-12, US-13 | US-25, US-30 | T5 | T12, T14 | T19, T20, T24 |
 | Andrew Rowe (dropped the course) | @an-rowe54 | - | - | - | T5 | - | - |
 
 Some stories changed hands during Sprint 2. US-05 and US-14 went from Michael to Mohamad, US-12 and US-13 from Andrew to Michael, and US-10 and US-11 from Kimia to Paul. US-15 was split: Mohamad built the application table (15.1) and Maher built the rest (15.2 to 15.5), including the job seeker side that Michael was first assigned. Andrew Rowe dropped the course during Sprint 2, and Maher took over US-21.
 
-In Sprint 3, US-19 went from Kimia to Mohamad and US-22 from Paul to Kimia. The AI feature (#91) became US-24. US-30 and US-29 came in on November 15. Michael took US-30, and US-29 is Maher's.
+In Sprint 3, US-19 went from Kimia to Mohamad and US-22 from Paul to Kimia. The AI feature (#91) became US-24. US-30 came in on November 15, and Michael took it. Maher's US-29 was briefly in Sprint 3 too.
 
-Not planned for a sprint yet: US-06 (Mohamad), US-09 and US-18 (Maher), US-22 (Kimia) and US-23 (Michael).
+Not planned for a sprint yet: US-06 (Mohamad), US-09, US-18 and US-29 (Maher), US-22 (Kimia) and US-23 (Michael).
 
 ## Sprint 1 Documentation Tasks
 
@@ -224,11 +224,11 @@ Status: Completed in PR #123. Acceptance tests: #126, #127.
 | T17 | Sprint 3 meeting minutes, November 5 (#159) | Task | Mohamad | Medium | Nov 6 | Completed |
 | T18 | Sprint 3 meeting minutes, November 12 (#164) | Task | Mohamad | Medium | Nov 13 | Completed |
 | T19 | Sprint 3 acceptance tests, two per story (#162) | Task | Everyone | High | Nov 15 | In Progress |
-| T20 | Unit tests for every Sprint 3 story, running in CI | Task | Everyone | High | Nov 15 | In Progress |
-| T21 | GitHub project board for the backlog and Sprint 3 | Task | Mohamad | High | Nov 14 | Completed |
+| T20 | Unit tests for every Sprint 3 story, running in CI | Task | Everyone | High | Nov 15 | Completed |
+| T21 | GitHub project board for the backlog and Sprint 3 | Task | Paul | High | Nov 14 | Completed |
 | T22 | Sprint 3 plan, task breakdown and contribution log (#168) | Task | Mohamad | High | Nov 15 | Completed |
 | T23 | Update the README for Sprint 3 | Task | Mohamad | Medium | Nov 15 | Completed |
-| T24 | Sprint 3 AI usage logs (#169) | Task | Everyone | High | Nov 16 | In Progress |
+| T24 | Sprint 3 AI usage logs (#169) | Task | Everyone | High | Nov 16 | Completed |
 | T25 | Sprint 3 summary report, one page (#170) | Task | Mohamad | High | Nov 16 | Completed |
 
 ## Sprint 3 - User Stories
@@ -265,11 +265,11 @@ Status: Completed. Michael's PR #173 was merged on November 14. Acceptance tests
 | 26.4 | Notify applicants about status changes and interview invitations | Kimia | Completed |
 | 26.5 | Notify applicants about offers and rejections | Kimia | Completed |
 | 26.6 | Remind users about upcoming deadlines | Kimia | Completed |
-| 26.7 | Remind recruiters about applications waiting for an answer | Kimia | In Progress |
+| 26.7 | Remind recruiters about applications waiting for an answer | Kimia | Completed |
 | 26.8 | Build the notification bell and inbox | Kimia | Completed |
-| 26.9 | Write the acceptance tests and unit tests | Kimia | In Progress |
+| 26.9 | Write the acceptance tests and unit tests | Kimia | Completed |
 
-Status: Merged in PR #167 on November 14. The reminders for applications waiting for an answer (26.7) and the acceptance tests are still left.
+Status: Completed in PR #167 (merged November 14), and Kimia closed the issue on November 16. For 26.7 we used the reminder from US-03, so recruiters see applications that have waited too long on their applicants page, not in the notification inbox. Acceptance tests: #196, #197.
 
 ### US-27: Job Offer Emails (#163) - High - Maher - Sprint 3
 | Task | Description | Owner | Status |
@@ -334,23 +334,6 @@ Status: Completed in PR #183, merged November 15. The Light, Dark and System cho
 
 It's a sub-story of US-13 (#18) for the parts of feature 1 we didn't have yet. Status: Completed. Michael's PR #191 was merged on November 15, the same day the story was written. Recruiters can filter a posting's applications by status and by when they were sent (last 7 days, last 30 days or any time). Acceptance tests: #189, #190.
 
-### US-29: Personalized Home Dashboard (#184) - No priority yet - Maher - Sprint 3
-| Task | Description | Owner | Status |
-|---|---|---|---|
-| 29.1 | Show a dashboard on the Home page that depends on the user's role | Maher | Not Started |
-| 29.2 | Get the dashboard numbers and recent activity from the database | Maher | Not Started |
-| 29.3 | Build shared pieces for the stat cards, recent applications and quick actions | Maher | Not Started |
-| 29.4 | Build the job seeker dashboard: application numbers, recent applications and links | Maher | Not Started |
-| 29.5 | Build the recruiter dashboard: posting numbers, new applicants and applications waiting for review | Maher | Not Started |
-| 29.6 | Add a section for things that need attention, like waiting applications and close deadlines | Maher | Not Started |
-| 29.7 | Add quick-action buttons that lead to the rest of the site | Maher | Not Started |
-| 29.8 | Show messages for empty, loading and error states | Maher | Not Started |
-| 29.9 | Make it work in light and dark mode and on small screens | Maher | Not Started |
-| 29.10 | Keep onboarding working, and only show each user their own data | Maher | Not Started |
-| 29.11 | Test the numbers, recent activity, links, access rules, empty states, screen sizes and themes | Maher | Not Started |
-
-Maher wrote this story on November 15, and it went into Sprint 3 the same day. Status: In Progress. He's building it now, but there's no PR yet.
-
 ## Not Planned Yet - Remaining User Stories
 
 These stories are in the backlog but haven't been planned for a sprint yet. Their tasks come from each GitHub issue.
@@ -404,3 +387,20 @@ Status: Not started yet. We postponed it in Sprint 2 because it was the story we
 | 23.2 | Build the candidate search page and form | Michael | Not Started |
 | 23.3 | Restrict the page to recruiters | Michael | Not Started |
 | 23.4 | Test the filters, the Open to work rule, and access control | Michael | Not Started |
+
+### US-29: Personalized Home Dashboard (#184) - No priority yet - Maher - Not planned yet
+| Task | Description | Owner | Status |
+|---|---|---|---|
+| 29.1 | Show a dashboard on the Home page that depends on the user's role | Maher | Not Started |
+| 29.2 | Get the dashboard numbers and recent activity from the database | Maher | Not Started |
+| 29.3 | Build shared pieces for the stat cards, recent applications and quick actions | Maher | Not Started |
+| 29.4 | Build the job seeker dashboard: application numbers, recent applications and links | Maher | Not Started |
+| 29.5 | Build the recruiter dashboard: posting numbers, new applicants and applications waiting for review | Maher | Not Started |
+| 29.6 | Add a section for things that need attention, like waiting applications and close deadlines | Maher | Not Started |
+| 29.7 | Add quick-action buttons that lead to the rest of the site | Maher | Not Started |
+| 29.8 | Show messages for empty, loading and error states | Maher | Not Started |
+| 29.9 | Make it work in light and dark mode and on small screens | Maher | Not Started |
+| 29.10 | Keep onboarding working, and only show each user their own data | Maher | Not Started |
+| 29.11 | Test the numbers, recent activity, links, access rules, empty states, screen sizes and themes | Maher | Not Started |
+
+Maher wrote this story on November 15 and has started on it. It was in the Sprint 3 milestone until he took it out on November 16.

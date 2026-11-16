@@ -16,7 +16,7 @@ This sprint we want to finish the main features that are left: the recruiter das
 | 3. Notifications and reminders                 | US-26 (#161), plus US-27 (#163) for job offer emails                                                                                      | Completed |
 | 4. AI feature (start now, finish in Sprint 4)  | US-24 (#91): resume AI autofill and review                                                                                                | Completed |
 
-We're also doing US-28 (#166, more job search filters), US-19 (#80, following other users) and US-21 (#82, dark mode). On November 15 we added US-30 (#188) for what was still missing from feature 1, and Michael got it done that day. Maher's US-29 (#184, a personalized home dashboard) went into Sprint 3 too, and he's working on it now.
+We're also doing US-28 (#166, more job search filters), US-19 (#80, following other users) and US-21 (#82, dark mode). On November 15 we added US-30 (#188) for what was still missing from feature 1, and Michael got it done that day. Maher's US-29 (#184, a personalized home dashboard) was added too, but he moved it out of Sprint 3 the next day.
 
 ## Team Capacity
 
@@ -35,7 +35,7 @@ We kept the same **story points** as in Sprint 2. A point shows how big a story 
 | 8      | Very large | 15-20 h   | US-24: Resume AI autofill and review                   |
 | 13     | Too big    | ---       | Split into smaller stories                             |
 
-**Velocity:** Sprint 1 finished 12 points and Sprint 2 finished 50. Sprint 3 is shorter and has fewer people, so we planned 35, and we finished all 35 (US-27, US-26, US-25, US-24, US-28, US-19 and US-21). Then US-30 (5 points) came in on November 15 and was done that night, which brings us to 40. US-29 doesn't have points yet, and Maher is still working on it.
+**Velocity:** Sprint 1 finished 12 points and Sprint 2 finished 50. Sprint 3 is shorter and has fewer people, so we planned 35, and we finished all 35 (US-27, US-26, US-25, US-24, US-28, US-19 and US-21). Then US-30 (5 points) came in on November 15 and was done that night, which brings us to 40.
 
 ## Product Backlog
 
@@ -65,11 +65,10 @@ We kept the same **story points** as in Sprint 2. A point shows how big a story 
 | Low      | #80   | US-19: Recruiters and job seekers can follow each other | 5      | Completed (Sprint 3) |
 | Low      | #82   | US-21: Dark mode                                        | 3      | Completed (Sprint 3) |
 | High     | #188  | US-30: Archive postings and filter applications         | 5      | Completed (Sprint 3) |
-| -        | #184  | US-29: Personalized home dashboard                      | -      | In Progress          |
 
 **How we prioritized:** the required features and the AI feature come first, since they're what Sprint 3 is graded on. US-28 builds on the job search from Sprint 2. US-19 and US-21 are extras we only finish once the rest is on track.
 
-**What changed since Sprint 2:** we wrote US-25, US-26 and US-27 on November 5 and US-28 on November 12. The AI feature (#91) became US-24. US-19 moved from Kimia to Mohamad, and US-22 (messaging) from Paul to Kimia. US-18 (recruiter verification) was supposed to be in Sprint 3, but we didn't pick it this sprint, since Maher worked on US-27 and US-21 instead. On November 15, Maher wrote US-29 (personalized home dashboard, #184), and we moved it into Sprint 3. We also wrote US-30 (#188) that day for the parts of feature 1 we were missing (archiving postings and filtering applications), and Michael took it.
+**What changed since Sprint 2:** we wrote US-25, US-26 and US-27 on November 5 and US-28 on November 12. The AI feature (#91) became US-24. US-19 moved from Kimia to Mohamad, and US-22 (messaging) from Paul to Kimia. US-18 (recruiter verification) was supposed to be in Sprint 3, but we didn't pick it this sprint, since Maher worked on US-27 and US-21 instead. On November 15, Maher also wrote US-29 (personalized home dashboard, #184). It went into Sprint 3 at first, and Maher took it out the next day. We also wrote US-30 (#188) that day for the parts of feature 1 we were missing (archiving postings and filtering applications), and Michael took it.
 
 The tasks for each story are in its GitHub issue, and who owns what is in [task-breakdown.md](task-breakdown.md).
 
@@ -100,13 +99,12 @@ The tasks for each story are in its GitHub issue, and who owns what is in [task-
 | #80   | US-19: Recruiters and job seekers can follow each other | User Story | Mohamad     | Nov 16      | Low      | Completed   |
 | #82   | US-21: Dark mode                                        | User Story | Maher       | Nov 15      | Low      | Completed   |
 | #188  | US-30: Archive postings and filter applications         | User Story | Michael     | Nov 16      | High     | Completed   |
-| #184  | US-29: Personalized home dashboard                      | User Story | Maher       | Nov 16      | -        | In Progress |
 | #162  | Sprint 3 acceptance tests (two per story)               | Task       | Everyone    | Nov 15      | High     | In Progress |
-| -     | Unit tests for every Sprint 3 story, running in CI      | Task       | Everyone    | Nov 15      | High     | In Progress |
-| -     | GitHub project board                                    | Task       | Mohamad     | Nov 14      | High     | Completed   |
+| -     | Unit tests for every Sprint 3 story, running in CI      | Task       | Everyone    | Nov 15      | High     | Completed   |
+| -     | GitHub project board                                    | Task       | Paul        | Nov 14      | High     | Completed   |
 | #168  | Sprint 3 plan, task breakdown and contribution log      | Task       | Mohamad     | Nov 15      | High     | Completed   |
 | -     | Update the README for Sprint 3                          | Task       | Mohamad     | Nov 15      | Medium   | Completed   |
-| #169  | Sprint 3 AI usage logs                                  | Task       | Everyone    | Nov 16      | High     | In Progress |
+| #169  | Sprint 3 AI usage logs                                  | Task       | Everyone    | Nov 16      | High     | Completed   |
 | #170  | Sprint 3 summary report (one page)                      | Task       | Mohamad     | Nov 16      | High     | Completed   |
 
 ## Rubric

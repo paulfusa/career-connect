@@ -60,7 +60,6 @@ Sprint 3 runs from October 27 to November 16, 2026. The status of each story is 
 - US-19: Recruiters and job seekers can follow each other
 - US-21: Dark mode
 - US-30: Archive postings and filter applications
-- US-29: Personalized home dashboard (in progress)
 
 Completed in Sprint 1: US-01 (account registration), US-02 (login and logout), US-16 (first-login onboarding) and US-04 (profile management).
 
@@ -89,10 +88,9 @@ Completed in Sprint 2: US-08 (email verification), US-17 (forgot password), US-1
 - Following: job seekers and recruiters can follow each other and find people on the Recruiters / Job seekers page, and job seekers can show only the jobs of people they follow. Job postings and the applicants list show a profile photo that links to the person's profile.
 
 # Still to Do
-- Notification reminders for recruiters when an application has been waiting too long for an answer (US-26, task 26.7).
-- The personalized home dashboard (US-29), which Maher is working on now.
+- Putting the reminders for applications that waited too long into the notification inbox. Right now recruiters only see them on the applicants page.
 - Finishing the AI feature in Sprint 4.
-- Not planned yet: recruiter verification (US-18), messaging (US-22), searching job seekers as a recruiter (US-23), company reviews (US-09) and feature suggestions (US-06).
+- Not planned yet: recruiter verification (US-18), messaging (US-22), searching job seekers as a recruiter (US-23), company reviews (US-09), feature suggestions (US-06) and a personalized home dashboard (US-29), which Maher already started.
 
 # Technologies
 The repository is set up with SvelteKit, Svelte, TypeScript, Tailwind CSS, PostgreSQL on Supabase, Drizzle ORM, Better Auth, and pnpm. Emails are sent with Resend, and the AI features work with any OpenAI-compatible model, like Ollama on your own computer or Google Gemini. GitHub Actions runs our CI pipeline.
