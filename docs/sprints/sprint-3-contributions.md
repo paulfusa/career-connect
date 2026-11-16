@@ -10,7 +10,7 @@ This log is based on our GitHub history (commits, pull requests, reviews and iss
 | Paul Fourment       | @paulfusa            | 4       | 1 (#176)                   | 0        | 0                                            | 0                     | 8 (#153 to #158, #192, #193)                              | Absent        | Present        | ? h        |
 | Maher Waez          | @Maherwaez01         | 8       | 2 (#165, #183)             | 0        | 7 (#167, #173, #174, #175, #176, #177, #182) | 6                     | 3 (#184 to #186)                                          | Present       | Present        | ? h        |
 | Michael Derocher    | @MichaelDerocher1551 | 11      | 2 (#173, #191)             | 0        | 0                                            | 0                     | 8 (#149 to #152, #171, #172, #189, #190)                  | Present       | Absent         | ? h        |
-| Kimia Karimiyeganeh | @kimiakarimiy        | 8       | 1 (#167)                   | 0        | 0                                            | 0                     | 0                                                         | Present       | Present        | ? h        |
+| Kimia Karimiyeganeh | @kimiakarimiy        | 9       | 1 (#167)                   | 0        | 0                                            | 0                     | 2   (#196, #197)                                                      | Present       | Present        | 30 h        |
 
 Note: The counts are from November 15. Commit counts don't include merge commits, and include commits on branches that are still in review. "PRs merged for others" counts teammates' pull requests that the member merged. Each member fills in their own time spent, in hours, here and next to each activity below.
 
@@ -52,4 +52,18 @@ Note: The counts are from November 15. Commit counts don't include merge commits
 
 ## Kimia Karimiyeganeh
 
-- **Implemented US-26 (notifications and reminders)** in PR #167, merged November 14. Recruiters get a notification for new applications, and job seekers for status changes, interviews, offers and rejections. There's a notification bell with an unread count and an inbox, plus deadline reminders for recruiters. Added unit tests. (? h)
+- **Implemented US-26 (Notifications and Reminders)** in PR #167, merged November 14. Developed a complete notification system for recruiters and job seekers, covering database persistence, backend services, application-event integrations, the in-app notification interface, and recruiter deadline reminders. (summary)
+
+- **Designed and implemented the notification database schema and backend services.** Added the notification table, recipient relationships, notification types, timestamps, read status, and deduplication support. Implemented authenticated server-side operations for creating, retrieving, counting unread, and marking notifications as read, with ownership restrictions and automated unit tests. (7 h)
+
+- **Integrated notifications with application workflows.** Implemented recruiter notifications for new applications, applicant notifications for status changes and interview updates, and notifications for job offers and rejections. Added recipient validation, genuine status-change detection, error handling, and tests to preserve existing application functionality. (7 h)
+
+- **Implemented automated recruiter deadline reminders.** Developed a standalone TypeScript reminder runner, PostgreSQL database adapter, and GitHub Actions workflow. Added deadline eligibility filtering and duplicate prevention. Configured GitHub Actions variables and database secrets, troubleshot database connectivity, and successfully verified real reminder generation in the shared Supabase database. Run #3 created one reminder and Run #4 created zero duplicates. (7 h)
+
+- **Implemented and improved the notification user interface.** Added the notification bell, unread badge, inbox, notification links, and read/unread functionality. Following teammate feedback, repositioned the bell in the top-right header and added a responsive dropdown displaying recent notifications. Verified the UI using automated tests and browser testing. (2 h)
+
+- **Performed integration, debugging, and testing.** Resolved merge conflicts with the existing job-offer email implementation while preserving both email and in-app notifications. Reviewed the merged code, ran automated tests and TypeScript/Svelte checks, and manually verified application notifications, persistence, recruiter and job-seeker views, and the deadline-reminder workflow. PR #167 changed 28 files, including 8 test files. (4 h)
+
+- **Wrote Sprint 3 acceptance tests #196 and #197** for application-event notifications and recruiter deadline reminders. Verified notification delivery, unread counts, persistence, reminder generation, and duplicate prevention through functional and automated testing. (1 h)
+
+- **Prepared the Sprint 3 AI usage log and contribution documentation.** Documented the use of Codex and ChatGPT during implementation, debugging, UI refinement, and testing. Prepared a separate documentation pull request containing the AI log and updated Sprint 3 contribution record. (2 h)
