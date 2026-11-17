@@ -39,6 +39,9 @@
 		// US-19: job seekers find recruiters here and recruiters find job seekers
 		{ href: '/people', label: data.user.role === 'job_seeker' ? 'Recruiters' : 'Job seekers' },
 		{ href: '/following', label: 'Following' },
+		// US-06: everyone can suggest a feature, and admins also get the review page
+		{ href: '/suggestions', label: 'Suggest a feature' },
+		...(data.user.isAdmin ? [{ href: '/suggestions/review', label: 'Review suggestions' }] : []),
 		{ href: '/settings', label: 'Settings' }
 	]);
 
@@ -101,6 +104,30 @@
 					</a>
 				{/each}
 			</nav>
+
+			<!-- US-06: admins can switch between the two views with one account -->
+			{#if data.user.isAdmin}
+				<form method="POST" action="/view-as" class="mt-4 border-t border-white/60 pt-4 dark:border-white/15">
+					<p id="view-as-label" class="px-1 text-xs font-semibold uppercase tracking-wide text-ink/50">View as</p>
+					<div role="group" aria-labelledby="view-as-label" class="mt-2 grid grid-cols-2 gap-1">
+						{#each [['job_seeker', 'Job seeker'], ['recruiter', 'Recruiter']] as [value, text] (value)}
+							<button
+								type="submit"
+								name="role"
+								{value}
+								aria-pressed={data.user.role === value}
+								class="rounded-xl px-2 py-2 text-sm font-medium text-ink/70 transition
+									hover:bg-white/60 hover:text-ink
+									aria-pressed:bg-white/75 aria-pressed:text-ink
+									dark:hover:bg-white/10 dark:aria-pressed:bg-white/12 dark:aria-pressed:text-white
+									focus-visible:outline-2 focus-visible:outline-tide"
+							>
+								{text}
+							</button>
+						{/each}
+					</div>
+				</form>
+			{/if}
 
 
 <form

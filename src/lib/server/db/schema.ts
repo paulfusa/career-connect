@@ -206,6 +206,25 @@ export const follow = pgTable(
 	(t) => [unique('follow_pair_unique').on(t.followerId, t.followingId), index('follow_following_id_idx').on(t.followingId), check('follow_not_self', sql`${t.followerId} <> ${t.followingId}`)]
 );
 
+// US-06: feature ideas from job seekers and recruiters. Admins set the status when they review them
+export const featureSuggestion = pgTable(
+	'feature_suggestion',
+	{
+		id: uuid('id').primaryKey().defaultRandom(),
+		userId: userId(),
+		title: text('title').notNull(),
+		description: text('description').notNull(),
+		benefit: text('benefit').notNull(),
+		status: text('status', { enum: ['new', 'under_review', 'planned', 'not_planned'] }).default('new').notNull(),
+		createdAt: timestamp('created_at').defaultNow().notNull(),
+		updatedAt: timestamp('updated_at').defaultNow().notNull()
+	},
+	(t) => [
+		index('feature_suggestion_user_id_idx').on(t.userId),
+		check('feature_suggestion_status_check', sql`${t.status} in ('new', 'under_review', 'planned', 'not_planned')`)
+	]
+);
+
 export type Profile = typeof profile.$inferSelect;
 export type Notification = typeof notification.$inferSelect;
 export type PasswordResetCooldown = typeof passwordResetCooldown.$inferSelect;
@@ -216,6 +235,7 @@ export type JobPosting = typeof jobPosting.$inferSelect;
 export type Application = typeof application.$inferSelect;
 export type ApplicationOutcome = typeof applicationOutcome.$inferSelect;
 export type Follow = typeof follow.$inferSelect;
+export type FeatureSuggestion = typeof featureSuggestion.$inferSelect;
 
 export * from './auth.schema';
 export type CompanyProfile = typeof companyProfile.$inferSelect;

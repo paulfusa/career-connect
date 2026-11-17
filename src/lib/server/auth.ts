@@ -42,7 +42,10 @@ export const auth = betterAuth({
 			// allowed values enforced by the user_role_check constraint in the DB
 			role: { type: ['job_seeker', 'recruiter'], required: true, input: true },
 			// US-11: set by the onboarding actions only (input: false)
-			onboardedAt: { type: 'date', required: false, input: false }
+			onboardedAt: { type: 'date', required: false, input: false },
+			// US-06: team members who review feature suggestions. input: false means nobody can set it at sign-up
+			// or through update-user; it's only turned on with SQL in Supabase
+			isAdmin: { type: 'boolean', required: false, defaultValue: false, input: false }
 		}
 	},
 	plugins: [

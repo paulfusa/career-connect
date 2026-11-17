@@ -9,6 +9,7 @@ export const user = pgTable("user", {
   image: text("image"),
   role: text("role", { enum: ["job_seeker", "recruiter"] }).notNull(),
   onboardedAt: timestamp("onboarded_at"),
+  isAdmin: boolean("is_admin").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()
