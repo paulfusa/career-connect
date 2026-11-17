@@ -7,7 +7,7 @@ type AuthSession = typeof auth.$Infer.Session;
 declare global {
 	namespace App {
 		interface Locals {
-			// US-06: hooks.server.ts turns an admin into the job seeker or recruiter view they picked
+			// US-06: admins get the view they picked (see hooks.server.ts)
 			user?: Omit<AuthSession['user'], 'role'> & { role: 'job_seeker' | 'recruiter'; isAdmin: boolean };
 			session?: AuthSession['session'];
 		}

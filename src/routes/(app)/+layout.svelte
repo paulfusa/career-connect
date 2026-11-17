@@ -39,7 +39,7 @@
 		// US-19: job seekers find recruiters here and recruiters find job seekers
 		{ href: '/people', label: data.user.role === 'job_seeker' ? 'Recruiters' : 'Job seekers' },
 		{ href: '/following', label: 'Following' },
-		// US-06: everyone can suggest a feature, and admins also get the review page
+		// US-06: suggestions for everyone, review page for admins
 		{ href: '/suggestions', label: 'Suggest a feature' },
 		...(data.user.isAdmin ? [{ href: '/suggestions/review', label: 'Review suggestions' }] : []),
 		{ href: '/settings', label: 'Settings' }
@@ -105,7 +105,7 @@
 				{/each}
 			</nav>
 
-			<!-- US-06: admins can switch between the two views with one account -->
+			<!-- US-06: admin view switch -->
 			{#if data.user.isAdmin}
 				<form method="POST" action="/view-as" class="mt-4 border-t border-white/60 pt-4 dark:border-white/15">
 					<p id="view-as-label" class="px-1 text-xs font-semibold uppercase tracking-wide text-ink/50">View as</p>

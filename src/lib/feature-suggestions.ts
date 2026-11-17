@@ -1,4 +1,4 @@
-// US-06: shared by the suggestion pages and the server checks
+// US-06: used by the suggestion pages and the server
 export const SUGGESTION_STATUSES = {
 	new: 'New',
 	under_review: 'Under review',

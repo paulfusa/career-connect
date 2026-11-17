@@ -22,7 +22,7 @@ const handleBetterAuth: Handle = async ({ event, resolve }) => {
 
 	if (session) {
 		event.locals.session = session.session;
-		// US-06: admins use the app as a job seeker or a recruiter (their "View as" choice), plus the admin pages
+		// US-06: admins see the job seeker or recruiter view they picked
 		const choice = session.user.role === 'admin' ? event.cookies.get(VIEW_AS_COOKIE) : undefined;
 		event.locals.user = viewAs(session.user, choice);
 	}

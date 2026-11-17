@@ -5,7 +5,7 @@ import { featureSuggestion, user } from '$lib/server/db/schema';
 import { canReviewSuggestions, isSuggestionStatus, parseStatusChange } from '$lib/server/feature-suggestions';
 import type { Actions, PageServerLoad } from './$types';
 
-// US-06: only admins get this page. Everyone else gets the same 404 as a page that doesn't exist
+// US-06: admins only, everyone else gets a 404
 export const load: PageServerLoad = async ({ locals, url }) => {
 	if (!canReviewSuggestions(locals.user)) error(404, 'Not found');
 

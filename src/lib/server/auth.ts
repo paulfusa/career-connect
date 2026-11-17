@@ -40,8 +40,8 @@ export const auth = betterAuth({
 		// the profile page always sends the password, so no email confirmation is needed
 		deleteUser: { enabled: true },
 		additionalFields: {
-			// allowed values enforced by the user_role_check constraint in the DB.
-			// US-06: admin is only given with SQL in Supabase, the hooks below stop anyone setting it
+			// allowed values enforced by the user_role_check constraint in the DB
+			// US-06: admin can only be set from Supabase, see the hooks below
 			role: { type: ['job_seeker', 'recruiter', 'admin'], required: true, input: true },
 			// US-11: set by the onboarding actions only (input: false)
 			onboardedAt: { type: 'date', required: false, input: false }
@@ -49,7 +49,7 @@ export const auth = betterAuth({
 	},
 	databaseHooks: {
 		user: {
-			// sign-up only accepts job_seeker or recruiter, even when someone calls the API directly
+			// no admin accounts at sign-up, even through the API
 			create: { before: async (user) => allowedAtSignUp(user) },
 			// nobody can change their own role after signing up
 			update: { before: async (data) => ({ data: withoutRoleChange(data) }) }

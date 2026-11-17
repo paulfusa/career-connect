@@ -1,5 +1,5 @@
 // US-19: job seekers can see and follow recruiters, and recruiters can see and follow job seekers
-// true also tells TypeScript the target is a job seeker or recruiter (admin profiles never open, US-06)
+// US-06: admin profiles never open, so the target is a job seeker or recruiter here
 export function canSeeProfile(viewerRole: string, targetRole: string): targetRole is 'job_seeker' | 'recruiter' {
 	return (
 		(viewerRole === 'recruiter' && targetRole === 'job_seeker') ||

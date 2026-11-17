@@ -5,8 +5,7 @@ import { PgDialect } from 'drizzle-orm/pg-core';
 import { getTableName, type SQL, type Table } from 'drizzle-orm';
 import { isHttpError } from '@sveltejs/kit';
 
-// US-06: tests the suggestion form checks, and the real Suggest a feature and Review suggestions pages
-// with a fake database, the same way as follow.test.ts. The users are what hooks.server.ts hands the pages
+// US-06: suggestion form checks, plus the real suggest and review pages with a fake db (same setup as follow.test.ts)
 registerHooks({
 	resolve(specifier, context, next) {
 		if (specifier === '$lib/server/db' || specifier === './db') return { url: 'fake:suggestion-db', shortCircuit: true };
@@ -90,7 +89,7 @@ const formOf = (values: Record<string, string>) => {
 	for (const [key, value] of Object.entries(values)) form.set(key, value);
 	return form;
 };
-// the values the query sends to Postgres, to check which user or status it's for
+// query params, to check which user/status a query is for
 const params = (condition?: SQL) => (condition ? dialect.sqlToQuery(condition).params : []);
 
 async function runAction(page: { actions: Record<string, (event: never) => unknown> }, name: string, me: object, values: Record<string, string>) {
@@ -156,7 +155,7 @@ test('suggest page: you only see your own suggestions', async () => {
 });
 
 test('suggest: a valid suggestion is saved for the signed-in user', async () => {
-	// a userId in the form is ignored, the suggestion always belongs to whoever is signed in
+	// a userId sent in the form is ignored
 	const result = await runAction(suggestPage, 'suggest', seeker, { ...good, userId: 'someone-else' });
 	assert.equal(result.success, true);
 	assert.equal(inserts.length, 1);
@@ -187,7 +186,7 @@ test('review page: an admin sees every suggestion, and can filter by status', as
 	assert.equal(planned.status, 'planned');
 	assert.deepEqual(params(selects[1].where), ['planned']);
 
-	// an unknown status is ignored instead of breaking the page
+	// unknown status is just ignored
 	assert.equal((await openReview(admin, '?status=nope')).status, null);
 });
 

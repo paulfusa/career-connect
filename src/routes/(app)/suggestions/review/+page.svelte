@@ -43,7 +43,7 @@
 			<article class="{glassPanel} p-6">
 				<h2 class="font-display text-xl font-semibold">{suggestion.title}</h2>
 				<p class="mt-1 text-sm text-ink/60">
-					<!-- not a link: profiles only open for the other role (US-19), so an admin would often get a 404 -->
+					<!-- no link, profiles only open for the other role (US-19) -->
 					{suggestion.authorName} · {suggestion.authorRole === 'recruiter' ? 'Recruiter' : 'Job seeker'} · {formatDate(suggestion.createdAt)}
 				</p>
 				<p class="mt-4 whitespace-pre-line">{suggestion.description}</p>

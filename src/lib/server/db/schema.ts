@@ -206,7 +206,7 @@ export const follow = pgTable(
 	(t) => [unique('follow_pair_unique').on(t.followerId, t.followingId), index('follow_following_id_idx').on(t.followingId), check('follow_not_self', sql`${t.followerId} <> ${t.followingId}`)]
 );
 
-// US-06: feature ideas from job seekers and recruiters. Admins set the status when they review them
+// US-06: feature suggestions from users, admins change the status
 export const featureSuggestion = pgTable(
 	'feature_suggestion',
 	{

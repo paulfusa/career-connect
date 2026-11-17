@@ -3,8 +3,7 @@ import assert from 'node:assert/strict';
 import { registerHooks } from 'node:module';
 import { isHttpError, isRedirect } from '@sveltejs/kit';
 
-// US-06: the admin role. Tests what hooks.server.ts does with an admin (the "View as" choice),
-// the switch's endpoint, and the rules that stop anyone giving themselves a role through Better Auth's API
+// US-06: admin role, the View as switch, and the sign-up/update role checks
 registerHooks({
 	resolve(specifier, context, next) {
 		if (specifier.startsWith('$lib/')) {
@@ -25,7 +24,7 @@ const recruiter = { id: 'recruiter-1', role: 'recruiter' };
 test('admin role: an admin uses the app as a job seeker until they pick recruiter', () => {
 	assert.deepEqual(viewAs(admin, undefined), { id: 'admin-1', role: 'job_seeker', isAdmin: true });
 	assert.deepEqual(viewAs(admin, 'recruiter'), { id: 'admin-1', role: 'recruiter', isAdmin: true });
-	// the session's user object isn't changed, only the copy used for this request
+	// doesn't change the session user
 	assert.equal(admin.role, 'admin');
 });
 
@@ -54,7 +53,7 @@ test('update-user: a role change is dropped, the rest of the update goes through
 
 type Cookie = { name: string; value: string; options: Record<string, unknown> };
 
-// the user as the pages see it, after hooks.server.ts
+// locals.user like hooks.server.ts would set it
 async function pick(me: { role: string } | undefined, role: string) {
 	const set: Cookie[] = [];
 	const body = new FormData();

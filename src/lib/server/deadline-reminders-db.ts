@@ -28,7 +28,7 @@ export function buildDeadlineReminderInsert(db: DeadlineReminderDatabase) {
 			isNotNull(jobPosting.applicationDeadline),
 			gte(jobPosting.applicationDeadline, today),
 			lte(jobPosting.applicationDeadline, sql`${today} + 3`),
-			// US-06: admins can post jobs too (in recruiter view), so they get the reminders as well
+			// US-06: admins can post jobs too
 			inArray(user.role, ['recruiter', 'admin']),
 			eq(user.emailVerified, true)
 		));

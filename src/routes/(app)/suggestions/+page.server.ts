@@ -5,7 +5,7 @@ import { featureSuggestion } from '$lib/server/db/schema';
 import { parseSuggestion } from '$lib/server/feature-suggestions';
 import type { Actions, PageServerLoad } from './$types';
 
-// US-06: the form, and the suggestions you sent with their status, newest first
+// US-06: your own suggestions, newest first
 export const load: PageServerLoad = async ({ locals }) => {
 	const mine = await db
 		.select({

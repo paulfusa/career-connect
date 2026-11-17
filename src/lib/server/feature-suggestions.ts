@@ -11,7 +11,7 @@ const NAMES: Record<Field, string> = {
 	benefit: 'How it would help'
 };
 
-// US-06: checks the suggestion form. Returns the trimmed values, plus one message per field that's wrong
+// US-06: checks the suggestion form, returns the values and an error for each bad field
 export function parseSuggestion(form: FormData): { values: SuggestionInput; errors: Partial<Record<Field, string>> } {
 	const values = {} as SuggestionInput;
 	const errors: Partial<Record<Field, string>> = {};
@@ -30,7 +30,7 @@ export function parseSuggestion(form: FormData): { values: SuggestionInput; erro
 export const isSuggestionStatus = (value: unknown): value is SuggestionStatus =>
 	typeof value === 'string' && Object.hasOwn(SUGGESTION_STATUSES, value);
 
-// the review form sends the suggestion's id and the new status. null means something was tampered with
+// id + new status from the review form, null if something's off
 export function parseStatusChange(form: FormData): { id: string; status: SuggestionStatus } | null {
 	const id = form.get('id');
 	const status = form.get('status');
@@ -38,5 +38,5 @@ export function parseStatusChange(form: FormData): { id: string; status: Suggest
 	return { id, status };
 }
 
-// only admins can review suggestions (hooks.server.ts sets isAdmin for accounts with the admin role)
+// only admins can review suggestions
 export const canReviewSuggestions = (user: { isAdmin?: boolean | null } | undefined | null): boolean => user?.isAdmin === true;
