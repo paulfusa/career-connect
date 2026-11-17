@@ -33,9 +33,10 @@ test('deadline reminders: one insert-select enforces trusted recruiter and job e
 	assert.match(sql, /"job_posting"\."status" = \$/);
 	assert.match(sql, /"job_posting"\."published" = \$/);
 	assert.match(sql, /"job_posting"\."application_deadline" is not null/);
-	assert.match(sql, /"user"\."role" = \$/);
+	// US-06: recruiters and admins (who can post jobs in recruiter view)
+	assert.match(sql, /"user"\."role" in \(\$\d+, \$\d+\)/);
 	assert.match(sql, /"user"\."email_verified" = \$/);
-	assert.deepEqual(params.slice(-4), ['open', true, 'recruiter', true]);
+	assert.deepEqual(params.slice(-5), ['open', true, 'recruiter', 'admin', true]);
 	assert.doesNotMatch(sql, /"profile"|"application"|"session"/);
 });
 
