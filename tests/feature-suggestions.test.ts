@@ -6,7 +6,7 @@ import { getTableName, type SQL, type Table } from 'drizzle-orm';
 import { isHttpError } from '@sveltejs/kit';
 
 // US-06: tests the suggestion form checks, and the real Suggest a feature and Review suggestions pages
-// with a fake database, the same way as follow.test.ts
+// with a fake database, the same way as follow.test.ts. The users are what hooks.server.ts hands the pages
 registerHooks({
 	resolve(specifier, context, next) {
 		if (specifier === '$lib/server/db' || specifier === './db') return { url: 'fake:suggestion-db', shortCircuit: true };
@@ -140,7 +140,7 @@ test('review form: only a real id and a known status are accepted', () => {
 	assert.equal(parseStatusChange(formOf({ id: ID, status: 'toString' })), null);
 });
 
-test('only users with the admin flag can review suggestions', () => {
+test('only admins can review suggestions', () => {
 	assert.equal(canReviewSuggestions(admin), true);
 	assert.equal(canReviewSuggestions(seeker), false);
 	assert.equal(canReviewSuggestions({ isAdmin: null }), false);
@@ -171,7 +171,7 @@ test('suggest: a wrong form is sent back with the messages and nothing is saved'
 	assert.equal(inserts.length, 0);
 });
 
-test('review page: people without the admin flag get a not found page', async () => {
+test('review page: people who are not admins get a not found page', async () => {
 	await assert.rejects(openReview(seeker), (err) => isHttpError(err, 404));
 	await assert.rejects(openReview(undefined as never), (err) => isHttpError(err, 404));
 	assert.equal(selects.length, 0);
@@ -200,7 +200,7 @@ test('review: an admin can change the status', async () => {
 	assert.deepEqual(params(updates[0].where), [ID]);
 });
 
-test('review: someone without the admin flag cannot change a status', async () => {
+test('review: someone who is not an admin cannot change a status', async () => {
 	await assert.rejects(runAction(reviewPage, 'status', seeker, { id: ID, status: 'planned' }), (err) => isHttpError(err, 404));
 	assert.equal(updates.length, 0);
 });

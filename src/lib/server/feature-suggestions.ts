@@ -38,5 +38,5 @@ export function parseStatusChange(form: FormData): { id: string; status: Suggest
 	return { id, status };
 }
 
-// only team members with the admin flag (set in Supabase) can review suggestions
+// only admins can review suggestions (hooks.server.ts sets isAdmin for accounts with the admin role)
 export const canReviewSuggestions = (user: { isAdmin?: boolean | null } | undefined | null): boolean => user?.isAdmin === true;

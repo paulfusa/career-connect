@@ -10,6 +10,7 @@ import {
 	sendPasswordResetCode
 } from '$lib/server/email';
 import { emailOTP } from 'better-auth/plugins';
+import { allowedAtSignUp, withoutRoleChange } from '$lib/server/role-guard';
 
 export const auth = betterAuth({
 	baseURL: env.ORIGIN,
@@ -39,13 +40,19 @@ export const auth = betterAuth({
 		// the profile page always sends the password, so no email confirmation is needed
 		deleteUser: { enabled: true },
 		additionalFields: {
-			// allowed values enforced by the user_role_check constraint in the DB
-			role: { type: ['job_seeker', 'recruiter'], required: true, input: true },
+			// allowed values enforced by the user_role_check constraint in the DB.
+			// US-06: admin is only given with SQL in Supabase, the hooks below stop anyone setting it
+			role: { type: ['job_seeker', 'recruiter', 'admin'], required: true, input: true },
 			// US-11: set by the onboarding actions only (input: false)
-			onboardedAt: { type: 'date', required: false, input: false },
-			// US-06: team members who review feature suggestions. input: false means nobody can set it at sign-up
-			// or through update-user; it's only turned on with SQL in Supabase
-			isAdmin: { type: 'boolean', required: false, defaultValue: false, input: false }
+			onboardedAt: { type: 'date', required: false, input: false }
+		}
+	},
+	databaseHooks: {
+		user: {
+			// sign-up only accepts job_seeker or recruiter, even when someone calls the API directly
+			create: { before: async (user) => allowedAtSignUp(user) },
+			// nobody can change their own role after signing up
+			update: { before: async (data) => ({ data: withoutRoleChange(data) }) }
 		}
 	},
 	plugins: [
