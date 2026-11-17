@@ -144,6 +144,7 @@
 									<div>
 										<p class="font-semibold">{e.title}</p>
 										<p class="text-ink/75">
+											<!-- eslint-disable-next-line svelte/no-useless-mustaches -- Svelte drops plain whitespace at the start of a tag or block -->
 											{e.company}{#if e.employmentType}<span class="text-ink/50">{' · '}{EMPLOYMENT_TYPES[e.employmentType as keyof typeof EMPLOYMENT_TYPES]}</span>{/if}
 										</p>
 									</div>

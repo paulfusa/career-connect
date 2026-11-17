@@ -11,6 +11,7 @@ const LINK_ORIGIN = 'https://notification.invalid';
 // Support current producer destinations only. Destination routes still authorize
 // the request; this helper cannot determine whether a posting still exists.
 export function safeNotificationLink(value: unknown): string | null {
+	// eslint-disable-next-line no-control-regex -- rejects control characters on purpose
 	if (typeof value !== 'string' || !value.startsWith('/') || value.startsWith('//') || /[\\\u0000-\u001f\u007f]/.test(value)) return null;
 	try {
 		const url = new URL(value, LINK_ORIGIN);

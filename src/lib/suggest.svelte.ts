@@ -14,6 +14,7 @@ export const searchCities: Search = async (query, signal) => {
 	const { features } = (await res.json()) as {
 		features: { properties: { name?: string; state?: string; country?: string } }[];
 	};
+	// eslint-disable-next-line svelte/prefer-svelte-reactivity -- a throwaway de-duplication set, not state
 	const seen = new Set<string>();
 	return features
 		.map(({ properties: p }) => ({
@@ -46,6 +47,7 @@ export const searchSchools: Search = async (query, signal) => {
 export function filterList(list: string[], query: string, exclude: string[] = [], limit = 8): Suggestion[] {
 	const q = query.trim().toLowerCase();
 	if (!q) return [];
+	// eslint-disable-next-line svelte/prefer-svelte-reactivity -- a throwaway lookup set, not state
 	const skip = new Set(exclude.map((v) => v.toLowerCase()));
 	const matches = list.filter((item) => item.toLowerCase().includes(q) && !skip.has(item.toLowerCase()));
 	matches.sort((a, b) => Number(!a.toLowerCase().startsWith(q)) - Number(!b.toLowerCase().startsWith(q)));
@@ -60,6 +62,7 @@ export const logoUrl = (domain: string) =>
 export class Suggester {
 	options = $state<Suggestion[]>([]);
 	loading = $state(false);
+	// eslint-disable-next-line svelte/prefer-svelte-reactivity -- only read in event handlers, never rendered
 	#seen = new Map<string, Suggestion>();
 	#timer: ReturnType<typeof setTimeout> | undefined;
 	#request: AbortController | undefined;

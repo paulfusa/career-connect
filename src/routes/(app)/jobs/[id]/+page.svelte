@@ -301,7 +301,7 @@
     						dark:border-white/15 dark:bg-[#242427] dark:text-[#f5f5f5]"
 						>
 							<option value="" disabled>Select a resume</option>
-							{#each data.resumes as resume}
+							{#each data.resumes as resume (resume.id)}
 								<option value={resume.id}>{resume.fileName}</option>
 							{/each}
 						</select>
