@@ -1,4 +1,6 @@
 # Career Connect
+[![CI/CD](https://github.com/paulfusa/career-connect/actions/workflows/ci.yml/badge.svg)](https://github.com/paulfusa/career-connect/actions/workflows/ci.yml) [![CodeQL](https://github.com/paulfusa/career-connect/actions/workflows/codeql.yml/badge.svg)](https://github.com/paulfusa/career-connect/actions/workflows/codeql.yml)
+
 Project for **SOEN 341 LAB FM** - *Fall 2026*  
 
 **GitHub Repository:** https://github.com/paulfusa/career-connect
@@ -44,9 +46,9 @@ The team shares one Supabase database, so changes to the database go through a p
 Then open http://localhost:5173 in your browser.
 
 # Testing
-Run the type check with `pnpm check` and the automated tests with `pnpm test`.
+Run the linter with `pnpm lint`, the type check with `pnpm check`, the automated tests with `pnpm test`, and the tests with a coverage report with `pnpm test:coverage`.
 
-Our CI pipeline on GitHub Actions ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs both on every pull request and marks it as passed or failed.
+Our CI/CD pipeline on GitHub Actions runs all of these, plus CodeQL static analysis and a production build, on every pull request, and publishes the built app on every merge to main. See [CI/CD pipeline](docs/ci-cd.md).
 
 Acceptance tests are GitHub issues with the `Acceptance Test` label, linked to the user story they test.
 
@@ -109,5 +111,6 @@ The repository is set up with SvelteKit, Svelte, TypeScript, Tailwind CSS, Postg
 - [Sprint submissions and summary reports](docs/submissions/)
 - [AI setup](docs/ai-setup.md)
 - [Deadline reminders](docs/deadline-reminders.md)
+- [CI/CD pipeline](docs/ci-cd.md)
 - [AI usage logs](AI_Log/)
 - User stories and acceptance tests: GitHub Issues

@@ -133,9 +133,11 @@
 								<span class="min-w-0">
 									<span class="block font-semibold">{e.title}</span>
 									<span class="block text-ink/75">
+										<!-- eslint-disable-next-line svelte/no-useless-mustaches -- Svelte drops plain whitespace at the start of a tag or block -->
 										{e.company}{#if e.employmentType}<span class="text-ink/50">{' · '}{EMPLOYMENT_TYPES[e.employmentType as keyof typeof EMPLOYMENT_TYPES]}</span>{/if}
 									</span>
 									<span class="block text-sm text-ink/55">
+										<!-- eslint-disable-next-line svelte/no-useless-mustaches -- Svelte drops plain whitespace at the start of a tag or block -->
 										{month(e.startDate)} – {e.endDate ? month(e.endDate) : 'Present'}{#if e.location}{' · '}{e.location}{/if}
 									</span>
 									{#if e.description}<span class="mt-1.5 block whitespace-pre-line text-sm text-ink/75">{e.description}</span>{/if}

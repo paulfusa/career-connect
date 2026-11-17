@@ -200,15 +200,15 @@ test('deadline runner: importing the entry point performs no work or logging', a
 
 test('deadline workflow: manual-only job requires literal JSON true and the full default branch ref', () => {
 	const workflow = readFileSync(new URL('../.github/workflows/deadline-reminders.yml', import.meta.url), 'utf8');
-	assert.match(workflow, /^on:\s*\n  workflow_dispatch:\s*\n/m);
+	assert.match(workflow, /^on:\s*\n {2}workflow_dispatch:\s*\n/m);
 	assert.doesNotMatch(workflow, /^\s*(schedule|cron|push|pull_request|pull_request_target):/m);
-	assert.match(workflow, /jobs:\s*\n  generate:\s*\n(?:\s*#[^\n]*\n)*    if: \$\{\{ vars\.DEADLINE_REMINDERS_ENABLED == 'true' && fromJSON\(vars\.DEADLINE_REMINDERS_ENABLED \|\| 'false'\) == true && github\.ref == format\('refs\/heads\/\{0\}', github\.event\.repository\.default_branch\) \}\}/);
+	assert.match(workflow, /jobs:\s*\n {2}generate:\s*\n(?:\s*#[^\n]*\n)* {4}if: \$\{\{ vars\.DEADLINE_REMINDERS_ENABLED == 'true' && fromJSON\(vars\.DEADLINE_REMINDERS_ENABLED \|\| 'false'\) == true && github\.ref == format\('refs\/heads\/\{0\}', github\.event\.repository\.default_branch\) \}\}/);
 	assert.doesNotMatch(workflow, /github\.ref_name/);
-	assert.match(workflow, /permissions:\s*\n  contents: read/);
+	assert.match(workflow, /permissions:\s*\n {2}contents: read/);
 	assert.match(workflow, /cancel-in-progress: false/);
 	assert.match(workflow, /timeout-minutes: 10/);
 	assert.match(workflow, /run: pnpm install --frozen-lockfile/);
-	assert.match(workflow, /run: pnpm reminders:deadlines\s*\n        env:\s*\n          REMINDER_DATABASE_URL: \$\{\{ secrets\.REMINDER_DATABASE_URL \}\}/);
+	assert.match(workflow, /run: pnpm reminders:deadlines\s*\n {8}env:\s*\n {10}REMINDER_DATABASE_URL: \$\{\{ secrets\.REMINDER_DATABASE_URL \}\}/);
 	assert.equal((workflow.match(/secrets\./g) ?? []).length, 1);
 	assert.doesNotMatch(workflow, /\bDATABASE_URL\b/);
 	const ci = readFileSync(new URL('../.github/workflows/ci.yml', import.meta.url), 'utf8');

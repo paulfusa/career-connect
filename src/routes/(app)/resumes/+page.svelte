@@ -120,7 +120,7 @@
 							<div class="min-w-0 flex-1">
 								<a href="/resumes/{r.id}" target="_blank" rel="noopener" class="block truncate font-semibold hover:text-tide hover:underline">{r.fileName}</a>
 									<p class="text-sm text-ink/55">
-										{formatBytes(r.sizeBytes)}{' · '}{r.updatedAt > r.createdAt ? 'Replaced' : 'Uploaded'}
+										{formatBytes(r.sizeBytes)} · {r.updatedAt > r.createdAt ? 'Replaced' : 'Uploaded'}
 										{dateFmt.format(r.updatedAt)}
 							</p>
 						</div>

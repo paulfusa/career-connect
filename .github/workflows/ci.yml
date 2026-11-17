@@ -1,26 +1,91 @@
-name: CI
+name: CI/CD
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
+
+permissions:
+  contents: read
+
+# a newer push to the same branch or PR cancels the run still in progress
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  check-and-test:
+  lint-and-check:
+    name: Lint and type check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Set up pnpm
-        uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v4
         with:
           version: '12'
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '24'
           cache: pnpm
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - run: pnpm install --frozen-lockfile
+      - name: Lint (ESLint static analysis)
+        run: pnpm lint
       - name: Type check
         run: pnpm check
-      - name: Run tests
-        run: pnpm test
+
+  test:
+    name: Unit tests and coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: '12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # fails if line or branch coverage drops under 80% (thresholds are in package.json)
+      - name: Run unit tests with coverage
+        run: |
+          set -o pipefail
+          pnpm test:coverage | tee test-output.txt
+      - name: Coverage report
+        if: always()
+        run: |
+          {
+            echo '## Unit test coverage'
+            echo '```'
+            sed -n '/start of coverage report/,/end of coverage report/p' test-output.txt | sed 's/^# //'
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  build:
+    name: Production build
+    needs: [lint-and-check, test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: '12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      # CD: every merge to main publishes the built app as a downloadable package.
+      # ponytail: no hosting, the app is demoed locally; add a deploy step here if a host is ever needed
+      - name: Publish build package
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: career-connect-${{ github.sha }}
+          path: |
+            build
+            package.json
+            pnpm-lock.yaml
+            pnpm-workspace.yaml
+            .env.example
+          retention-days: 30

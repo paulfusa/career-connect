@@ -58,6 +58,7 @@ export function createNotificationService(store: NotificationStore) {
 				typeof input.link !== 'string' ||
 				!input.link.startsWith('/') ||
 				input.link.startsWith('//') ||
+				// eslint-disable-next-line no-control-regex -- rejects control characters on purpose
 				/[\\\u0000-\u001f\u007f]/.test(input.link)
 			)) {
 				throw new TypeError('link must be a root-relative in-app path');

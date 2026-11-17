@@ -86,7 +86,7 @@
                     { value: 'light', label: 'Light', icon: '☀' },
                     { value: 'dark', label: 'Dark', icon: '☾' },
                     { value: 'system', label: 'System', icon: '▣' }
-                ] as option}
+                ] as option (option.value)}
                     <button
                         type="button"
                         aria-pressed={selectedTheme === option.value}
