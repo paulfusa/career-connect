@@ -1,13 +1,13 @@
 # Sprint 3 User Stories (US-24, US-31, US-32, US-33)
 - **Purpose of AI Use**: Writing user stories for the Sprint 3 requirements (Generative AI feature, AI job matching, unit tests, CI/CD) in the same format as the team's existing stories
 - **AI-Suggested Content**: US-24 (Resume AI Autofill & Review) with acceptance criteria matching the posted acceptance tests, US-31 (AI Job Matching Suggestions), a static analysis story, a unit test coverage story and a CI/CD pipeline story, plus a check of which requirements were already covered by existing stories (US-25, US-26) and tooling (the CI workflow from #102)
-- **Validation**:
+- **Validation**: Reviewed and modified User Stories to a;lign properly with the assignment
 - **Decision**: Partially Accepted / Modified (static analysis story not used; criteria and tasks trimmed in US-31, US-32 and US-33)
-- **Reflection**:
+- **Reflection**: AI Helped create user stories to follow to implement development
 - **Responsible Person**: Paul Fourment
 
 # Prompt 1
-I never made a user story for US-24. Can you quickly give me one to paste?
+I never made a user story for US-24. Can you give me the outline for it?
 
 # Response 1
 A US-24 story in the same format as US-04 (Priority, Sprint 3, Source: team-proposed for the Generative AI requirement):
@@ -16,7 +16,7 @@ A US-24 story in the same format as US-04 (Priority, Sprint 3, Source: team-prop
 - **Tasks 24.1–24.5**: PDF text extraction, the provider-agnostic AI client and team setup guide, the review, the profile autofill, and tests.
 
 # Prompt 2
-But the acceptance tests don't align with those tasks. I already put the acceptance tests up.
+Acceptance tests don't align with those tasks.
 
 # Response 2
 Rewrote the story so it lines up with the acceptance tests already posted (#192, #193):
@@ -30,7 +30,7 @@ Rewrote the story so it lines up with the acceptance tests already posted (#192,
 - Suggested adding a **Tasks:** line to each posted test, like the other acceptance tests: 24.1 → Tasks 24.1, 24.2, 24.3; 24.2 → Tasks 24.2, 24.4, 24.5 (PDF reading is shared by both features).
 
 # Prompt 3
-I need to make user stories for these points (matching the other user stories in the repo, https://github.com/paulfusa/career-connect):
+I need to make user stories for these points:
 - Receive in-app notifications and reminders for application updates, interview invitations, upcoming deadlines, and recruiter actions.
 - View an analytics dashboard with application history, a status breakdown (pending, interview, rejected, etc.), and activity metrics such as applications submitted over time.
 - AI job matching suggestions: recommend relevant jobs based on user profiles and resumes.
