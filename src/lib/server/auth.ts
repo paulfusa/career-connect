@@ -3,6 +3,7 @@ import { betterAuth } from 'better-auth/minimal';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { sveltekitCookies } from 'better-auth/svelte-kit';
 import { getRequestEvent } from '$app/server';
+import { building } from '$app/environment';
 import { db } from '$lib/server/db';
 import {
 	sendVerificationEmail,
@@ -12,7 +13,8 @@ import { emailOTP } from 'better-auth/plugins';
 
 export const auth = betterAuth({
 	baseURL: env.ORIGIN,
-	secret: env.BETTER_AUTH_SECRET,
+	// `vite build` loads this module with no .env (e.g. in CI); better-auth still refuses to run without a real secret
+	secret: env.BETTER_AUTH_SECRET ?? (building ? 'build-time-placeholder-not-used-at-runtime' : undefined),
 	database: drizzleAdapter(db, { provider: 'pg' }),
 	emailAndPassword: { enabled: true,
 		requireEmailVerification: true,
