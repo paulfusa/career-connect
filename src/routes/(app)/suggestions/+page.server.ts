@@ -30,7 +30,7 @@ export const actions: Actions = {
 		return { success: true };
 	},
 
-	// you can only delete your own, and only while the team hasn't looked at it yet
+	// only your own, and only while it's still new
 	delete: async ({ request, locals }) => {
 		const id = parseSuggestionId(await request.formData());
 		if (!id) return fail(400, { message: 'Suggestion not found.' });

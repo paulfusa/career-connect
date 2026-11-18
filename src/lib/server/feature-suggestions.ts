@@ -38,7 +38,7 @@ export function parseStatusChange(form: FormData): { id: string; status: Suggest
 	return { id, status };
 }
 
-// the id sent by a delete button, null if it isn't a real id
+// id from a delete button, null if it isn't valid
 export function parseSuggestionId(form: FormData): string | null {
 	const id = form.get('id');
 	return typeof id === 'string' && UUID.test(id) ? id : null;

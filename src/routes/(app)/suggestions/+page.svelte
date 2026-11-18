@@ -9,7 +9,7 @@
 
 	let { data, form }: PageProps = $props();
 	let sending = $state(false);
-	// same delete flow as the Resumes page
+	// delete works like on the Resumes page
 	let confirming = $state<(typeof data.mine)[number] | null>(null);
 	let deleting = $state(false);
 	const onDelete = () => {
@@ -127,7 +127,7 @@
 					>
 						{SUGGESTION_STATUSES[suggestion.status]}
 					</span>
-					<!-- only while it's New, after that the team's decision stays -->
+					<!-- can only delete while it's New -->
 					{#if suggestion.status === 'new'}
 						<button
 							type="button"

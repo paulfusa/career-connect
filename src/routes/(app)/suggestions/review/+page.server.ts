@@ -48,7 +48,7 @@ export const actions: Actions = {
 		return { success: 'Status saved.', id: change.id };
 	},
 
-	// admins can delete any suggestion, for spam, duplicates or test entries
+	// admins can delete any suggestion (spam, duplicates, test ones)
 	delete: async ({ request, locals }) => {
 		if (!canReviewSuggestions(locals.user)) error(404, 'Not found');
 
