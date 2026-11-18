@@ -139,6 +139,12 @@ test('form: fields that are too short or too long are refused', () => {
 	assert.equal(parseSuggestion(formOf({ ...good, benefit: 'Short' })).errors.benefit, 'How it would help needs at least 10 characters.');
 });
 
+test('form: one character over the limit is refused for every field', () => {
+	assert.equal(parseSuggestion(formOf({ ...good, title: 'x'.repeat(121) })).errors.title, 'Title can be at most 120 characters.');
+	assert.equal(parseSuggestion(formOf({ ...good, description: 'x'.repeat(2001) })).errors.description, 'Description can be at most 2000 characters.');
+	assert.equal(parseSuggestion(formOf({ ...good, benefit: 'x'.repeat(1001) })).errors.benefit, 'How it would help can be at most 1000 characters.');
+});
+
 test('form: exactly the minimum and maximum lengths are accepted', () => {
 	assert.deepEqual(parseSuggestion(formOf({ title: 'x'.repeat(5), description: 'x'.repeat(20), benefit: 'x'.repeat(10) })).errors, {});
 	assert.deepEqual(parseSuggestion(formOf({ title: 'x'.repeat(120), description: 'x'.repeat(2000), benefit: 'x'.repeat(1000) })).errors, {});
