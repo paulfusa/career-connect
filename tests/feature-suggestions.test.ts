@@ -33,8 +33,10 @@ type Select = { table: string; fields: string[]; where?: SQL };
 let selects: Select[] = [];
 let inserts: { table: string; values: Record<string, unknown> }[] = [];
 let updates: { table: string; set: Record<string, unknown>; where?: SQL }[] = [];
+let deletes: { table: string; where: SQL }[] = [];
 let rows: unknown[] = [];
 let updated: unknown[] = [{ id: 'x' }];
+let deleted: unknown[] = [{ id: 'x' }];
 
 const db = {
 	select(fields: Record<string, unknown> = {}) {
@@ -67,6 +69,14 @@ const db = {
 			returning() { return Promise.resolve(updated); }
 		};
 		return query;
+	},
+	delete(table: Table) {
+		return {
+			where(condition: SQL) {
+				deletes.push({ table: getTableName(table), where: condition });
+				return { returning: () => Promise.resolve(deleted) };
+			}
+		};
 	}
 };
 (globalThis as typeof globalThis & { __suggestionDb: typeof db }).__suggestionDb = db;
@@ -104,8 +114,10 @@ beforeEach(() => {
 	selects = [];
 	inserts = [];
 	updates = [];
+	deletes = [];
 	rows = [];
 	updated = [{ id: ID }];
+	deleted = [{ id: ID }];
 });
 
 test('form: a full suggestion passes, with the spaces around it removed', () => {
@@ -212,4 +224,41 @@ test('review: a wrong status or a missing suggestion is refused', async () => {
 	const gone = await runAction(reviewPage, 'status', admin, { id: ID, status: 'planned' });
 	assert.equal(gone.status, 404);
 	assert.equal(gone.data?.message, 'That suggestion no longer exists.');
+});
+
+test('delete: you can delete your own suggestion while it is still New', async () => {
+	const result = await runAction(suggestPage, 'delete', seeker, { id: ID });
+	assert.equal(result.deleted, true);
+	assert.equal(deletes[0].table, 'feature_suggestion');
+	// the query only matches this suggestion, if it's yours and still new
+	assert.deepEqual(params(deletes[0].where), [ID, 'seeker-1', 'new']);
+});
+
+test("delete: someone else's suggestion, or one the team already looked at, is not deleted", async () => {
+	deleted = [];
+	const result = await runAction(suggestPage, 'delete', seeker, { id: ID });
+	assert.equal(result.status, 400);
+	assert.equal(result.data?.message, "You can only delete your own suggestions while they're still New.");
+});
+
+test('delete: a made-up id never reaches the database', async () => {
+	assert.equal((await runAction(suggestPage, 'delete', seeker, { id: 'nope' })).status, 400);
+	assert.equal((await runAction(reviewPage, 'delete', admin, { id: 'nope' })).status, 400);
+	assert.equal(deletes.length, 0);
+});
+
+test('admin delete: an admin can delete any suggestion', async () => {
+	const result = await runAction(reviewPage, 'delete', admin, { id: ID });
+	assert.equal(result.deleted, true);
+	assert.deepEqual(params(deletes[0].where), [ID]);
+
+	deleted = [];
+	const gone = await runAction(reviewPage, 'delete', admin, { id: ID });
+	assert.equal(gone.status, 404);
+	assert.equal(gone.data?.message, 'That suggestion no longer exists.');
+});
+
+test('admin delete: someone who is not an admin gets a not found page', async () => {
+	await assert.rejects(runAction(reviewPage, 'delete', seeker, { id: ID }), (err) => isHttpError(err, 404));
+	assert.equal(deletes.length, 0);
 });

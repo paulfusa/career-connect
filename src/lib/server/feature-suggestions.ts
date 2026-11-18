@@ -38,5 +38,11 @@ export function parseStatusChange(form: FormData): { id: string; status: Suggest
 	return { id, status };
 }
 
+// the id sent by a delete button, null if it isn't a real id
+export function parseSuggestionId(form: FormData): string | null {
+	const id = form.get('id');
+	return typeof id === 'string' && UUID.test(id) ? id : null;
+}
+
 // only admins can review suggestions
 export const canReviewSuggestions = (user: { isAdmin?: boolean | null } | undefined | null): boolean => user?.isAdmin === true;

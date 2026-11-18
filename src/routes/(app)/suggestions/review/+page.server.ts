@@ -2,7 +2,7 @@ import { error, fail } from '@sveltejs/kit';
 import { desc, eq } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import { featureSuggestion, user } from '$lib/server/db/schema';
-import { canReviewSuggestions, isSuggestionStatus, parseStatusChange } from '$lib/server/feature-suggestions';
+import { canReviewSuggestions, isSuggestionStatus, parseStatusChange, parseSuggestionId } from '$lib/server/feature-suggestions';
 import type { Actions, PageServerLoad } from './$types';
 
 // US-06: admins only, everyone else gets a 404
@@ -46,5 +46,18 @@ export const actions: Actions = {
 		if (updated.length === 0) return fail(404, { message: 'That suggestion no longer exists.' });
 
 		return { success: 'Status saved.', id: change.id };
+	},
+
+	// admins can delete any suggestion, for spam, duplicates or test entries
+	delete: async ({ request, locals }) => {
+		if (!canReviewSuggestions(locals.user)) error(404, 'Not found');
+
+		const id = parseSuggestionId(await request.formData());
+		if (!id) return fail(400, { message: 'That suggestion is not valid.' });
+
+		const deleted = await db.delete(featureSuggestion).where(eq(featureSuggestion.id, id)).returning({ id: featureSuggestion.id });
+		if (deleted.length === 0) return fail(404, { message: 'That suggestion no longer exists.' });
+
+		return { deleted: true };
 	}
 };
