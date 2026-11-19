@@ -65,7 +65,7 @@ export const companyReview = pgTable(
 			.notNull()
 			.references(() => companyProfile.id, { onDelete: 'cascade' }),
 		userId: userId(),
-		// 0.5 to 5, in half stars
+		// 0 to 5, in half stars
 		rating: numeric('rating', { precision: 2, scale: 1, mode: 'number' }).notNull(),
 		body: text('body').notNull(),
 		createdAt: timestamp('created_at').defaultNow().notNull(),
@@ -74,7 +74,7 @@ export const companyReview = pgTable(
 	(t) => [
 		unique('company_review_company_user_unique').on(t.companyId, t.userId),
 		index('company_review_user_id_idx').on(t.userId),
-		check('company_review_rating_check', sql`${t.rating} between 0.5 and 5 and ${t.rating} * 2 = round(${t.rating} * 2)`)
+		check('company_review_rating_check', sql`${t.rating} between 0 and 5 and ${t.rating} * 2 = round(${t.rating} * 2)`)
 	]
 );
 

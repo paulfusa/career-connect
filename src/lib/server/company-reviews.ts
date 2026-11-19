@@ -10,9 +10,9 @@ export type ReviewErrors = { rating?: string; body?: string };
 export function parseReview(form: FormData): { values: ReviewForm; errors: ReviewErrors } {
 	const rawRating = form.get('rating');
 	const rawBody = form.get('body');
-	// half stars are fine: 0.5, 1, 1.5 ... 5
-	const number = typeof rawRating === 'string' && /^[0-5](\.[05])?$/.test(rawRating) ? Number(rawRating) : 0;
-	const rating = number >= 0.5 && number <= 5 ? number : null;
+	// 0 to 5 in half stars: 0, 0.5, 1 ... 5
+	const number = typeof rawRating === 'string' && /^[0-5](\.[05])?$/.test(rawRating) ? Number(rawRating) : NaN;
+	const rating = number <= 5 ? number : null;
 	const body = typeof rawBody === 'string' ? rawBody.trim() : '';
 
 	const errors: ReviewErrors = {};

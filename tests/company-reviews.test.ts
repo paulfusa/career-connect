@@ -139,11 +139,12 @@ test('form: a rating and a review pass, with the spaces around the review remove
 	assert.deepEqual(values, { rating: 5, body: good.body });
 });
 
-test('form: the rating goes from half a star to 5, in half stars', () => {
-	for (const [rating, expected] of [['0.5', 0.5], ['1', 1], ['3.5', 3.5], ['4.5', 4.5], ['5', 5], ['4.0', 4]] as const) {
+test('form: the rating goes from 0 to 5, in half stars', () => {
+	for (const [rating, expected] of [['0', 0], ['0.0', 0], ['0.5', 0.5], ['1', 1], ['3.5', 3.5], ['4.5', 4.5], ['5', 5], ['4.0', 4]] as const) {
 		assert.equal(parseReview(formOf({ ...good, rating })).values.rating, expected, rating);
+		assert.equal(parseReview(formOf({ ...good, rating })).errors.rating, undefined, rating);
 	}
-	for (const rating of ['0', '0.0', '5.5', '6', '4.3', '4.25', '-1', 'five', '', ' 3', '1e0']) {
+	for (const rating of ['5.5', '6', '4.3', '4.25', '-1', '-0', 'five', '', ' 3', '1e0']) {
 		assert.equal(parseReview(formOf({ ...good, rating })).errors.rating, 'Pick a star rating.', rating);
 	}
 	assert.equal(parseReview(formOf({ body: good.body })).errors.rating, 'Pick a star rating.');
