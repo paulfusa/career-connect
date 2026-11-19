@@ -84,7 +84,7 @@ const db = {
 };
 (globalThis as typeof globalThis & { __reviewDb: typeof db }).__reviewDb = db;
 
-const { parseReview, ratingSummary, toRating, canReviewCompany } = await import('../src/lib/server/company-reviews.ts');
+const { parseReview, ratingSummary, toRating, canReviewCompany, reviewProblem } = await import('../src/lib/server/company-reviews.ts');
 const { starFills } = await import('../src/lib/company-reviews.ts');
 const companyPage = await import('../src/routes/(app)/companies/[id]/+page.server.ts');
 const jobsPage = await import('../src/routes/(app)/jobs/+page.server.ts');
@@ -197,22 +197,15 @@ test('my reviews: only the reviews you wrote', async () => {
 	assert.equal((page.reviews as unknown[]).length, 1);
 	assert.equal(selects[0].table, 'company_review');
 	assert.deepEqual(params(selects[0].where), ['seeker-1']);
-	// job seekers don't have a company, so there's no second query
-	assert.equal(selects.length, 1);
-	assert.equal(page.ownCompany, null);
 });
 
-test('my reviews: a recruiter also gets a link to the reviews of their own company', async () => {
-	results = [[], [{ id: COMPANY_ID, name: 'Northwind' }]];
-	const page = (await myReviewsPage.load({ locals: { user: owner } } as never)) as Record<string, unknown>;
+test("my reviews: recruiters don't write reviews, so they can't open it or edit from it", async () => {
+	await assert.rejects(async () => myReviewsPage.load({ locals: { user: owner } } as never), (err) => isHttpError(err, 403));
+	assert.equal(selects.length, 0);
 
-	assert.deepEqual(page.ownCompany, { id: COMPANY_ID, name: 'Northwind' });
-	assert.equal(selects[1].table, 'company_profile');
-	assert.deepEqual(params(selects[1].where), ['recruiter-1']);
-
-	// a recruiter who hasn't made a company profile yet
-	results = [[], []];
-	assert.equal(((await myReviewsPage.load({ locals: { user: otherRecruiter } } as never)) as Record<string, unknown>).ownCompany, null);
+	const edit = await runMyReviewsAction('edit', otherRecruiter, { ...good, companyId: COMPANY_ID });
+	assert.equal(edit.status, 403);
+	assert.equal(updates.length, 0);
 });
 
 test('my reviews: you can edit and delete your review right from the list', async () => {
@@ -243,11 +236,14 @@ test('my reviews: a bad company, a wrong form or a review that is gone is refuse
 	assert.equal((await runMyReviewsAction('delete', seeker, { companyId: COMPANY_ID })).status, 404);
 });
 
-test("who can review: anyone signed in, but not the company's own recruiter", () => {
+test('who can review: only job seekers, recruiters can just read', () => {
+	assert.equal(reviewProblem(seeker, company), null);
 	assert.equal(canReviewCompany(seeker, company), true);
-	assert.equal(canReviewCompany(otherRecruiter, company), true);
-	assert.equal(canReviewCompany(owner, company), false);
+	assert.equal(reviewProblem(otherRecruiter, company), 'Only job seekers can review companies.');
+	assert.equal(reviewProblem(owner, company), 'Only job seekers can review companies.');
 	assert.equal(canReviewCompany(null, company), false);
+	// an admin who owns the company and switched to the job seeker view
+	assert.equal(reviewProblem({ id: 'recruiter-1', role: 'job_seeker' }, company), "You can't review your own company.");
 });
 
 test('page: a company that does not exist, or a bad id, is a 404', async () => {
@@ -280,12 +276,17 @@ test('page: shows the reviews of this company, which one is yours, and the avera
 	assert.equal(page.isOwner, false);
 });
 
-test("page: the company's recruiter can see it but can't review it", async () => {
+test("page: recruiters can see it but can't review, their own company or any other", async () => {
 	results = [[company], []];
 	const page = await openPage(owner);
 	assert.equal(page.isOwner, true);
 	assert.equal(page.canReview, false);
 	assert.deepEqual(page.summary, { average: null, count: 0 });
+
+	results = [[company], []];
+	const other = await openPage(otherRecruiter);
+	assert.equal(other.isOwner, false);
+	assert.equal(other.canReview, false);
 });
 
 test('post: a review is saved for this company and the signed-in user', async () => {
@@ -318,11 +319,13 @@ test('post: a wrong form comes back with the messages and nothing is saved', asy
 	assert.equal(inserts.length, 0);
 });
 
-test("post: a recruiter can't review their own company", async () => {
-	results = [[company]];
-	const result = await runAction('post', owner, good);
-	assert.equal(result.status, 403);
-	assert.equal(result.data?.message, "You can't review your own company.");
+test("post: recruiters can't post a review, even about another company", async () => {
+	for (const recruiter of [owner, otherRecruiter]) {
+		results = [[company]];
+		const result = await runAction('post', recruiter, good);
+		assert.equal(result.status, 403);
+		assert.equal(result.data?.message, 'Only job seekers can review companies.');
+	}
 	assert.equal(inserts.length, 0);
 });
 
@@ -341,6 +344,10 @@ test('edit: you can only change your own review', async () => {
 	assert.ok(updates[0].set.updatedAt instanceof Date);
 	// only matches your review of this company
 	assert.deepEqual(params(updates[0].where), [COMPANY_ID, 'seeker-1']);
+
+	// recruiters can't edit
+	assert.equal((await runAction('edit', otherRecruiter, good)).status, 403);
+	assert.equal(updates.length, 1);
 });
 
 test('edit: a wrong form goes back to the edit form, and a missing review is a 404', async () => {

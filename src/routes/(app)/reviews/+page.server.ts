@@ -1,14 +1,15 @@
-import { fail } from '@sveltejs/kit';
+import { error, fail } from '@sveltejs/kit';
 import { desc, eq } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import { companyProfile, companyReview } from '$lib/server/db/schema';
-import { isId, parseReview } from '$lib/server/company-reviews';
+import { isId, ONLY_JOB_SEEKERS, parseReview } from '$lib/server/company-reviews';
 import { deleteReview, editReview } from '$lib/server/company-reviews-db';
 import type { Actions, PageServerLoad } from './$types';
 
-// US-09: every review you wrote, newest first
+// US-09: every review you wrote, newest first. Only job seekers write reviews, like My Applications
 export const load: PageServerLoad = async ({ locals }) => {
-	const me = locals.user!;
+	const me = locals.user;
+	if (!me || me.role !== 'job_seeker') error(403, 'Only job seekers can see My reviews.');
 
 	const reviews = await db
 		.select({
@@ -26,13 +27,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 		.where(eq(companyReview.userId, me.id))
 		.orderBy(desc(companyReview.createdAt));
 
-	// recruiters also get a link to their own company's reviews
-	const [ownCompany] =
-		me.role === 'recruiter'
-			? await db.select({ id: companyProfile.id, name: companyProfile.name }).from(companyProfile).where(eq(companyProfile.recruiterId, me.id))
-			: [];
-
-	return { reviews, ownCompany: ownCompany ?? null };
+	return { reviews };
 };
 
 // same as on the company page, but the company comes from the form
@@ -40,6 +35,8 @@ const gone = "That review doesn't exist anymore.";
 
 export const actions: Actions = {
 	edit: async ({ request, locals }) => {
+		if (locals.user!.role !== 'job_seeker') return fail(403, { message: ONLY_JOB_SEEKERS });
+
 		const form = await request.formData();
 		const companyId = form.get('companyId');
 		if (!isId(companyId)) return fail(404, { message: gone });

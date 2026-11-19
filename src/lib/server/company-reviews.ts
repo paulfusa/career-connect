@@ -38,6 +38,15 @@ export function toRating(average: unknown, count: unknown): { average: number; c
 	return { average: oneDecimal(Number(average)), count: reviews };
 }
 
-// anyone signed in, except the recruiter who owns the company
-export const canReviewCompany = (user: { id: string } | null | undefined, company: { recruiterId: string }): boolean =>
-	!!user && user.id !== company.recruiterId;
+type Reviewer = { id: string; role: string } | null | undefined;
+export const ONLY_JOB_SEEKERS = 'Only job seekers can review companies.';
+
+// only job seekers write reviews, recruiters can just read them.
+// The owner check is for admins, who can have a company and then switch to the job seeker view
+export function reviewProblem(user: Reviewer, company: { recruiterId: string }): string | null {
+	if (user?.role !== 'job_seeker') return ONLY_JOB_SEEKERS;
+	if (user.id === company.recruiterId) return "You can't review your own company.";
+	return null;
+}
+
+export const canReviewCompany = (user: Reviewer, company: { recruiterId: string }) => reviewProblem(user, company) === null;

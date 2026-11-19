@@ -54,16 +54,6 @@
 <h1 class="font-display text-3xl font-semibold tracking-tight md:mt-14">My reviews</h1>
 <p class="mt-2 text-ink/65">The reviews you wrote about companies.</p>
 
-{#if data.ownCompany}
-	<a
-		href="/companies/{data.ownCompany.id}"
-		class="mt-5 block w-fit rounded-xl border border-white/60 bg-white/70 px-5 py-3 font-medium text-tide-deep hover:bg-white
-			dark:border-white/15 dark:bg-[#303034] dark:text-[#7dd3df] dark:hover:bg-[#404044]"
-	>
-		See what people wrote about {data.ownCompany.name}
-	</a>
-{/if}
-
 {#if form && 'updated' in form}
 	<p class="{successBox} mt-5" role="status">Review updated.</p>
 {:else if form && 'deleted' in form}

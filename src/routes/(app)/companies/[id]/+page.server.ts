@@ -2,7 +2,7 @@ import { error, fail } from '@sveltejs/kit';
 import { desc, eq } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import { companyProfile, companyReview, user } from '$lib/server/db/schema';
-import { canReviewCompany, isId, parseReview, ratingSummary } from '$lib/server/company-reviews';
+import { canReviewCompany, isId, ONLY_JOB_SEEKERS, parseReview, ratingSummary, reviewProblem } from '$lib/server/company-reviews';
 import { deleteReview, editReview } from '$lib/server/company-reviews-db';
 import type { Actions, PageServerLoad } from './$types';
 
@@ -50,7 +50,8 @@ export const actions: Actions = {
 	post: async ({ params, request, locals }) => {
 		const company = await findCompany(params.id);
 		if (!company) return fail(404, { message: 'Company not found.' });
-		if (!canReviewCompany(locals.user, company)) return fail(403, { message: "You can't review your own company." });
+		const problem = reviewProblem(locals.user, company);
+		if (problem) return fail(403, { message: problem });
 
 		const { values, errors } = parseReview(await request.formData());
 		if (values.rating === null || Object.keys(errors).length > 0) return fail(400, { values, errors });
@@ -67,6 +68,7 @@ export const actions: Actions = {
 
 	edit: async ({ params, request, locals }) => {
 		if (!isId(params.id)) return fail(404, { message: 'Company not found.' });
+		if (locals.user!.role !== 'job_seeker') return fail(403, { message: ONLY_JOB_SEEKERS });
 
 		const { values, errors } = parseReview(await request.formData());
 		if (values.rating === null || Object.keys(errors).length > 0) return fail(400, { values, errors, editing: true });

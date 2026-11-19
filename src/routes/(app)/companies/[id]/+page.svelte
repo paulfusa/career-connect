@@ -116,7 +116,9 @@
 
 	{#if data.isOwner}
 		<p class="mt-5 text-ink/65">This is your company, so you can't review it. You can still see what people wrote.</p>
-	{:else if data.canReview && !mine}
+	{:else if !data.canReview}
+		<p class="mt-5 text-ink/65">Only job seekers can write reviews. As a recruiter, you can read them.</p>
+	{:else if !mine}
 		<form
 			method="POST"
 			action="?/post"
@@ -201,13 +203,16 @@
 						<p class="mt-4 whitespace-pre-line">{review.body}</p>
 						{#if review.mine}
 							<div class="mt-4 flex gap-2">
-								<button
-									type="button"
-									onclick={startEditing}
-									class="{textButton} text-tide-deep hover:bg-tide/10 focus-visible:outline-tide dark:text-tide dark:hover:bg-white/10"
-								>
-									Edit
-								</button>
+								<!-- if you switched to recruiter (admins), you can still delete it but not edit it -->
+								{#if data.canReview}
+									<button
+										type="button"
+										onclick={startEditing}
+										class="{textButton} text-tide-deep hover:bg-tide/10 focus-visible:outline-tide dark:text-tide dark:hover:bg-white/10"
+									>
+										Edit
+									</button>
+								{/if}
 								<button
 									type="button"
 									onclick={() => (confirming = true)}

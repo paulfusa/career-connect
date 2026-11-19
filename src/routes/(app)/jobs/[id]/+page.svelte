@@ -173,10 +173,9 @@
 
 				<a
 					href="/companies/{data.companyProfile.id}"
-					class="mt-5 block w-fit rounded-xl border border-white/60 bg-white/70 px-5 py-3 font-medium text-tide-deep hover:bg-white
-						dark:border-white/15 dark:bg-[#303034] dark:text-[#7dd3df] dark:hover:bg-[#404044]"
+					class="mt-3 block font-medium text-tide-deep dark:text-tide hover:underline"
 				>
-					See reviews of {data.companyProfile.name}
+					See reviews of {data.companyProfile.name} →
 				</a>
 			</section>
 		{/if}
