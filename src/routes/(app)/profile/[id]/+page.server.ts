@@ -39,7 +39,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 			: [];
 
 	const { profile: target, ...account } = row;
-	return { target: account, targetProfile: target, ...entries, followers: followers.count, following: !!mine, jobs };
+	return { target: { ...account, role: row.role }, targetProfile: target, ...entries, followers: followers.count, following: !!mine, jobs };
 };
 
 export const actions: Actions = {

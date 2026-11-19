@@ -1,5 +1,6 @@
 // US-19: job seekers can see and follow recruiters, and recruiters can see and follow job seekers
-export function canSeeProfile(viewerRole: string, targetRole: string): boolean {
+// US-06: admin profiles never open, so the target is a job seeker or recruiter here
+export function canSeeProfile(viewerRole: string, targetRole: string): targetRole is 'job_seeker' | 'recruiter' {
 	return (
 		(viewerRole === 'recruiter' && targetRole === 'job_seeker') ||
 		(viewerRole === 'job_seeker' && targetRole === 'recruiter')

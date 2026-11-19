@@ -1,7 +1,7 @@
 # Deadline reminders (US-26, Task 26.6)
 
 The standalone `pnpm reminders:deadlines` job creates persistent in-app reminders
-for verified recruiters about their own open, published postings. It does not send
+for verified recruiters (and admins, US-06) about their own open, published postings. It does not send
 pre-application reminders to job seekers: saved jobs and reminder subscriptions
 are not implemented. Existing overdue-decision indicators are separate.
 

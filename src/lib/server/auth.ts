@@ -10,6 +10,7 @@ import {
 	sendPasswordResetCode
 } from '$lib/server/email';
 import { emailOTP } from 'better-auth/plugins';
+import { allowedAtSignUp, withoutRoleChange } from '$lib/server/role-guard';
 
 export const auth = betterAuth({
 	baseURL: env.ORIGIN,
@@ -40,9 +41,18 @@ export const auth = betterAuth({
 		deleteUser: { enabled: true },
 		additionalFields: {
 			// allowed values enforced by the user_role_check constraint in the DB
-			role: { type: ['job_seeker', 'recruiter'], required: true, input: true },
+			// US-06: admin can only be set from Supabase, see the hooks below
+			role: { type: ['job_seeker', 'recruiter', 'admin'], required: true, input: true },
 			// US-11: set by the onboarding actions only (input: false)
 			onboardedAt: { type: 'date', required: false, input: false }
+		}
+	},
+	databaseHooks: {
+		user: {
+			// no admin accounts at sign-up, even through the API
+			create: { before: async (user) => allowedAtSignUp(user) },
+			// nobody can change their own role after signing up
+			update: { before: async (data) => ({ data: withoutRoleChange(data) }) }
 		}
 	},
 	plugins: [
