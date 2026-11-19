@@ -3,7 +3,7 @@ import { REVIEW_LIMITS } from '../company-reviews.ts';
 export type ReviewForm = { rating: number | null; body: string };
 export type ReviewErrors = { rating?: string; body?: string };
 
-// US-09: checks the review form, returns the values and an error for each bad field
+// US-09: checks the review form, same idea as the suggestion form in US-06
 export function parseReview(form: FormData): { values: ReviewForm; errors: ReviewErrors } {
 	const rawRating = form.get('rating');
 	const rawBody = form.get('body');
@@ -19,13 +19,13 @@ export function parseReview(form: FormData): { values: ReviewForm; errors: Revie
 	return { values: { rating, body }, errors };
 }
 
-// average rating with one decimal, null when nobody reviewed yet
+// average with one decimal, null if there are no reviews yet
 export function ratingSummary(ratings: number[]): { average: number | null; count: number } {
 	if (ratings.length === 0) return { average: null, count: 0 };
 	const total = ratings.reduce((sum, rating) => sum + rating, 0);
 	return { average: Math.round((total / ratings.length) * 10) / 10, count: ratings.length };
 }
 
-// anyone signed in can review a company, except the recruiter who owns it
+// anyone signed in, except the recruiter who owns the company
 export const canReviewCompany = (user: { id: string } | null | undefined, company: { recruiterId: string }): boolean =>
 	!!user && user.id !== company.recruiterId;

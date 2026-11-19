@@ -17,7 +17,7 @@ async function findCompany(id: string) {
 const yours = (companyId: string, userId: string) =>
 	and(eq(companyReview.companyId, companyId), eq(companyReview.userId, userId));
 
-// US-09: the company's page, with its reviews and average rating
+// US-09: company page with its reviews
 export const load: PageServerLoad = async ({ params, locals }) => {
 	const company = await findCompany(params.id);
 	if (!company) error(404, 'Company not found.');
@@ -39,7 +39,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 		.orderBy(desc(companyReview.createdAt));
 
 	const me = locals.user!.id;
-	// don't send other people's user ids to the page, just mark which one is yours
+	// no need to send everyone's user id, just flag yours
 	const reviews = rows.map(({ userId, ...review }) => ({ ...review, mine: userId === me }));
 
 	return {

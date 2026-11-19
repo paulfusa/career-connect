@@ -18,7 +18,7 @@
 	let rating = $state<number | null>(null);
 	let posting = $state(false);
 
-	// editing your review happens right in the list
+	// you edit your review in place
 	let editing = $state(false);
 	let editRating = $state<number | null>(null);
 	let saving = $state(false);
@@ -49,12 +49,13 @@
 
 	const errors = $derived((form && 'errors' in form ? form.errors : undefined) ?? {});
 	const values = $derived(form && 'values' in form ? form.values : null);
-	// the edit form and the post form both send errors back, this says which one they're for
+	// errors can come from the post form or the edit form
 	const editFailed = $derived(!!form && 'editing' in form);
 	const postErrors = $derived(editFailed ? {} : errors);
 	const editErrors = $derived(editFailed ? errors : {});
 
 	const formatDate = (date: Date) => date.toLocaleDateString('en-CA', { dateStyle: 'medium' });
+	// both dates are the same until someone edits it
 	const wasEdited = (review: { createdAt: Date; updatedAt: Date }) =>
 		review.updatedAt.getTime() - review.createdAt.getTime() > 1000;
 	const textButton = 'rounded-lg px-2.5 py-1.5 text-sm font-medium focus-visible:outline-2';

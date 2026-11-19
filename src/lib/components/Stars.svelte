@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { RATINGS } from '$lib/company-reviews';
 
-	// US-09: shows a rating as stars, rounded to the closest whole star
+	// US-09: a rating as stars (3.5 shows 4)
 	let { rating, size = 'sm' }: { rating: number; size?: 'sm' | 'lg' } = $props();
 	const filled = $derived(Math.round(rating));
 </script>

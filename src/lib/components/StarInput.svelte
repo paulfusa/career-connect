@@ -2,7 +2,7 @@
 	import { RATINGS } from '$lib/company-reviews';
 	import FieldError from './FieldError.svelte';
 
-	// US-09: 1 to 5 star picker. They're normal radio buttons underneath, so it works with forms and the keyboard
+	// US-09: the stars are just radio buttons, so the keyboard works too
 	let { value = $bindable(null), error, errorId }: { value?: number | null; error?: string; errorId: string } = $props();
 </script>
 

@@ -5,7 +5,7 @@ import { PgDialect } from 'drizzle-orm/pg-core';
 import { getTableName, type SQL, type Table } from 'drizzle-orm';
 import { isHttpError } from '@sveltejs/kit';
 
-// US-09: review form checks and the average, plus the real company page with a fake db (same setup as follow.test.ts)
+// US-09: the review form, the average, and the real company page with a fake db (same setup as follow.test.ts)
 registerHooks({
 	resolve(specifier, context, next) {
 		if (specifier === '$lib/server/db' || specifier === './db') return { url: 'fake:review-db', shortCircuit: true };
@@ -31,7 +31,7 @@ registerHooks({
 const dialect = new PgDialect();
 type Select = { table: string; where?: SQL };
 let selects: Select[] = [];
-// what each select gives back, in order (the company first, then its reviews)
+// what each select returns, in order (company first, then reviews)
 let results: unknown[][] = [];
 let inserts: { table: string; values: Record<string, unknown>; conflictTarget?: unknown }[] = [];
 let updates: { table: string; set: Record<string, unknown>; where?: SQL }[] = [];
@@ -252,7 +252,7 @@ test('edit: you can only change your own review', async () => {
 	assert.deepEqual(params(updates[0].where), [COMPANY_ID, 'seeker-1']);
 });
 
-test("edit: a wrong form is sent back to the edit form, and a missing review is a 404", async () => {
+test('edit: a wrong form goes back to the edit form, and a missing review is a 404', async () => {
 	const bad = await runAction('edit', seeker, { rating: '9', body: good.body });
 	assert.equal(bad.status, 400);
 	assert.equal(bad.data?.editing, true);
@@ -273,7 +273,7 @@ test('delete: you can delete your own review', async () => {
 	assert.deepEqual(params(deletes[0].where), [COMPANY_ID, 'seeker-1']);
 });
 
-test("delete: nothing to delete, or a bad id, is refused", async () => {
+test('delete: nothing to delete, or a bad id, is refused', async () => {
 	deleted = [];
 	const result = await runAction('delete', seeker);
 	assert.equal(result.status, 404);
