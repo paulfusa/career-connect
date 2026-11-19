@@ -78,7 +78,7 @@
 		</p>
 {/snippet}
 
-<div class="space-y-5 md:mt-14">
+<div class="space-y-5">
 	{#if params.has('saved') && !edit && !experienceParam && !educationParam}
 		<p role="status" class={successBox}>Profile saved.</p>
 	{/if}

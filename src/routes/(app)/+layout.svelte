@@ -2,6 +2,7 @@
 	import { page } from '$app/state';
 	import Avatar from '$lib/components/Avatar.svelte';
 	import Backdrop from '$lib/components/Backdrop.svelte';
+	import Icon, { type IconName } from '$lib/components/Icon.svelte';
 	import NotificationBell from '$lib/components/NotificationBell.svelte';
 	import { notificationContextIsCurrent } from '$lib/notification-ui';
 	import { glassPanel } from '$lib/ui';
@@ -31,19 +32,33 @@
 	});
 
 	const roleLabel = { job_seeker: 'Job seeker', recruiter: 'Recruiter' };
-	let nav = $derived([
-		{ href: '/', label: 'Home' },
-		{ href: '/jobs', label: 'Jobs' },
-		...(data.user.role === 'job_seeker' ? [{ href: '/resumes', label: 'Resumes' }] : []),
-		...(data.user.role === 'job_seeker' ? [{ href: '/applications', label: 'My Applications' }] : []),
+	let nav = $derived<{ href: string; label: string; icon: IconName }[]>([
+		{ href: '/', label: 'Home', icon: 'home' },
+		{ href: '/jobs', label: 'Jobs', icon: 'briefcase' },
+		...(data.user.role === 'job_seeker'
+			? [
+					{ href: '/resumes', label: 'Resumes', icon: 'file' as const },
+					{ href: '/applications', label: 'My Applications', icon: 'send' as const }
+				]
+			: []),
 		// US-19: job seekers find recruiters here and recruiters find job seekers
-		{ href: '/people', label: data.user.role === 'job_seeker' ? 'Recruiters' : 'Job seekers' },
-		{ href: '/following', label: 'Following' },
+		{ href: '/people', label: data.user.role === 'job_seeker' ? 'Recruiters' : 'Job seekers', icon: 'users' },
+		{ href: '/following', label: 'Following', icon: 'userCheck' },
 		// US-06: suggestions for everyone, review page for admins
-		{ href: '/suggestions', label: 'Suggest a feature' },
-		...(data.user.isAdmin ? [{ href: '/suggestions/review', label: 'Review suggestions' }] : []),
-		{ href: '/settings', label: 'Settings' }
+		{ href: '/suggestions', label: 'Suggest a feature', icon: 'lightbulb' },
+		...(data.user.isAdmin ? [{ href: '/suggestions/review', label: 'Review suggestions', icon: 'clipboardCheck' as const }] : []),
+		{ href: '/settings', label: 'Settings', icon: 'settings' }
 	]);
+
+	// one style for every sidebar row; the current page gets a tinted background and a teal icon
+	const navItem =
+		'group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-ink/70 transition ' +
+		'hover:bg-white/60 hover:text-ink focus-visible:outline-2 focus-visible:outline-tide ' +
+		'aria-[current=page]:bg-white/80 aria-[current=page]:text-ink aria-[current=page]:shadow-sm aria-[current=page]:shadow-ink/5 ' +
+		'dark:hover:bg-white/10 dark:hover:text-white dark:aria-[current=page]:bg-white/12 dark:aria-[current=page]:text-white';
+	const navIcon =
+		'size-[18px] text-ink/45 transition group-hover:text-ink/70 group-aria-[current=page]:text-tide ' +
+		'dark:text-white/45 dark:group-hover:text-white/75 dark:group-aria-[current=page]:text-[#7dd3df]';
 
 	let tagline = $derived(
 		data.user.role === 'recruiter'
@@ -80,7 +95,7 @@
 				</div>
 			</div>
 
-			<nav aria-label="Main navigation" class="mt-5 flex flex-wrap gap-1 md:flex-col">
+			<nav aria-label="Main navigation" class="mt-5 grid gap-1 min-[360px]:grid-cols-2 md:flex md:flex-col">
 				{#each nav as item (item.href)}
 					<a
 						href={item.href}
@@ -90,16 +105,9 @@
 								? 'page'
 								: undefined
 						}
-							class="flex-1 rounded-xl px-3 py-2 text-sm font-medium
-							text-ink/70 transition
-							hover:bg-white/60 hover:text-ink
-							aria-[current=page]:bg-white/75
-							aria-[current=page]:text-ink
-							dark:hover:bg-white/10
-							dark:aria-[current=page]:bg-white/12
-							dark:aria-[current=page]:text-white
-							md:flex-none"
+							class={navItem}
 					>
+						<Icon name={item.icon} class={navIcon} />
 						{item.label}
 					</a>
 				{/each}
@@ -139,12 +147,13 @@
 
 				<button
 					type="submit"
-					class="w-full rounded-xl px-3 py-2 text-left text-sm
+					class="group flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm
 						font-medium text-ink/60 transition
-						hover:bg-white/60 hover:text-ink
-						dark:hover:bg-white/10 dark:hover:text-white
+						hover:bg-rose-50/80 hover:text-rose-700
+						dark:hover:bg-rose-950/40 dark:hover:text-rose-300
 						focus-visible:outline-2 focus-visible:outline-tide"
 				>
+					<Icon name="logOut" class="size-[18px] text-ink/40 transition group-hover:text-rose-600 dark:text-white/40 dark:group-hover:text-rose-300" />
 					Log out
 				</button>
 			</form>

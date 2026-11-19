@@ -12,7 +12,7 @@
 
 <svelte:head><title>Following · CareerConnect</title></svelte:head>
 
-<h1 class="font-display text-3xl font-semibold tracking-tight md:mt-14">Following</h1>
+<h1 class="font-display text-3xl font-semibold tracking-tight">Following</h1>
 
 {#if form?.message}
 	<p class="{errorBox} mt-5" role="alert">{form.message}</p>

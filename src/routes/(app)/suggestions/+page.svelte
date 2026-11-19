@@ -27,7 +27,7 @@
 
 <svelte:head><title>Suggest a feature · CareerConnect</title></svelte:head>
 
-<h1 class="font-display text-3xl font-semibold tracking-tight md:mt-14">Suggest a feature</h1>
+<h1 class="font-display text-3xl font-semibold tracking-tight">Suggest a feature</h1>
 <p class="mt-2 text-ink/65">
 	Is something missing on CareerConnect? Tell us what you'd like and how it would help you. The team reads every
 	suggestion, but sending one doesn't mean it will be built.

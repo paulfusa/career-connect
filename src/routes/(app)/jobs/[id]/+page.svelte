@@ -25,7 +25,7 @@
 
 <svelte:head><title>{posting.title} · CareerConnect</title></svelte:head>
 
-<div class="md:mt-14">
+<div>
 	<a href="/jobs" class="text-sm font-medium text-tide-deep dark:text-tide hover:underline">← All job postings</a>
 	{#if page.url.searchParams.has('saved')}
 		<p role="status" class="{successBox} mt-4">Job posting updated.</p>
