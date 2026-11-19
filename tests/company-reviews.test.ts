@@ -87,6 +87,7 @@ const db = {
 const { parseReview, ratingSummary, toRating, canReviewCompany } = await import('../src/lib/server/company-reviews.ts');
 const companyPage = await import('../src/routes/(app)/companies/[id]/+page.server.ts');
 const jobsPage = await import('../src/routes/(app)/jobs/+page.server.ts');
+const myReviewsPage = await import('../src/routes/(app)/reviews/+page.server.ts');
 
 const COMPANY_ID = '7d3e2a10-5b6c-4f8e-9a1b-2c3d4e5f6a7b';
 const company = { id: COMPANY_ID, recruiterId: 'recruiter-1', name: 'Northwind', description: 'We make apps.', location: 'Montreal', website: null };
@@ -172,6 +173,31 @@ test('job list: each posting gets the stars of its company', async () => {
 	assert.deepEqual(page.postings.map((posting) => posting.rating), [{ average: 3.5, count: 2 }, null]);
 	// the raw columns aren't sent to the page
 	assert.ok(!('ratingAverage' in page.postings[0]));
+});
+
+test('my reviews: only the reviews you wrote', async () => {
+	results = [[{ id: 'r1', rating: 4, companyId: COMPANY_ID, companyName: 'Northwind' }]];
+	const page = (await myReviewsPage.load({ locals: { user: seeker } } as never)) as Record<string, unknown>;
+
+	assert.equal((page.reviews as unknown[]).length, 1);
+	assert.equal(selects[0].table, 'company_review');
+	assert.deepEqual(params(selects[0].where), ['seeker-1']);
+	// job seekers don't have a company, so there's no second query
+	assert.equal(selects.length, 1);
+	assert.equal(page.ownCompany, null);
+});
+
+test('my reviews: a recruiter also gets a link to the reviews of their own company', async () => {
+	results = [[], [{ id: COMPANY_ID, name: 'Northwind' }]];
+	const page = (await myReviewsPage.load({ locals: { user: owner } } as never)) as Record<string, unknown>;
+
+	assert.deepEqual(page.ownCompany, { id: COMPANY_ID, name: 'Northwind' });
+	assert.equal(selects[1].table, 'company_profile');
+	assert.deepEqual(params(selects[1].where), ['recruiter-1']);
+
+	// a recruiter who hasn't made a company profile yet
+	results = [[], []];
+	assert.equal(((await myReviewsPage.load({ locals: { user: otherRecruiter } } as never)) as Record<string, unknown>).ownCompany, null);
 });
 
 test("who can review: anyone signed in, but not the company's own recruiter", () => {
