@@ -12,7 +12,7 @@
 	type Review = PageProps['data']['reviews'][number];
 	let { data, form }: PageProps = $props();
 
-	// edit works the same as on the company page, one review at a time
+	// same edit form as the company page
 	let editing = $state<string | null>(null);
 	let editRating = $state<number | null>(null);
 	let saving = $state(false);

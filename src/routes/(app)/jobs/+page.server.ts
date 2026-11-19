@@ -54,7 +54,7 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 		sortBy = [sql`coalesce(${jobPosting.salaryMax}, ${jobPosting.salaryMin}) desc nulls last`];
 	}
 
-	// US-09: reviews of the company of whoever posted the job
+	// US-09: reviews of the company that posted the job
 	const companyReviews = sql`from ${companyReview} inner join ${companyProfile} on ${companyProfile.id} = ${companyReview.companyId}
 		where ${companyProfile.recruiterId} = ${jobPosting.createdBy}`;
 

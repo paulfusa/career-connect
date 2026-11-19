@@ -26,7 +26,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 		.where(eq(companyReview.userId, me.id))
 		.orderBy(desc(companyReview.createdAt));
 
-	// recruiters get a shortcut to what people wrote about their own company
+	// recruiters also get a link to their own company's reviews
 	const [ownCompany] =
 		me.role === 'recruiter'
 			? await db.select({ id: companyProfile.id, name: companyProfile.name }).from(companyProfile).where(eq(companyProfile.recruiterId, me.id))

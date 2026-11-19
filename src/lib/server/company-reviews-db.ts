@@ -2,8 +2,8 @@ import { and, eq } from 'drizzle-orm';
 import { db } from './db';
 import { companyReview } from './db/schema';
 
-// US-09: changing or deleting your review, used by the company page and My reviews.
-// Both only touch your own review of that company, and say false if there isn't one
+// US-09: edit and delete for the company page and My reviews.
+// They only touch your own review, and return false if you don't have one
 
 const yours = (companyId: string, userId: string) =>
 	and(eq(companyReview.companyId, companyId), eq(companyReview.userId, userId));

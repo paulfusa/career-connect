@@ -31,7 +31,7 @@ export function ratingSummary(ratings: number[]): { average: number | null; coun
 	return { average: oneDecimal(total / ratings.length), count: ratings.length };
 }
 
-// for the stars on job postings: postgres gives avg() back as text, and null when there are no reviews
+// stars on job postings (postgres sends avg() back as text)
 export function toRating(average: unknown, count: unknown): { average: number; count: number } | null {
 	const reviews = Number(count ?? 0);
 	if (!reviews || average === null || average === undefined) return null;
