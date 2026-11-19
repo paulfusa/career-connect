@@ -88,12 +88,19 @@
                     </p>
                 </div>
                 
-                <div class="border-t border-white/60 pt-5 text-center">
+                <div class="flex flex-wrap justify-center gap-x-6 gap-y-2 border-t border-white/60 pt-5">
                     <a
                         href="/company/edit"
                         class="text-sm font-medium text-tide-deep transition hover:underline"
                     >
                         Edit Company Profile
+                    </a>
+                    <!-- US-09: the page job seekers see, with the reviews -->
+                    <a
+                        href="/companies/{data.company.id}"
+                        class="text-sm font-medium text-tide-deep transition hover:underline"
+                    >
+                        See your company page and reviews
                     </a>
                 </div>
 

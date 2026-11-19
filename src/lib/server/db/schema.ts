@@ -56,6 +56,26 @@ export const companyProfile = pgTable('company_profile', {
     updatedAt: timestamp('updated_at').defaultNow().notNull()
 });
 
+// US-09: reviews of a company, one per person per company
+export const companyReview = pgTable(
+	'company_review',
+	{
+		id: uuid('id').primaryKey().defaultRandom(),
+		companyId: uuid('company_id')
+			.notNull()
+			.references(() => companyProfile.id, { onDelete: 'cascade' }),
+		userId: userId(),
+		rating: integer('rating').notNull(),
+		body: text('body').notNull(),
+		createdAt: timestamp('created_at').defaultNow().notNull(),
+		updatedAt: timestamp('updated_at').defaultNow().notNull()
+	},
+	(t) => [
+		unique('company_review_company_user_unique').on(t.companyId, t.userId),
+		index('company_review_user_id_idx').on(t.userId),
+		check('company_review_rating_check', sql`${t.rating} between 1 and 5`)
+	]
+);
 
 export const experience = pgTable(
 	'experience',
@@ -219,3 +239,4 @@ export type Follow = typeof follow.$inferSelect;
 
 export * from './auth.schema';
 export type CompanyProfile = typeof companyProfile.$inferSelect;
+export type CompanyReview = typeof companyReview.$inferSelect;

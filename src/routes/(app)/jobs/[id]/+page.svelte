@@ -135,8 +135,9 @@
 		
 		{#if data.companyProfile}
 			<section class="mt-8 border-t border-white/60 dark:border-white/15 pt-6">
+				<!-- US-09: the name opens the company page with its reviews -->
 				<h2 class="font-display text-xl font-semibold">
-					About {data.companyProfile.name}
+					About <a href="/companies/{data.companyProfile.id}" class="text-tide-deep hover:underline dark:text-tide">{data.companyProfile.name}</a>
 				</h2>
 
 				<p class="mt-3 whitespace-pre-line leading-7 text-ink/75">
@@ -157,6 +158,13 @@
 						Visit company website →
 					</a>
 				{/if}
+
+				<a
+					href="/companies/{data.companyProfile.id}"
+					class="mt-3 block font-medium text-tide-deep dark:text-tide hover:underline"
+				>
+					See reviews of {data.companyProfile.name} →
+				</a>
 			</section>
 		{/if}
 
