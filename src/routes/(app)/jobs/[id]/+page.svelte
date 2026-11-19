@@ -188,6 +188,15 @@
 			</section>
 		{/if}
 
+		<!-- US-09: the About box is another company or there isn't one, so the reviews link goes here -->
+		{#if data.showReviews && !data.aboutThisCompany}
+			<section class="mt-8 border-t border-white/60 dark:border-white/15 pt-6">
+				<a href="/companies/{data.companySlug}" class="block font-medium text-tide-deep dark:text-tide hover:underline">
+					See reviews of {posting.company} →
+				</a>
+			</section>
+		{/if}
+
 		{#if data.isJobSeeker}
 			<section class="mt-8 border-t border-white/60 dark:border-white/15 pt-6">
 				<h2 class="font-display text-xl font-semibold">Apply for this job</h2>
