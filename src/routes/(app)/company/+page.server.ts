@@ -1,9 +1,10 @@
 
 import { error } from '@sveltejs/kit';
-import { eq, sql } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { db } from '$lib/server/db';
-import { companyProfile, companyReview } from '$lib/server/db/schema';
-import { toRating } from '$lib/server/company-reviews';
+import { companyProfile } from '$lib/server/db/schema';
+import { companySlug } from '$lib/company-reviews';
+import { ratingsFor } from '$lib/server/company-reviews-db';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -18,15 +19,12 @@ export const load: PageServerLoad = async ({ locals }) => {
         .limit(1);
 
     // US-09: the company's stars, shown under its name
-    const [stars] = company
-        ? await db
-            .select({ average: sql<string | null>`avg(${companyReview.rating})`, reviews: sql<number>`count(*)::int` })
-            .from(companyReview)
-            .where(eq(companyReview.companyId, company.id))
-        : [];
+    const slug = company ? companySlug(company.name) : '';
+    const ratings = await ratingsFor(slug ? [slug] : []);
 
     return {
         company: company ?? null,
-        rating: stars ? toRating(stars.average, stars.reviews) : null
+        companySlug: slug,
+        rating: ratings.get(slug) ?? null
     };
 };

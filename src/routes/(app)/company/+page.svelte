@@ -46,7 +46,7 @@
                                 {data.company.location}
                             </p>
                             <!-- US-09: your stars, click to see the reviews -->
-                            <a href="/companies/{data.company.id}" class="mt-1 inline-flex items-center gap-1.5 text-sm text-ink/65 hover:underline">
+                            <a href="/companies/{data.companySlug}" class="mt-1 inline-flex items-center gap-1.5 text-sm text-ink/65 hover:underline">
                                 {#if data.rating}
                                     <Stars rating={data.rating.average} />
                                     {data.rating.average.toFixed(1)} · {data.rating.count} {data.rating.count === 1 ? 'review' : 'reviews'}
@@ -107,7 +107,7 @@
                     </a>
                     <!-- US-09: the page job seekers see, with the reviews -->
                     <a
-                        href="/companies/{data.company.id}"
+                        href="/companies/{data.companySlug}"
                         class="text-sm font-medium text-tide-deep transition hover:underline"
                     >
                         See your company page and reviews

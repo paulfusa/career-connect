@@ -1,10 +1,11 @@
 import { fail, redirect } from '@sveltejs/kit';
 import { and, asc, count, desc, eq, getTableColumns, gte, ilike, inArray, isNull, or, sql, type SQL } from 'drizzle-orm';
 import { db } from '$lib/server/db';
-import { application, companyProfile, companyReview, follow, jobPosting, user } from '$lib/server/db/schema';
+import { application, companyReview, follow, jobPosting, user } from '$lib/server/db/schema';
 import type { Actions, PageServerLoad } from './$types';
 import { parseJobSearch, postedAfter } from '$lib/server/job-search';
 import { canSeeReviews, toRating } from '$lib/server/company-reviews';
+import { slugOf, yourCompanySlugs } from '$lib/server/company-reviews-db';
 import { isClosed } from '$lib/server/job-posting';
 import { todayEastern } from '$lib/server/application';
 
@@ -54,9 +55,9 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 		sortBy = [sql`coalesce(${jobPosting.salaryMax}, ${jobPosting.salaryMin}) desc nulls last`];
 	}
 
-	// US-09: reviews of the company that posted the job
-	const companyReviews = sql`from ${companyReview} inner join ${companyProfile} on ${companyProfile.id} = ${companyReview.companyId}
-		where ${companyProfile.recruiterId} = ${jobPosting.createdBy}`;
+	// US-09: reviews of the company named on the job
+	const company = slugOf(jobPosting.company);
+	const companyReviews = sql`from ${companyReview} where ${companyReview.companySlug} = ${company}`;
 
 	const postings = await db
 		// US-19: also get the name and photo of the recruiter who posted each job
@@ -65,7 +66,8 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 			creatorName: user.name,
 			creatorImage: user.image,
 			ratingAverage: sql<string | null>`(select avg(${companyReview.rating}) ${companyReviews})`,
-			ratingCount: sql<number>`(select count(*)::int ${companyReviews})`
+			ratingCount: sql<number>`(select count(*)::int ${companyReviews})`,
+			yourCompany: sql<boolean>`${company} in (${yourCompanySlugs(locals.user!.id)})`
 		})
 		.from(jobPosting)
 		.innerJoin(user, eq(user.id, jobPosting.createdBy))
@@ -82,12 +84,12 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 
 	// US-05: past-deadline jobs show as Closed too
 	return {
-		postings: postings.map(({ ratingAverage, ratingCount, ...posting }) => ({
+		postings: postings.map(({ ratingAverage, ratingCount, yourCompany, ...posting }) => ({
 			...posting,
 			closed: isClosed(posting, today),
 			applicationCount: mine ? countsByPosting.get(posting.id) ?? 0 : null,
-			// recruiters only see the stars on their own postings
-			rating: canSeeReviews(locals.user, { recruiterId: posting.createdBy }) ? toRating(ratingAverage, ratingCount) : null
+			// recruiters only see the stars of their own companies
+			rating: canSeeReviews(locals.user, yourCompany) ? toRating(ratingAverage, ratingCount) : null
 		})),
 		mine,
 		archivedView,

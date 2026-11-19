@@ -37,7 +37,20 @@
 			<div class="flex min-w-0 items-start gap-4">
 				<OrgLogo name={posting.company} domain={posting.companyDomain} />
 				<div class="min-w-0">
-					<p class="text-sm font-medium uppercase tracking-widest text-tide-deep dark:text-tide">{posting.company}</p>
+					<!-- US-09: the company's stars go right next to its name and open its reviews (recruiters only get them for their own companies) -->
+					<div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+						<p class="text-sm font-medium uppercase tracking-widest text-tide-deep dark:text-tide">{posting.company}</p>
+						{#if data.showReviews}
+							<a href="/companies/{data.companySlug}" class="inline-flex items-center gap-1.5 text-sm text-ink/65 hover:underline">
+								{#if data.companyRating}
+									<Stars rating={data.companyRating.average} />
+									{data.companyRating.average.toFixed(1)} · {data.companyRating.count} {data.companyRating.count === 1 ? 'review' : 'reviews'}
+								{:else}
+									No reviews yet
+								{/if}
+							</a>
+						{/if}
+					</div>
 					<h1 class="mt-2 font-display text-3xl font-semibold tracking-tight">{posting.title}</h1>
 					<p class="mt-2 text-ink/65">
 						{posting.location} <span aria-hidden="true">·</span> Posted by
@@ -48,17 +61,6 @@
 							{data.creatorName}
 						{/if}
 					</p>
-					<!-- US-09: stars link to the reviews (recruiters only get them on their own jobs) -->
-					{#if data.companyProfile && data.showReviews}
-						<a href="/companies/{data.companyProfile.id}" class="mt-2 inline-flex items-center gap-1.5 text-sm text-ink/65 hover:underline">
-							{#if data.companyRating}
-								<Stars rating={data.companyRating.average} />
-								{data.companyRating.average.toFixed(1)} · {data.companyRating.count} {data.companyRating.count === 1 ? 'review' : 'reviews'}
-							{:else}
-								No reviews yet
-							{/if}
-						</a>
-					{/if}
 				</div>
 			</div>
 	{#if data.isOwner}
@@ -147,10 +149,10 @@
 		
 		{#if data.companyProfile}
 			<section class="mt-8 border-t border-white/60 dark:border-white/15 pt-6">
-				<!-- US-09: the name opens the company page with its reviews -->
+				<!-- US-09: the name opens the company page with its reviews, only when the profile is the job's company -->
 				<h2 class="font-display text-xl font-semibold">
-					{#if data.showReviews}
-						About <a href="/companies/{data.companyProfile.id}" class="text-tide-deep hover:underline dark:text-tide">{data.companyProfile.name}</a>
+					{#if data.aboutThisCompany}
+						About <a href="/companies/{data.companySlug}" class="text-tide-deep hover:underline dark:text-tide">{data.companyProfile.name}</a>
 					{:else}
 						About {data.companyProfile.name}
 					{/if}
@@ -175,9 +177,9 @@
 					</a>
 				{/if}
 
-				{#if data.showReviews}
+				{#if data.aboutThisCompany}
 					<a
-						href="/companies/{data.companyProfile.id}"
+						href="/companies/{data.companySlug}"
 						class="mt-3 block font-medium text-tide-deep dark:text-tide hover:underline"
 					>
 						See reviews of {data.companyProfile.name} →

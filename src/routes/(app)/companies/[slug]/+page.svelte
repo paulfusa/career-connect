@@ -73,19 +73,24 @@
 		</div>
 		<div class="min-w-0">
 			<h1 class="font-display text-3xl font-semibold tracking-tight">{company.name}</h1>
-			<p class="mt-1 text-sm text-ink/60">{company.location}</p>
+			{#if company.profile}<p class="mt-1 text-sm text-ink/60">{company.profile.location}</p>{/if}
 		</div>
 	</div>
-	<p class="mt-5 whitespace-pre-line leading-7 text-ink/75">{company.description}</p>
-	{#if company.website}
-		<a
-			href={company.website}
-			target="_blank"
-			rel="noopener noreferrer"
-			class="mt-3 inline-block font-medium text-tide-deep hover:underline dark:text-tide"
-		>
-			Visit company website →
-		</a>
+	{#if company.profile}
+		<p class="mt-5 whitespace-pre-line leading-7 text-ink/75">{company.profile.description}</p>
+		{#if company.profile.website}
+			<a
+				href={company.profile.website}
+				target="_blank"
+				rel="noopener noreferrer"
+				class="mt-3 inline-block font-medium text-tide-deep hover:underline dark:text-tide"
+			>
+				Visit company website →
+			</a>
+		{/if}
+	{:else}
+		<!-- reviews go with the name, so a company only on job postings still has a page -->
+		<p class="mt-5 text-ink/65">{company.name} doesn't have a company profile on CareerConnect yet.</p>
 	{/if}
 </section>
 
@@ -114,7 +119,7 @@
 		<p class="{errorBox} mt-5" role="alert">{form.message}</p>
 	{/if}
 
-	<!-- recruiters only get here for their own company -->
+	<!-- recruiters only get here for their own companies -->
 	{#if data.isOwner}
 		<p class="mt-5 text-ink/65">This is your company, so you can't review it. You can still see what people wrote.</p>
 	{:else if data.canReview && !mine}

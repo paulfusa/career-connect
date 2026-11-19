@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { registerHooks } from 'node:module';
 import { PgDialect } from 'drizzle-orm/pg-core';
 import { getTableName, type SQL, type Table } from 'drizzle-orm';
-import { isHttpError, isRedirect } from '@sveltejs/kit';
+import { isHttpError } from '@sveltejs/kit';
 
 // US-09: the review form, the average, and the real company page with a fake db (same setup as follow.test.ts)
 registerHooks({
@@ -29,9 +29,9 @@ registerHooks({
 });
 
 const dialect = new PgDialect();
-type Select = { table: string; where?: SQL };
+type Select = { table: string; fields: Record<string, unknown>; where?: SQL };
 let selects: Select[] = [];
-// what each select returns, in order (company first, then reviews)
+// what each select returns, in order
 let results: unknown[][] = [];
 let inserts: { table: string; values: Record<string, unknown>; conflictTarget?: unknown }[] = [];
 let updates: { table: string; set: Record<string, unknown>; where?: SQL }[] = [];
@@ -41,8 +41,8 @@ let updated: unknown[] = [];
 let deleted: unknown[] = [];
 
 const db = {
-	select() {
-		const call: Select = { table: '' };
+	select(fields: Record<string, unknown> = {}) {
+		const call: Select = { table: '', fields };
 		selects.push(call);
 		const query = {
 			from(table: Table) { call.table = getTableName(table); return query; },
@@ -50,6 +50,7 @@ const db = {
 			leftJoin() { return query; },
 			where(condition: SQL) { call.where = condition; return query; },
 			orderBy() { return query; },
+			groupBy() { return query; },
 			limit() { return query; },
 			then(resolve: (value: unknown[]) => unknown, reject: (reason: unknown) => unknown) {
 				return Promise.resolve(results.shift() ?? []).then(resolve, reject);
@@ -86,21 +87,23 @@ const db = {
 };
 (globalThis as typeof globalThis & { __reviewDb: typeof db }).__reviewDb = db;
 
-const { parseReview, ratingSummary, toRating, canReviewCompany, canSeeReviews, reviewProblem } = await import('../src/lib/server/company-reviews.ts');
-const { starFills } = await import('../src/lib/company-reviews.ts');
-const companyPage = await import('../src/routes/(app)/companies/[id]/+page.server.ts');
+const { parseReview, ratingSummary, toRating, canReviewCompany, canSeeReviews, reviewProblem, isSlug } = await import('../src/lib/server/company-reviews.ts');
+const { starFills, companySlug } = await import('../src/lib/company-reviews.ts');
+const companyPage = await import('../src/routes/(app)/companies/[slug]/+page.server.ts');
 const jobsPage = await import('../src/routes/(app)/jobs/+page.server.ts');
 const myReviewsPage = await import('../src/routes/(app)/reviews/+page.server.ts');
 const companyProfilePage = await import('../src/routes/(app)/company/+page.server.ts');
-const companyReviewsLink = await import('../src/routes/(app)/company/reviews/+page.server.ts');
+const companyReviewsPage = await import('../src/routes/(app)/company/reviews/+page.server.ts');
 const jobPage = await import('../src/routes/(app)/jobs/[id]/+page.server.ts');
 
-const COMPANY_ID = '7d3e2a10-5b6c-4f8e-9a1b-2c3d4e5f6a7b';
-const company = { id: COMPANY_ID, recruiterId: 'recruiter-1', name: 'Northwind', description: 'We make apps.', location: 'Montreal', website: null };
+const SLUG = 'northwind';
+const profile = { name: 'Northwind', description: 'We make apps.', location: 'Montreal', website: null };
 const seeker = { id: 'seeker-1', role: 'job_seeker' };
 const owner = { id: 'recruiter-1', role: 'recruiter' };
 const otherRecruiter = { id: 'recruiter-2', role: 'recruiter' };
 const good = { rating: '4', body: 'Quick replies and a clear interview process.' };
+// the company page looks up the company, then the companies you're part of (profile, then jobs you posted)
+const notYours = [[], []];
 
 const formOf = (values: Record<string, string>) => {
 	const form = new FormData();
@@ -109,18 +112,21 @@ const formOf = (values: Record<string, string>) => {
 };
 // query params, to check which company and user a query is for
 const params = (condition?: SQL) => (condition ? dialect.sqlToQuery(condition).params : []);
+const sqlOf = (field: unknown) => dialect.sqlToQuery(field as SQL);
+// what slugOf(job_posting.company) looks like in SQL
+const jobCompanySlug = `trim(both '-' from regexp_replace(lower("job_posting"."company"), '[^a-z0-9]+', '-', 'g'))`;
 
 type Result = Record<string, unknown> & { status?: number; data?: Record<string, unknown> };
-async function runAction(name: string, me: object, values: Record<string, string> = {}, id = COMPANY_ID) {
+async function runAction(name: string, me: object, values: Record<string, string> = {}, slug = SLUG) {
 	const request = new Request('http://localhost/', { method: 'POST', body: formOf(values) });
-	return companyPage.actions[name]({ locals: { user: me }, params: { id }, request } as never) as Promise<Result>;
+	return companyPage.actions[name]({ locals: { user: me }, params: { slug }, request } as never) as Promise<Result>;
 }
 async function runMyReviewsAction(name: string, me: object, values: Record<string, string>) {
 	const request = new Request('http://localhost/', { method: 'POST', body: formOf(values) });
 	return myReviewsPage.actions[name]({ locals: { user: me }, request } as never) as Promise<Result>;
 }
-const openPage = (me: object, id = COMPANY_ID) =>
-	companyPage.load({ locals: { user: me }, params: { id } } as never) as Promise<Record<string, unknown>>;
+const openPage = (me: object, slug = SLUG) =>
+	companyPage.load({ locals: { user: me }, params: { slug } } as never) as Promise<Record<string, unknown>>;
 
 beforeEach(() => {
 	selects = [];
@@ -184,32 +190,51 @@ test('stars on job postings: the average from postgres is rounded, and no review
 	assert.equal(toRating(undefined, undefined), null);
 });
 
-test('job list: each posting gets the stars of its company', async () => {
+test('company names: the same company however it is written', () => {
+	assert.equal(companySlug('Intel'), 'intel');
+	assert.equal(companySlug('  INTEL '), 'intel');
+	assert.equal(companySlug('Lionfish Cyber Security'), 'lionfish-cyber-security');
+	assert.equal(companySlug('AT&T'), 'at-t');
+	assert.equal(companySlug('Apple News+'), 'apple-news');
+	assert.equal(companySlug('!!!'), '');
+
+	// and only names written that way work in the address
+	assert.equal(isSlug('lionfish-cyber-security'), true);
+	for (const bad of ['', 'Intel', '-intel', 'intel-', 'in--tel', '../intel', 'a'.repeat(201), null]) assert.equal(isSlug(bad), false, String(bad));
+});
+
+test("job list: each posting gets the stars of the company on it, not of the recruiter's profile", async () => {
 	const job = { archived: false, published: true, status: 'open', applicationDeadline: null };
 	results = [[
-		{ ...job, id: 'job-1', createdBy: 'recruiter-1', ratingAverage: '3.5000000000000000', ratingCount: 2 },
-		{ ...job, id: 'job-2', createdBy: 'recruiter-2', ratingAverage: null, ratingCount: 0 }
+		{ ...job, id: 'job-1', company: 'Intel', ratingAverage: '3.5000000000000000', ratingCount: 2, yourCompany: false },
+		{ ...job, id: 'job-2', company: 'Lionfish Cyber Security', ratingAverage: null, ratingCount: 0, yourCompany: false }
 	]];
 	const page = (await jobsPage.load({ url: new URL('http://localhost/jobs'), locals: { user: seeker } } as never)) as {
 		postings: Record<string, unknown>[];
 	};
 	assert.deepEqual(page.postings.map((posting) => posting.rating), [{ average: 3.5, count: 2 }, null]);
 	// the raw columns aren't sent to the page
-	assert.ok(!('ratingAverage' in page.postings[0]));
+	assert.ok(!('ratingAverage' in page.postings[0]) && !('yourCompany' in page.postings[0]));
+	// the reviews are matched with the company name on the job
+	const count = sqlOf(selects[0].fields.ratingCount).sql;
+	assert.ok(count.includes(`"company_review"."company_slug" = ${jobCompanySlug}`), count);
+	assert.ok(!count.includes('company_profile'));
 
-	// a recruiter only gets the stars on their own postings
+	// a recruiter only gets the stars of their own companies
 	results = [[
-		{ ...job, id: 'job-1', createdBy: 'recruiter-1', ratingAverage: '3.5', ratingCount: 2 },
-		{ ...job, id: 'job-3', createdBy: 'recruiter-3', ratingAverage: '4', ratingCount: 1 }
+		{ ...job, id: 'job-1', company: 'Intel', ratingAverage: '3.5', ratingCount: 2, yourCompany: true },
+		{ ...job, id: 'job-3', company: 'Meta', ratingAverage: '4', ratingCount: 1, yourCompany: false }
 	]];
 	const recruiterView = (await jobsPage.load({ url: new URL('http://localhost/jobs'), locals: { user: owner } } as never)) as {
 		postings: Record<string, unknown>[];
 	};
 	assert.deepEqual(recruiterView.postings.map((posting) => posting.rating), [{ average: 3.5, count: 2 }, null]);
+	// their companies come from their profile and the jobs they posted
+	assert.deepEqual(sqlOf(selects[1].fields.yourCompany).params, ['recruiter-1', 'recruiter-1']);
 });
 
 test('my reviews: only the reviews you wrote', async () => {
-	results = [[{ id: 'r1', rating: 4, companyId: COMPANY_ID, companyName: 'Northwind' }]];
+	results = [[{ id: 'r1', rating: 4, companySlug: SLUG, companyName: 'Northwind' }]];
 	const page = (await myReviewsPage.load({ locals: { user: seeker } } as never)) as Record<string, unknown>;
 
 	assert.equal((page.reviews as unknown[]).length, 1);
@@ -221,61 +246,71 @@ test("my reviews: recruiters don't write reviews, so they can't open it or edit 
 	await assert.rejects(async () => myReviewsPage.load({ locals: { user: owner } } as never), (err) => isHttpError(err, 403));
 	assert.equal(selects.length, 0);
 
-	const edit = await runMyReviewsAction('edit', otherRecruiter, { ...good, companyId: COMPANY_ID });
+	const edit = await runMyReviewsAction('edit', otherRecruiter, { ...good, company: SLUG });
 	assert.equal(edit.status, 403);
 	assert.equal(updates.length, 0);
 });
 
 test('my reviews: you can edit and delete your review right from the list', async () => {
-	const edited = await runMyReviewsAction('edit', seeker, { companyId: COMPANY_ID, rating: '2', body: good.body });
+	const edited = await runMyReviewsAction('edit', seeker, { company: SLUG, rating: '2', body: good.body });
 	assert.equal(edited.updated, true);
 	assert.equal(updates[0].set.rating, 2);
-	assert.deepEqual(params(updates[0].where), [COMPANY_ID, 'seeker-1']);
+	assert.deepEqual(params(updates[0].where), [SLUG, 'seeker-1']);
 
-	const deletedResult = await runMyReviewsAction('delete', seeker, { companyId: COMPANY_ID });
+	const deletedResult = await runMyReviewsAction('delete', seeker, { company: SLUG });
 	assert.equal(deletedResult.deleted, true);
-	assert.deepEqual(params(deletes[0].where), [COMPANY_ID, 'seeker-1']);
+	assert.deepEqual(params(deletes[0].where), [SLUG, 'seeker-1']);
 });
 
 test('my reviews: a bad company, a wrong form or a review that is gone is refused', async () => {
-	assert.equal((await runMyReviewsAction('edit', seeker, { ...good, companyId: 'nope' })).status, 404);
-	assert.equal((await runMyReviewsAction('delete', seeker, { companyId: 'nope' })).status, 404);
+	assert.equal((await runMyReviewsAction('edit', seeker, { ...good, company: 'Not a company' })).status, 404);
+	assert.equal((await runMyReviewsAction('delete', seeker, { company: '../northwind' })).status, 404);
 
 	// the errors come back with the company, so the page knows which review they're for
-	const bad = await runMyReviewsAction('edit', seeker, { companyId: COMPANY_ID, rating: '', body: good.body });
+	const bad = await runMyReviewsAction('edit', seeker, { company: SLUG, rating: '', body: good.body });
 	assert.equal(bad.status, 400);
-	assert.equal(bad.data?.companyId, COMPANY_ID);
+	assert.equal(bad.data?.company, SLUG);
 	assert.equal(updates.length, 0);
 	assert.equal(deletes.length, 0);
 
 	updated = [];
 	deleted = [];
-	assert.equal((await runMyReviewsAction('edit', seeker, { ...good, companyId: COMPANY_ID })).data?.message, "That review doesn't exist anymore.");
-	assert.equal((await runMyReviewsAction('delete', seeker, { companyId: COMPANY_ID })).status, 404);
+	assert.equal((await runMyReviewsAction('edit', seeker, { ...good, company: SLUG })).data?.message, "That review doesn't exist anymore.");
+	assert.equal((await runMyReviewsAction('delete', seeker, { company: SLUG })).status, 404);
 });
 
 test('who can review: only job seekers, recruiters can just read', () => {
-	assert.equal(reviewProblem(seeker, company), null);
-	assert.equal(canReviewCompany(seeker, company), true);
-	assert.equal(reviewProblem(otherRecruiter, company), 'Only job seekers can review companies.');
-	assert.equal(reviewProblem(owner, company), 'Only job seekers can review companies.');
-	assert.equal(canReviewCompany(null, company), false);
-	// an admin who owns the company and switched to the job seeker view
-	assert.equal(reviewProblem({ id: 'recruiter-1', role: 'job_seeker' }, company), "You can't review your own company.");
+	assert.equal(reviewProblem(seeker, false), null);
+	assert.equal(canReviewCompany(seeker, false), true);
+	assert.equal(reviewProblem(otherRecruiter, false), 'Only job seekers can review companies.');
+	assert.equal(reviewProblem(owner, true), 'Only job seekers can review companies.');
+	assert.equal(canReviewCompany(null, false), false);
+	// an admin who has this company and switched to the job seeker view
+	assert.equal(reviewProblem({ role: 'job_seeker' }, true), "You can't review your own company.");
 });
 
-test('page: a company that does not exist, or a bad id, is a 404', async () => {
-	await assert.rejects(openPage(seeker, 'not-an-id'), (err) => isHttpError(err, 404));
+test('who can see reviews: job seekers see all of them, recruiters only their own companies', () => {
+	assert.equal(canSeeReviews(seeker, false), true);
+	assert.equal(canSeeReviews(owner, true), true);
+	assert.equal(canSeeReviews(otherRecruiter, false), false);
+	assert.equal(canSeeReviews(null, false), false);
+});
+
+test('page: a company nobody has heard of, or a bad address, is a 404', async () => {
+	await assert.rejects(openPage(seeker, 'Not A Slug'), (err) => isHttpError(err, 404));
 	assert.equal(selects.length, 0);
 
-	results = [[]];
+	// no profile, no job and no review with that name
+	results = [[], [], []];
 	await assert.rejects(openPage(seeker), (err) => isHttpError(err, 404));
+	assert.equal(selects.length, 3);
 });
 
 test('page: shows the reviews of this company, which one is yours, and the average', async () => {
 	const date = new Date('2026-11-18T12:00:00Z');
 	results = [
-		[company],
+		[profile],
+		...notYours,
 		[
 			{ id: 'r1', userId: 'seeker-1', rating: 4, body: good.body, createdAt: date, updatedAt: date, authorName: 'Find jobs', authorImage: null },
 			{ id: 'r2', userId: 'seeker-2', rating: 2, body: 'Never heard back after applying.', createdAt: date, updatedAt: date, authorName: 'Sam', authorImage: null }
@@ -283,8 +318,11 @@ test('page: shows the reviews of this company, which one is yours, and the avera
 	];
 	const page = await openPage(seeker);
 
-	assert.equal(selects[1].table, 'company_review');
-	assert.deepEqual(params(selects[1].where), [COMPANY_ID]);
+	// the profile and the reviews are both found by the name
+	assert.deepEqual(params(selects[0].where), [SLUG]);
+	assert.equal(selects[3].table, 'company_review');
+	assert.deepEqual(params(selects[3].where), [SLUG]);
+	assert.deepEqual(page.company, { slug: SLUG, name: 'Northwind', profile });
 	const reviews = page.reviews as Record<string, unknown>[];
 	assert.deepEqual(reviews.map((review) => review.mine), [true, false]);
 	// the page doesn't get other people's user ids
@@ -294,26 +332,42 @@ test('page: shows the reviews of this company, which one is yours, and the avera
 	assert.equal(page.isOwner, false);
 });
 
-test("page: a recruiter can read their own company's reviews but can't review it", async () => {
-	results = [[company], []];
+test("page: a company that's only on job postings, or only in old reviews, still has a page", async () => {
+	results = [[], [{ name: 'Lionfish Cyber Security' }], ...notYours, []];
+	const fromJob = await openPage(seeker, 'lionfish-cyber-security');
+	assert.deepEqual(fromJob.company, { slug: 'lionfish-cyber-security', name: 'Lionfish Cyber Security', profile: null });
+	assert.equal(fromJob.canReview, true);
+
+	results = [[], [], [{ name: 'Gone Inc' }], ...notYours, []];
+	assert.equal(((await openPage(seeker, 'gone-inc')).company as { name: string }).name, 'Gone Inc');
+});
+
+test("page: a recruiter can read their own companies' reviews but can't review them", async () => {
+	// the company on their profile
+	results = [[profile], [{ slug: SLUG, name: 'Northwind' }], [], []];
 	const page = await openPage(owner);
 	assert.equal(page.isOwner, true);
 	assert.equal(page.canReview, false);
 	assert.deepEqual(page.summary, { average: null, count: 0 });
+	assert.deepEqual(params(selects[1].where), ['recruiter-1']);
+
+	// or a company they posted a job for
+	results = [[profile], [], [{ slug: SLUG, name: 'NORTHWIND' }], []];
+	assert.equal((await openPage(otherRecruiter)).isOwner, true);
 });
 
 test("page: other recruiters can't open the page at all", async () => {
-	results = [[company]];
+	results = [[profile], ...notYours];
 	await assert.rejects(openPage(otherRecruiter), (err) => isHttpError(err, 403));
 	// stopped before the reviews were loaded
-	assert.equal(selects.length, 1);
+	assert.equal(selects.length, 3);
 });
 
-// a job by recruiter-1, their company has 2 reviews (4.5 on average)
-async function openJob(me: { role: string }) {
-	const posting = { id: '11111111-1111-4111-8111-111111111111', createdBy: 'recruiter-1', published: true, archived: false, status: 'open', applicationDeadline: null };
+// a Northwind job whose company has 2 reviews (4.5 on average)
+async function openJob(me: { role: string }, changes: Record<string, unknown> = {}) {
+	const posting = { id: '11111111-1111-4111-8111-111111111111', company: 'Northwind', createdBy: 'recruiter-1', published: true, archived: false, status: 'open', applicationDeadline: null };
 	results = [
-		[{ posting, creatorName: 'Hiring company', creatorImage: null, companyProfile: company, ratingAverage: '4.5', ratingCount: 2 }],
+		[{ posting, creatorName: 'Hiring company', creatorImage: null, companyProfile: profile, companySlug: SLUG, ratingAverage: '4.5', ratingCount: 2, yourCompany: false, ...changes }],
 		// for job seekers the page also gets their application and resumes
 		...(me.role === 'job_seeker' ? [[], []] : []),
 		[{ total: 0 }],
@@ -322,70 +376,87 @@ async function openJob(me: { role: string }) {
 	return (await jobPage.load({ params: { id: posting.id }, locals: { user: me } } as never)) as Record<string, unknown>;
 }
 
-test("job page: recruiters only see the stars on their own company's jobs", async () => {
+test("job page: the stars are the job's company's, and recruiters only see their own companies'", async () => {
 	const seekerView = await openJob(seeker);
 	assert.equal(seekerView.showReviews, true);
 	assert.deepEqual(seekerView.companyRating, { average: 4.5, count: 2 });
+	assert.equal(seekerView.aboutThisCompany, true);
+	const count = sqlOf(selects[0].fields.ratingCount).sql;
+	assert.ok(count.includes(`"company_review"."company_slug" = ${jobCompanySlug}`), count);
 
-	const ownerView = await openJob(owner);
+	const ownerView = await openJob(owner, { yourCompany: true });
 	assert.equal(ownerView.showReviews, true);
 	assert.deepEqual(ownerView.companyRating, { average: 4.5, count: 2 });
 
 	const otherView = await openJob(otherRecruiter);
 	assert.equal(otherView.showReviews, false);
 	assert.equal(otherView.companyRating, null);
+	assert.equal(otherView.aboutThisCompany, false);
 	// the raw numbers don't get sent either
-	assert.ok(!('ratingAverage' in otherView));
+	assert.ok(!('ratingAverage' in otherView) && !('yourCompany' in otherView));
 });
 
-test('who can see reviews: job seekers see all of them, recruiters only their own company', () => {
-	assert.equal(canSeeReviews(seeker, company), true);
-	assert.equal(canSeeReviews(owner, company), true);
-	assert.equal(canSeeReviews(otherRecruiter, company), false);
-	assert.equal(canSeeReviews(null, company), false);
+test("job page: a job for another company doesn't link the recruiter's profile to the reviews", async () => {
+	// Hiring company's profile is Intel, but this job is at Lionfish
+	const page = await openJob(seeker, { companyProfile: { ...profile, name: 'Intel' }, companySlug: 'lionfish-cyber-security', ratingAverage: null, ratingCount: 0 });
+	assert.equal(page.showReviews, true);
+	assert.equal(page.companySlug, 'lionfish-cyber-security');
+	assert.equal(page.companyRating, null);
+	assert.equal(page.aboutThisCompany, false);
 });
 
-test('company reviews link: takes a recruiter to their own company page', async () => {
-	results = [[{ id: COMPANY_ID }]];
-	await assert.rejects(
-		async () => companyReviewsLink.load({ locals: { user: owner } } as never),
-		(err) => isRedirect(err) && err.status === 303 && err.location === `/companies/${COMPANY_ID}`
-	);
+test('company reviews: a recruiter sees each of their companies with its stars', async () => {
+	results = [
+		[{ slug: SLUG, name: 'Northwind' }],
+		[{ slug: SLUG, name: 'NORTHWIND' }, { slug: 'lionfish-cyber-security', name: 'Lionfish Cyber Security' }, { slug: '', name: '!!!' }],
+		[{ slug: SLUG, average: '4.0000000000000000', count: 1 }]
+	];
+	const page = (await companyReviewsPage.load({ locals: { user: owner } } as never)) as Record<string, unknown>;
+	// the profile's name wins, and a name with no letters or numbers is skipped
+	assert.deepEqual(page.companies, [
+		{ slug: SLUG, name: 'Northwind', rating: { average: 4, count: 1 } },
+		{ slug: 'lionfish-cyber-security', name: 'Lionfish Cyber Security', rating: null }
+	]);
 	assert.deepEqual(params(selects[0].where), ['recruiter-1']);
+	assert.deepEqual(params(selects[1].where), ['recruiter-1']);
+	assert.deepEqual(params(selects[2].where), [SLUG, 'lionfish-cyber-security']);
 
-	// no company profile yet, so the page asks them to make one
-	results = [[]];
-	assert.deepEqual(await companyReviewsLink.load({ locals: { user: otherRecruiter } } as never), {});
+	// no profile and no jobs yet, so the page asks them to make a profile
+	selects = [];
+	results = [[], []];
+	assert.deepEqual(await companyReviewsPage.load({ locals: { user: otherRecruiter } } as never), { companies: [] });
+	assert.equal(selects.length, 2);
 
-	await assert.rejects(async () => companyReviewsLink.load({ locals: { user: seeker } } as never), (err) => isHttpError(err, 403));
+	await assert.rejects(async () => companyReviewsPage.load({ locals: { user: seeker } } as never), (err) => isHttpError(err, 403));
 });
 
 test('company profile: shows the stars of your company', async () => {
-	results = [[company], [{ average: '4.2500000000000000', reviews: 2 }]];
+	results = [[profile], [{ slug: SLUG, average: '4.2500000000000000', count: 2 }]];
 	const page = (await companyProfilePage.load({ locals: { user: owner } } as never)) as Record<string, unknown>;
 	assert.deepEqual(page.rating, { average: 4.3, count: 2 });
-	assert.deepEqual(params(selects[1].where), [COMPANY_ID]);
+	assert.equal(page.companySlug, SLUG);
+	assert.deepEqual(params(selects[1].where), [SLUG]);
 
 	// no reviews yet, or no company yet
-	results = [[company], [{ average: null, reviews: 0 }]];
+	results = [[profile], []];
 	assert.equal(((await companyProfilePage.load({ locals: { user: owner } } as never)) as Record<string, unknown>).rating, null);
 	results = [[]];
 	assert.equal(((await companyProfilePage.load({ locals: { user: otherRecruiter } } as never)) as Record<string, unknown>).rating, null);
 });
 
 test('post: a review is saved for this company and the signed-in user', async () => {
-	results = [[company]];
-	// a userId or companyId sent in the form is ignored
-	const result = await runAction('post', seeker, { ...good, userId: 'someone-else', companyId: 'other' });
+	results = [[profile], ...notYours];
+	// a userId or company sent in the form is ignored
+	const result = await runAction('post', seeker, { ...good, userId: 'someone-else', company: 'other' });
 	assert.equal(result.posted, true);
 	assert.equal(inserts.length, 1);
 	assert.equal(inserts[0].table, 'company_review');
-	assert.deepEqual(inserts[0].values, { companyId: COMPANY_ID, userId: 'seeker-1', rating: 4, body: good.body });
+	assert.deepEqual(inserts[0].values, { companySlug: SLUG, companyName: 'Northwind', userId: 'seeker-1', rating: 4, body: good.body });
 	assert.ok(Array.isArray(inserts[0].conflictTarget));
 });
 
 test('post: a second review of the same company is refused', async () => {
-	results = [[company]];
+	results = [[profile], ...notYours];
 	inserted = [];
 	const result = await runAction('post', seeker, good);
 	assert.equal(result.status, 400);
@@ -393,7 +464,7 @@ test('post: a second review of the same company is refused', async () => {
 });
 
 test('post: a wrong form comes back with the messages and nothing is saved', async () => {
-	results = [[company]];
+	results = [[profile], ...notYours];
 	const result = await runAction('post', seeker, { rating: '', body: 'Nice' });
 	assert.equal(result.status, 400);
 	const errors = result.data?.errors as Record<string, string>;
@@ -403,19 +474,24 @@ test('post: a wrong form comes back with the messages and nothing is saved', asy
 	assert.equal(inserts.length, 0);
 });
 
-test("post: recruiters can't post a review, even about another company", async () => {
+test("post: recruiters can't post a review, and neither can an admin about their own company", async () => {
 	for (const recruiter of [owner, otherRecruiter]) {
-		results = [[company]];
+		results = [[profile], ...notYours];
 		const result = await runAction('post', recruiter, good);
 		assert.equal(result.status, 403);
 		assert.equal(result.data?.message, 'Only job seekers can review companies.');
 	}
+
+	results = [[profile], [{ slug: SLUG, name: 'Northwind' }], []];
+	const admin = await runAction('post', { id: 'admin-1', role: 'job_seeker' }, good);
+	assert.equal(admin.status, 403);
+	assert.equal(admin.data?.message, "You can't review your own company.");
 	assert.equal(inserts.length, 0);
 });
 
 test('post: a company that does not exist is refused', async () => {
-	assert.equal((await runAction('post', seeker, good, 'not-an-id')).status, 404);
-	results = [[]];
+	assert.equal((await runAction('post', seeker, good, 'Not A Slug')).status, 404);
+	results = [[], [], []];
 	assert.equal((await runAction('post', seeker, good)).status, 404);
 	assert.equal(inserts.length, 0);
 });
@@ -427,7 +503,7 @@ test('edit: you can only change your own review', async () => {
 	assert.equal(updates[0].set.rating, 5);
 	assert.ok(updates[0].set.updatedAt instanceof Date);
 	// only matches your review of this company
-	assert.deepEqual(params(updates[0].where), [COMPANY_ID, 'seeker-1']);
+	assert.deepEqual(params(updates[0].where), [SLUG, 'seeker-1']);
 
 	// recruiters can't edit
 	assert.equal((await runAction('edit', otherRecruiter, good)).status, 403);
@@ -445,22 +521,22 @@ test('edit: a wrong form goes back to the edit form, and a missing review is a 4
 	assert.equal(missing.status, 404);
 	assert.equal(missing.data?.message, "You haven't reviewed this company.");
 
-	assert.equal((await runAction('edit', seeker, good, 'not-an-id')).status, 404);
+	assert.equal((await runAction('edit', seeker, good, 'Not A Slug')).status, 404);
 });
 
 test('delete: you can delete your own review', async () => {
 	const result = await runAction('delete', seeker);
 	assert.equal(result.deleted, true);
 	assert.equal(deletes[0].table, 'company_review');
-	assert.deepEqual(params(deletes[0].where), [COMPANY_ID, 'seeker-1']);
+	assert.deepEqual(params(deletes[0].where), [SLUG, 'seeker-1']);
 });
 
-test('delete: nothing to delete, or a bad id, is refused', async () => {
+test('delete: nothing to delete, or a bad address, is refused', async () => {
 	deleted = [];
 	const result = await runAction('delete', seeker);
 	assert.equal(result.status, 404);
 	assert.equal(result.data?.message, "You haven't reviewed this company.");
 
-	assert.equal((await runAction('delete', seeker, {}, 'not-an-id')).status, 404);
+	assert.equal((await runAction('delete', seeker, {}, 'Not A Slug')).status, 404);
 	assert.equal(deletes.length, 1);
 });

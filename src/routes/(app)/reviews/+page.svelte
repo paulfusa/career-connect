@@ -65,7 +65,7 @@
 {#if data.reviews.length === 0}
 	<section class="{glassPanel} mt-5 p-8 text-center">
 		<p class="font-medium">You haven't reviewed any companies yet.</p>
-		<p class="mt-1 text-sm text-ink/60">Open a job posting and click the company name to leave a review.</p>
+		<p class="mt-1 text-sm text-ink/60">Open a job posting and click the reviews next to the company name to write one.</p>
 		<a href="/jobs" class="mt-4 inline-block font-medium text-tide-deep hover:underline dark:text-tide">Browse job postings →</a>
 	</section>
 {:else}
@@ -74,18 +74,18 @@
 			<li class="{glassPanel} p-6">
 				<div class="flex flex-wrap items-start justify-between gap-3">
 					<div class="min-w-0">
-						<a href="/companies/{review.companyId}" class="font-display text-xl font-semibold hover:underline">{review.companyName}</a>
+						<a href="/companies/{review.companySlug}" class="font-display text-xl font-semibold hover:underline">{review.companyName}</a>
 						<p class="text-sm text-ink/60">
-							{review.companyLocation} · {formatDate(review.createdAt)}{#if wasEdited(review)}&nbsp;· edited{/if}
+							{formatDate(review.createdAt)}{#if wasEdited(review)}&nbsp;· edited{/if}
 						</p>
 					</div>
 					{#if editing !== review.id}<Stars rating={review.rating} />{/if}
 				</div>
 
 				{#if editing === review.id}
-					{@const failed = !!form && 'companyId' in form && form.companyId === review.companyId}
+					{@const failed = !!form && 'company' in form && form.company === review.companySlug}
 					<form method="POST" action="?/edit" class="mt-4 space-y-5" use:enhance={onSave}>
-						<input type="hidden" name="companyId" value={review.companyId} />
+						<input type="hidden" name="company" value={review.companySlug} />
 						<StarInput bind:value={editRating} error={failed ? errors.rating : undefined} errorId="rating-error-{review.id}" />
 						<label class="block">
 							<span class={label}>Your review</span>
@@ -143,7 +143,7 @@
 		oncancel={() => (confirming = null)}
 	>
 		<form method="POST" action="?/delete" use:enhance={onDelete}>
-			<input type="hidden" name="companyId" value={confirming.companyId} />
+			<input type="hidden" name="company" value={confirming.companySlug} />
 			<button
 				disabled={deleting}
 				class="w-full rounded-xl bg-rose-600 px-4 py-2.5 font-semibold text-white transition hover:bg-rose-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600 disabled:opacity-70"

@@ -3,6 +3,8 @@ import { and, desc, eq, sql } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import { application, applicationOutcome, companyProfile, companyReview, jobPosting, resume, user } from '$lib/server/db/schema';
 import { canSeeReviews, toRating } from '$lib/server/company-reviews';
+import { slugOf, yourCompanySlugs } from '$lib/server/company-reviews-db';
+import { companySlug } from '$lib/company-reviews';
 import type { Actions, PageServerLoad } from './$types';
 import { applyProblem, parseApplication, todayEastern, withdrawProblem } from '$lib/server/application';
 import { canViewJobPosting, isClosed } from '$lib/server/job-posting';
@@ -15,15 +17,18 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 export const load: PageServerLoad = async ({ params, locals }) => {
 	if (!UUID.test(params.id)) error(404, 'Job posting not found.');
 
+	// US-09: the stars of the company named on the job
+	const company = slugOf(jobPosting.company);
 	const [result] = await db
 		.select({
 			posting: jobPosting,
 			creatorName: user.name,
 			creatorImage: user.image,
 			companyProfile: companyProfile,
-			// US-09: the company's average stars
-			ratingAverage: sql<string | null>`(select avg(${companyReview.rating}) from ${companyReview} where ${companyReview.companyId} = ${companyProfile.id})`,
-			ratingCount: sql<number>`(select count(*)::int from ${companyReview} where ${companyReview.companyId} = ${companyProfile.id})`
+			companySlug: company,
+			ratingAverage: sql<string | null>`(select avg(${companyReview.rating}) from ${companyReview} where ${companyReview.companySlug} = ${company})`,
+			ratingCount: sql<number>`(select count(*)::int from ${companyReview} where ${companyReview.companySlug} = ${company})`,
+			yourCompany: sql<boolean>`${company} in (${yourCompanySlugs(locals.user!.id)})`
 		})
 		.from(jobPosting)
 		.innerJoin(user, eq(jobPosting.createdBy, user.id))
@@ -69,13 +74,15 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 	const submitted = await submittedCount(result.posting.id);
 	const { decided, offered } = await decisionCounts(result.posting.id);
 
-	const { ratingAverage, ratingCount, ...job } = result;
-	// recruiters only see the reviews of their own company
-	const showReviews = canSeeReviews(locals.user, { recruiterId: result.posting.createdBy });
+	const { ratingAverage, ratingCount, yourCompany, ...job } = result;
+	// recruiters only see the reviews of their own companies
+	const showReviews = !!job.companySlug && canSeeReviews(locals.user, yourCompany);
 	return {
 		...job,
 		showReviews,
 		companyRating: showReviews ? toRating(ratingAverage, ratingCount) : null,
+		// the About box is the recruiter's company profile, which can be a different company than the job's
+		aboutThisCompany: showReviews && !!job.companyProfile && companySlug(job.companyProfile.name) === job.companySlug,
 		isOwner: result.posting.createdBy === locals.user!.id,
 		isJobSeeker,
 		resumes,

@@ -61,9 +61,10 @@ export const companyReview = pgTable(
 	'company_review',
 	{
 		id: uuid('id').primaryKey().defaultRandom(),
-		companyId: uuid('company_id')
-			.notNull()
-			.references(() => companyProfile.id, { onDelete: 'cascade' }),
+		// the company's name as a slug (see companySlug), so it works for any posting or profile with that name
+		companySlug: text('company_slug').notNull(),
+		// the name the way it was written when the review was posted
+		companyName: text('company_name').notNull(),
 		userId: userId(),
 		// 0 to 5, in half stars
 		rating: numeric('rating', { precision: 2, scale: 1, mode: 'number' }).notNull(),
@@ -72,9 +73,10 @@ export const companyReview = pgTable(
 		updatedAt: timestamp('updated_at').defaultNow().notNull()
 	},
 	(t) => [
-		unique('company_review_company_user_unique').on(t.companyId, t.userId),
+		unique('company_review_company_user_unique').on(t.companySlug, t.userId),
 		index('company_review_user_id_idx').on(t.userId),
-		check('company_review_rating_check', sql`${t.rating} between 0 and 5 and ${t.rating} * 2 = round(${t.rating} * 2)`)
+		check('company_review_rating_check', sql`${t.rating} between 0 and 5 and ${t.rating} * 2 = round(${t.rating} * 2)`),
+		check('company_review_slug_check', sql`${t.companySlug} ~ '^[a-z0-9]+(-[a-z0-9]+)*$'`)
 	]
 );
 

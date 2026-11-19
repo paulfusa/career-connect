@@ -1,17 +1,15 @@
-import { error, redirect } from '@sveltejs/kit';
-import { eq } from 'drizzle-orm';
-import { db } from '$lib/server/db';
-import { companyProfile } from '$lib/server/db/schema';
+import { error } from '@sveltejs/kit';
+import { ratingsFor, yourCompanies } from '$lib/server/company-reviews-db';
 import type { PageServerLoad } from './$types';
 
-// US-09: Company reviews in the recruiter sidebar, sends them to their own company page
+// US-09: Company reviews in the recruiter sidebar. Lists the companies you're part of (your company profile
+// and the companies on jobs you posted) with their stars, and each one opens its reviews
 export const load: PageServerLoad = async ({ locals }) => {
 	const me = locals.user;
 	if (!me || me.role !== 'recruiter') error(403, 'Only recruiters have company reviews.');
 
-	const [company] = await db.select({ id: companyProfile.id }).from(companyProfile).where(eq(companyProfile.recruiterId, me.id));
-	if (company) redirect(303, `/companies/${company.id}`);
+	const companies = await yourCompanies(me.id);
+	const ratings = await ratingsFor(companies.map((company) => company.slug));
 
-	// no company profile yet, the page says to make one
-	return {};
+	return { companies: companies.map((company) => ({ ...company, rating: ratings.get(company.slug) ?? null })) };
 };

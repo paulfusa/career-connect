@@ -1,7 +1,8 @@
 import { REVIEW_LIMITS } from '../company-reviews.ts';
 
-const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-export const isId = (value: unknown): value is string => typeof value === 'string' && UUID.test(value);
+// a company in the address, like intel or lionfish-cyber-security (see companySlug)
+const SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/;
+export const isSlug = (value: unknown): value is string => typeof value === 'string' && value.length <= 200 && SLUG.test(value);
 
 export type ReviewForm = { rating: number | null; body: string };
 export type ReviewErrors = { rating?: string; body?: string };
@@ -40,18 +41,17 @@ export function toRating(average: unknown, count: unknown): { average: number; c
 	return { average: oneDecimal(Number(average)), count: reviews };
 }
 
-type Reviewer = { id: string; role: string } | null | undefined;
+type Reviewer = { role: string } | null | undefined;
 export const ONLY_JOB_SEEKERS = 'Only job seekers can review companies.';
 
-// job seekers only. The owner check is for admins, who can own a company and switch to the job seeker view
-export function reviewProblem(user: Reviewer, company: { recruiterId: string }): string | null {
+// job seekers only, and not about your own company (an admin with a company can switch to the job seeker view)
+export function reviewProblem(user: Reviewer, yours: boolean): string | null {
 	if (user?.role !== 'job_seeker') return ONLY_JOB_SEEKERS;
-	if (user.id === company.recruiterId) return "You can't review your own company.";
+	if (yours) return "You can't review your own company.";
 	return null;
 }
 
-export const canReviewCompany = (user: Reviewer, company: { recruiterId: string }) => reviewProblem(user, company) === null;
+export const canReviewCompany = (user: Reviewer, yours: boolean) => reviewProblem(user, yours) === null;
 
-// job seekers see every company's reviews, recruiters only their own company's
-export const canSeeReviews = (user: Reviewer, company: { recruiterId: string }) =>
-	user?.role === 'job_seeker' || user?.id === company.recruiterId;
+// job seekers see every company's reviews, recruiters only the companies they're part of
+export const canSeeReviews = (user: Reviewer, yours: boolean) => user?.role === 'job_seeker' || yours;
