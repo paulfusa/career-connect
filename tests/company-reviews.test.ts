@@ -85,6 +85,7 @@ const db = {
 (globalThis as typeof globalThis & { __reviewDb: typeof db }).__reviewDb = db;
 
 const { parseReview, ratingSummary, toRating, canReviewCompany } = await import('../src/lib/server/company-reviews.ts');
+const { starFills } = await import('../src/lib/company-reviews.ts');
 const companyPage = await import('../src/routes/(app)/companies/[id]/+page.server.ts');
 const jobsPage = await import('../src/routes/(app)/jobs/+page.server.ts');
 const myReviewsPage = await import('../src/routes/(app)/reviews/+page.server.ts');
@@ -156,6 +157,16 @@ test('average: none yet, one review, and rounding to one decimal', () => {
 	assert.deepEqual(ratingSummary([4, 2]), { average: 3, count: 2 });
 	assert.deepEqual(ratingSummary([5, 2]), { average: 3.5, count: 2 });
 	assert.deepEqual(ratingSummary([5, 4, 4]), { average: 4.3, count: 3 });
+});
+
+test('stars: averages show half stars, rounded to the closest half', () => {
+	assert.deepEqual(starFills(3.5), [1, 1, 1, 0.5, 0]);
+	assert.deepEqual(starFills(4), [1, 1, 1, 1, 0]);
+	assert.deepEqual(starFills(4.3), [1, 1, 1, 1, 0.5]);
+	assert.deepEqual(starFills(4.2), [1, 1, 1, 1, 0]);
+	assert.deepEqual(starFills(1.5), [1, 0.5, 0, 0, 0]);
+	assert.deepEqual(starFills(5), [1, 1, 1, 1, 1]);
+	assert.deepEqual(starFills(0), [0, 0, 0, 0, 0]);
 });
 
 test('stars on job postings: the average from postgres is rounded, and no reviews means no stars', () => {
