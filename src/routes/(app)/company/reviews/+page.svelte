@@ -9,12 +9,12 @@
 <svelte:head><title>Company reviews · CareerConnect</title></svelte:head>
 
 <h1 class="font-display text-3xl font-semibold tracking-tight md:mt-14">Company reviews</h1>
-<p class="mt-2 text-ink/65">What job seekers say about your company and the companies you post jobs for.</p>
+<p class="mt-2 text-ink/65">Reviews of your company and the companies you post jobs for.</p>
 
 {#if data.companies.length === 0}
 	<section class="{glassPanel} mt-5 p-8 text-center">
 		<p class="font-medium">You don't have a company yet.</p>
-		<p class="mt-1 text-sm text-ink/60">Make a company profile or post a job, and you'll see the company's reviews here.</p>
+		<p class="mt-1 text-sm text-ink/60">Make a company profile or post a job and you'll see its reviews here.</p>
 		<a href="/company/edit" class="mt-4 inline-block font-medium text-tide-deep hover:underline dark:text-tide">Create Company Profile →</a>
 	</section>
 {:else}

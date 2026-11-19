@@ -55,7 +55,7 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 		sortBy = [sql`coalesce(${jobPosting.salaryMax}, ${jobPosting.salaryMin}) desc nulls last`];
 	}
 
-	// US-09: reviews of the company named on the job
+	// US-09: reviews of the company on the job
 	const company = slugOf(jobPosting.company);
 	const companyReviews = sql`from ${companyReview} where ${companyReview.companySlug} = ${company}`;
 
@@ -88,7 +88,7 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 			...posting,
 			closed: isClosed(posting, today),
 			applicationCount: mine ? countsByPosting.get(posting.id) ?? 0 : null,
-			// recruiters only see the stars of their own companies
+			// recruiters only see stars for their own companies
 			rating: canSeeReviews(locals.user, yourCompany) ? toRating(ratingAverage, ratingCount) : null
 		})),
 		mine,

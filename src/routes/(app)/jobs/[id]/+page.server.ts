@@ -17,7 +17,7 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 export const load: PageServerLoad = async ({ params, locals }) => {
 	if (!UUID.test(params.id)) error(404, 'Job posting not found.');
 
-	// US-09: the stars of the company named on the job
+	// US-09: stars of the company on the job
 	const company = slugOf(jobPosting.company);
 	const [result] = await db
 		.select({
@@ -75,13 +75,13 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 	const { decided, offered } = await decisionCounts(result.posting.id);
 
 	const { ratingAverage, ratingCount, yourCompany, ...job } = result;
-	// recruiters only see the reviews of their own companies
+	// recruiters only see their own companies' reviews
 	const showReviews = !!job.companySlug && canSeeReviews(locals.user, yourCompany);
 	return {
 		...job,
 		showReviews,
 		companyRating: showReviews ? toRating(ratingAverage, ratingCount) : null,
-		// the About box is the recruiter's company profile, which can be a different company than the job's
+		// the About box shows the recruiter's profile, which isn't always the job's company
 		aboutThisCompany: showReviews && !!job.companyProfile && companySlug(job.companyProfile.name) === job.companySlug,
 		isOwner: result.posting.createdBy === locals.user!.id,
 		isJobSeeker,

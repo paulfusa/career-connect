@@ -61,9 +61,9 @@ export const companyReview = pgTable(
 	'company_review',
 	{
 		id: uuid('id').primaryKey().defaultRandom(),
-		// the company's name as a slug (see companySlug), so it works for any posting or profile with that name
+		// company name in lowercase with dashes (see companySlug)
 		companySlug: text('company_slug').notNull(),
-		// the name the way it was written when the review was posted
+		// the name the way it was written
 		companyName: text('company_name').notNull(),
 		userId: userId(),
 		// 0 to 5, in half stars

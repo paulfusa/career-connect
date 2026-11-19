@@ -102,7 +102,7 @@ const seeker = { id: 'seeker-1', role: 'job_seeker' };
 const owner = { id: 'recruiter-1', role: 'recruiter' };
 const otherRecruiter = { id: 'recruiter-2', role: 'recruiter' };
 const good = { rating: '4', body: 'Quick replies and a clear interview process.' };
-// the company page looks up the company, then the companies you're part of (profile, then jobs you posted)
+// after finding the company, the page looks up your companies (profile, then your jobs)
 const notYours = [[], []];
 
 const formOf = (values: Record<string, string>) => {
@@ -113,7 +113,7 @@ const formOf = (values: Record<string, string>) => {
 // query params, to check which company and user a query is for
 const params = (condition?: SQL) => (condition ? dialect.sqlToQuery(condition).params : []);
 const sqlOf = (field: unknown) => dialect.sqlToQuery(field as SQL);
-// what slugOf(job_posting.company) looks like in SQL
+// slugOf(job_posting.company) in SQL
 const jobCompanySlug = `trim(both '-' from regexp_replace(lower("job_posting"."company"), '[^a-z0-9]+', '-', 'g'))`;
 
 type Result = Record<string, unknown> & { status?: number; data?: Record<string, unknown> };
@@ -190,7 +190,7 @@ test('stars on job postings: the average from postgres is rounded, and no review
 	assert.equal(toRating(undefined, undefined), null);
 });
 
-test('company names: the same company however it is written', () => {
+test('company names: Intel, intel and INTEL are the same company', () => {
 	assert.equal(companySlug('Intel'), 'intel');
 	assert.equal(companySlug('  INTEL '), 'intel');
 	assert.equal(companySlug('Lionfish Cyber Security'), 'lionfish-cyber-security');
@@ -198,12 +198,12 @@ test('company names: the same company however it is written', () => {
 	assert.equal(companySlug('Apple News+'), 'apple-news');
 	assert.equal(companySlug('!!!'), '');
 
-	// and only names written that way work in the address
+	// only names like that work in the url
 	assert.equal(isSlug('lionfish-cyber-security'), true);
 	for (const bad of ['', 'Intel', '-intel', 'intel-', 'in--tel', '../intel', 'a'.repeat(201), null]) assert.equal(isSlug(bad), false, String(bad));
 });
 
-test("job list: each posting gets the stars of the company on it, not of the recruiter's profile", async () => {
+test("job list: each job shows its own company's stars, not the recruiter's profile", async () => {
 	const job = { archived: false, published: true, status: 'open', applicationDeadline: null };
 	results = [[
 		{ ...job, id: 'job-1', company: 'Intel', ratingAverage: '3.5000000000000000', ratingCount: 2, yourCompany: false },
@@ -215,7 +215,7 @@ test("job list: each posting gets the stars of the company on it, not of the rec
 	assert.deepEqual(page.postings.map((posting) => posting.rating), [{ average: 3.5, count: 2 }, null]);
 	// the raw columns aren't sent to the page
 	assert.ok(!('ratingAverage' in page.postings[0]) && !('yourCompany' in page.postings[0]));
-	// the reviews are matched with the company name on the job
+	// matched by the company name on the job
 	const count = sqlOf(selects[0].fields.ratingCount).sql;
 	assert.ok(count.includes(`"company_review"."company_slug" = ${jobCompanySlug}`), count);
 	assert.ok(!count.includes('company_profile'));
@@ -229,7 +229,7 @@ test("job list: each posting gets the stars of the company on it, not of the rec
 		postings: Record<string, unknown>[];
 	};
 	assert.deepEqual(recruiterView.postings.map((posting) => posting.rating), [{ average: 3.5, count: 2 }, null]);
-	// their companies come from their profile and the jobs they posted
+	// their companies come from their profile and their jobs
 	assert.deepEqual(sqlOf(selects[1].fields.yourCompany).params, ['recruiter-1', 'recruiter-1']);
 });
 
@@ -376,7 +376,7 @@ async function openJob(me: { role: string }, changes: Record<string, unknown> = 
 	return (await jobPage.load({ params: { id: posting.id }, locals: { user: me } } as never)) as Record<string, unknown>;
 }
 
-test("job page: the stars are the job's company's, and recruiters only see their own companies'", async () => {
+test("job page: shows the stars of the job's company, recruiters only for their own companies", async () => {
 	const seekerView = await openJob(seeker);
 	assert.equal(seekerView.showReviews, true);
 	assert.deepEqual(seekerView.companyRating, { average: 4.5, count: 2 });
@@ -396,7 +396,7 @@ test("job page: the stars are the job's company's, and recruiters only see their
 	assert.ok(!('ratingAverage' in otherView) && !('yourCompany' in otherView));
 });
 
-test("job page: a job for another company doesn't link the recruiter's profile to the reviews", async () => {
+test("job page: a job at another company doesn't link the recruiter's profile to the reviews", async () => {
 	// Hiring company's profile is Intel, but this job is at Lionfish
 	const page = await openJob(seeker, { companyProfile: { ...profile, name: 'Intel' }, companySlug: 'lionfish-cyber-security', ratingAverage: null, ratingCount: 0 });
 	assert.equal(page.showReviews, true);
@@ -412,7 +412,7 @@ test('company reviews: a recruiter sees each of their companies with its stars',
 		[{ slug: SLUG, average: '4.0000000000000000', count: 1 }]
 	];
 	const page = (await companyReviewsPage.load({ locals: { user: owner } } as never)) as Record<string, unknown>;
-	// the profile's name wins, and a name with no letters or numbers is skipped
+	// uses the profile's spelling, and skips '!!!'
 	assert.deepEqual(page.companies, [
 		{ slug: SLUG, name: 'Northwind', rating: { average: 4, count: 1 } },
 		{ slug: 'lionfish-cyber-security', name: 'Lionfish Cyber Security', rating: null }

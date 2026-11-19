@@ -1,6 +1,6 @@
 import { REVIEW_LIMITS } from '../company-reviews.ts';
 
-// a company in the address, like intel or lionfish-cyber-security (see companySlug)
+// company name in the url, like lionfish-cyber-security
 const SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 export const isSlug = (value: unknown): value is string => typeof value === 'string' && value.length <= 200 && SLUG.test(value);
 
@@ -44,7 +44,7 @@ export function toRating(average: unknown, count: unknown): { average: number; c
 type Reviewer = { role: string } | null | undefined;
 export const ONLY_JOB_SEEKERS = 'Only job seekers can review companies.';
 
-// job seekers only, and not about your own company (an admin with a company can switch to the job seeker view)
+// only job seekers, and not for their own company (admins can switch to the job seeker view)
 export function reviewProblem(user: Reviewer, yours: boolean): string | null {
 	if (user?.role !== 'job_seeker') return ONLY_JOB_SEEKERS;
 	if (yours) return "You can't review your own company.";
@@ -53,5 +53,5 @@ export function reviewProblem(user: Reviewer, yours: boolean): string | null {
 
 export const canReviewCompany = (user: Reviewer, yours: boolean) => reviewProblem(user, yours) === null;
 
-// job seekers see every company's reviews, recruiters only the companies they're part of
+// job seekers see all reviews, recruiters only their own companies'
 export const canSeeReviews = (user: Reviewer, yours: boolean) => user?.role === 'job_seeker' || yours;

@@ -37,7 +37,7 @@
 			<div class="flex min-w-0 items-start gap-4">
 				<OrgLogo name={posting.company} domain={posting.companyDomain} />
 				<div class="min-w-0">
-					<!-- US-09: the company's stars go right next to its name and open its reviews (recruiters only get them for their own companies) -->
+					<!-- US-09: stars next to the company name, click them to see the reviews -->
 					<div class="flex flex-wrap items-center gap-x-3 gap-y-1">
 						<p class="text-sm font-medium uppercase tracking-widest text-tide-deep dark:text-tide">{posting.company}</p>
 						{#if data.showReviews}
@@ -149,7 +149,7 @@
 		
 		{#if data.companyProfile}
 			<section class="mt-8 border-t border-white/60 dark:border-white/15 pt-6">
-				<!-- US-09: the name opens the company page with its reviews, only when the profile is the job's company -->
+				<!-- US-09: only links to the reviews if the profile is the job's company -->
 				<h2 class="font-display text-xl font-semibold">
 					{#if data.aboutThisCompany}
 						About <a href="/companies/{data.companySlug}" class="text-tide-deep hover:underline dark:text-tide">{data.companyProfile.name}</a>

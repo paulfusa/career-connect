@@ -6,7 +6,7 @@ import { canReviewCompany, canSeeReviews, isSlug, ONLY_JOB_SEEKERS, parseReview,
 import { deleteReview, editReview, slugOf, yourCompanies } from '$lib/server/company-reviews-db';
 import type { Actions, PageServerLoad } from './$types';
 
-// the company's name and profile. A company doesn't need a profile, a job posting or an old review with its name is enough
+// a company doesn't need a profile, a job or an old review with its name is enough
 async function findCompany(slug: string) {
 	if (!isSlug(slug)) return null;
 

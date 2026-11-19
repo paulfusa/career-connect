@@ -89,7 +89,7 @@
 			</a>
 		{/if}
 	{:else}
-		<!-- reviews go with the name, so a company only on job postings still has a page -->
+		<!-- no profile, the name comes from a job posting -->
 		<p class="mt-5 text-ink/65">{company.name} doesn't have a company profile on CareerConnect yet.</p>
 	{/if}
 </section>

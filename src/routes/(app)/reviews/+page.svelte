@@ -65,7 +65,7 @@
 {#if data.reviews.length === 0}
 	<section class="{glassPanel} mt-5 p-8 text-center">
 		<p class="font-medium">You haven't reviewed any companies yet.</p>
-		<p class="mt-1 text-sm text-ink/60">Open a job posting and click the reviews next to the company name to write one.</p>
+		<p class="mt-1 text-sm text-ink/60">Open a job and click the reviews next to the company name to write one.</p>
 		<a href="/jobs" class="mt-4 inline-block font-medium text-tide-deep hover:underline dark:text-tide">Browse job postings →</a>
 	</section>
 {:else}
