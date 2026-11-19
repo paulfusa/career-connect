@@ -41,8 +41,7 @@ export function toRating(average: unknown, count: unknown): { average: number; c
 type Reviewer = { id: string; role: string } | null | undefined;
 export const ONLY_JOB_SEEKERS = 'Only job seekers can review companies.';
 
-// only job seekers write reviews, recruiters can just read them.
-// The owner check is for admins, who can have a company and then switch to the job seeker view
+// job seekers only. The owner check is for admins, who can own a company and switch to the job seeker view
 export function reviewProblem(user: Reviewer, company: { recruiterId: string }): string | null {
 	if (user?.role !== 'job_seeker') return ONLY_JOB_SEEKERS;
 	if (user.id === company.recruiterId) return "You can't review your own company.";

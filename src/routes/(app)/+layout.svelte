@@ -36,7 +36,7 @@
 		{ href: '/jobs', label: 'Jobs' },
 		...(data.user.role === 'job_seeker' ? [{ href: '/resumes', label: 'Resumes' }] : []),
 		...(data.user.role === 'job_seeker' ? [{ href: '/applications', label: 'My Applications' }] : []),
-		// US-09: the company reviews you wrote (only job seekers write them)
+		// US-09: job seekers only
 		...(data.user.role === 'job_seeker' ? [{ href: '/reviews', label: 'My reviews' }] : []),
 		// US-19: job seekers find recruiters here and recruiters find job seekers
 		{ href: '/people', label: data.user.role === 'job_seeker' ? 'Recruiters' : 'Job seekers' },

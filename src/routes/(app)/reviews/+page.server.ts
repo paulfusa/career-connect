@@ -6,7 +6,7 @@ import { isId, ONLY_JOB_SEEKERS, parseReview } from '$lib/server/company-reviews
 import { deleteReview, editReview } from '$lib/server/company-reviews-db';
 import type { Actions, PageServerLoad } from './$types';
 
-// US-09: every review you wrote, newest first. Only job seekers write reviews, like My Applications
+// US-09: your reviews, newest first (job seekers only, like My Applications)
 export const load: PageServerLoad = async ({ locals }) => {
 	const me = locals.user;
 	if (!me || me.role !== 'job_seeker') error(403, 'Only job seekers can see My reviews.');

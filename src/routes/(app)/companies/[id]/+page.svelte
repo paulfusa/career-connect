@@ -203,7 +203,7 @@
 						<p class="mt-4 whitespace-pre-line">{review.body}</p>
 						{#if review.mine}
 							<div class="mt-4 flex gap-2">
-								<!-- if you switched to recruiter (admins), you can still delete it but not edit it -->
+								<!-- admins in the recruiter view can delete it but not edit it -->
 								{#if data.canReview}
 									<button
 										type="button"
