@@ -15,12 +15,12 @@
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate",
 		"db:studio": "drizzle-kit studio",
-		"auth:schema": "auth generate --config src/lib/server/auth.ts --output src/lib/server/db/auth.schema.ts --yes",
-		"test": "node --experimental-strip-types --test \"tests/**/*.test.ts\" \"src/lib/**/*.test.ts\"",
+    "auth:schema": "auth generate --config src/lib/server/auth.ts --output src/lib/server/db/auth.schema.ts --yes",
+		"test": "node --experimental-strip-types --test \"tests/**/*.test.ts\" \"src/**/*.test.ts\"",
 		"lint": "eslint .",
-		"test:coverage": "node --experimental-strip-types --experimental-test-coverage --test-coverage-exclude=\"**/*.test.ts\" --test-coverage-lines=80 --test-coverage-branches=80 --test \"tests/**/*.test.ts\" \"src/lib/**/*.test.ts\"",
+		"test:coverage": "node --experimental-strip-types --experimental-test-coverage --test-coverage-exclude=\"**/*.test.ts\" --test-coverage-exclude=\"tests/helpers/**\" --test-coverage-lines=80 --test-coverage-branches=80 --test \"tests/**/*.test.ts\" \"src/**/*.test.ts\"",
 		"db:seed": "tsx --env-file=.env scripts/seed.ts"
-	},
+  },
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
 		"@sveltejs/adapter-node": "^5.5.8",
