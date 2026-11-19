@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm';
-import { pgTable, integer, text, timestamp, boolean, date, uuid, unique, index, check, jsonb } from 'drizzle-orm/pg-core';
+import { pgTable, integer, text, timestamp, boolean, date, uuid, unique, index, check, jsonb, numeric } from 'drizzle-orm/pg-core';
 import type { ParsedResume, ResumeReview } from '../resume-ai';
 import { user } from './auth.schema';
 
@@ -65,7 +65,8 @@ export const companyReview = pgTable(
 			.notNull()
 			.references(() => companyProfile.id, { onDelete: 'cascade' }),
 		userId: userId(),
-		rating: integer('rating').notNull(),
+		// 0.5 to 5, in half stars
+		rating: numeric('rating', { precision: 2, scale: 1, mode: 'number' }).notNull(),
 		body: text('body').notNull(),
 		createdAt: timestamp('created_at').defaultNow().notNull(),
 		updatedAt: timestamp('updated_at').defaultNow().notNull()
@@ -73,7 +74,7 @@ export const companyReview = pgTable(
 	(t) => [
 		unique('company_review_company_user_unique').on(t.companyId, t.userId),
 		index('company_review_user_id_idx').on(t.userId),
-		check('company_review_rating_check', sql`${t.rating} between 1 and 5`)
+		check('company_review_rating_check', sql`${t.rating} between 0.5 and 5 and ${t.rating} * 2 = round(${t.rating} * 2)`)
 	]
 );
 

@@ -10,11 +10,13 @@ export type ReviewErrors = { rating?: string; body?: string };
 export function parseReview(form: FormData): { values: ReviewForm; errors: ReviewErrors } {
 	const rawRating = form.get('rating');
 	const rawBody = form.get('body');
-	const rating = typeof rawRating === 'string' && /^[1-5]$/.test(rawRating) ? Number(rawRating) : null;
+	// half stars are fine: 0.5, 1, 1.5 ... 5
+	const number = typeof rawRating === 'string' && /^[0-5](\.[05])?$/.test(rawRating) ? Number(rawRating) : 0;
+	const rating = number >= 0.5 && number <= 5 ? number : null;
 	const body = typeof rawBody === 'string' ? rawBody.trim() : '';
 
 	const errors: ReviewErrors = {};
-	if (rating === null) errors.rating = 'Pick a rating from 1 to 5 stars.';
+	if (rating === null) errors.rating = 'Pick a rating from half a star to 5 stars.';
 	if (!body) errors.body = 'Write a few words about the company.';
 	else if (body.length < REVIEW_LIMITS.min) errors.body = `Your review needs at least ${REVIEW_LIMITS.min} characters.`;
 	else if (body.length > REVIEW_LIMITS.max) errors.body = `Your review can be at most ${REVIEW_LIMITS.max} characters.`;
