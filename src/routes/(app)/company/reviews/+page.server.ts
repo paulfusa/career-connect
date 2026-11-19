@@ -4,7 +4,7 @@ import { db } from '$lib/server/db';
 import { companyProfile } from '$lib/server/db/schema';
 import type { PageServerLoad } from './$types';
 
-// US-09: the Company reviews link in the recruiter sidebar, it goes to their own company page
+// US-09: Company reviews in the recruiter sidebar, sends them to their own company page
 export const load: PageServerLoad = async ({ locals }) => {
 	const me = locals.user;
 	if (!me || me.role !== 'recruiter') error(403, 'Only recruiters have company reviews.');

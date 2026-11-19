@@ -45,7 +45,7 @@
                             <p class="mt-1 text-sm text-ink/60">
                                 {data.company.location}
                             </p>
-                            <!-- US-09: your stars, they open the reviews -->
+                            <!-- US-09: your stars, click to see the reviews -->
                             <a href="/companies/{data.company.id}" class="mt-1 inline-flex items-center gap-1.5 text-sm text-ink/65 hover:underline">
                                 {#if data.rating}
                                     <Stars rating={data.rating.average} />

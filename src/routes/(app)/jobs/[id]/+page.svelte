@@ -48,7 +48,7 @@
 							{data.creatorName}
 						{/if}
 					</p>
-					<!-- US-09: stars link to the company's reviews (recruiters only see their own) -->
+					<!-- US-09: stars link to the reviews (recruiters only get them on their own jobs) -->
 					{#if data.companyProfile && data.showReviews}
 						<a href="/companies/{data.companyProfile.id}" class="mt-2 inline-flex items-center gap-1.5 text-sm text-ink/65 hover:underline">
 							{#if data.companyRating}
