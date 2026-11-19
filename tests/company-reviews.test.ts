@@ -139,9 +139,9 @@ test('form: the rating goes from half a star to 5, in half stars', () => {
 		assert.equal(parseReview(formOf({ ...good, rating })).values.rating, expected, rating);
 	}
 	for (const rating of ['0', '0.0', '5.5', '6', '4.3', '4.25', '-1', 'five', '', ' 3', '1e0']) {
-		assert.equal(parseReview(formOf({ ...good, rating })).errors.rating, 'Pick a rating from half a star to 5 stars.', rating);
+		assert.equal(parseReview(formOf({ ...good, rating })).errors.rating, 'Pick a star rating.', rating);
 	}
-	assert.equal(parseReview(formOf({ body: good.body })).errors.rating, 'Pick a rating from half a star to 5 stars.');
+	assert.equal(parseReview(formOf({ body: good.body })).errors.rating, 'Pick a star rating.');
 });
 
 test('form: the review is required and has a min and max length', () => {
@@ -315,7 +315,7 @@ test('post: a wrong form comes back with the messages and nothing is saved', asy
 	const result = await runAction('post', seeker, { rating: '', body: 'Nice' });
 	assert.equal(result.status, 400);
 	const errors = result.data?.errors as Record<string, string>;
-	assert.equal(errors.rating, 'Pick a rating from half a star to 5 stars.');
+	assert.equal(errors.rating, 'Pick a star rating.');
 	assert.equal(errors.body, 'Your review needs at least 10 characters.');
 	assert.equal((result.data?.values as Record<string, unknown>).body, 'Nice');
 	assert.equal(inserts.length, 0);

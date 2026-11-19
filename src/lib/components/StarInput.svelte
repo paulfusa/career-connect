@@ -2,8 +2,7 @@
 	import { RATINGS, starFills } from '$lib/company-reviews';
 	import FieldError from './FieldError.svelte';
 
-	// US-09: each star has two radio buttons on top of it, the left half and the right half.
-	// They're real radios, so it works with forms and the arrow keys
+	// US-09: two radios per star, one for each half (arrow keys work too)
 	let { value = $bindable(null), error, errorId }: { value?: number | null; error?: string; errorId: string } = $props();
 	const fills = $derived(starFills(value ?? 0));
 </script>

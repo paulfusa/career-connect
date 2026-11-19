@@ -102,7 +102,7 @@
 			</div>
 		{/if}
 	</div>
-	<p class={hint}>Reviews are written by CareerConnect users and aren't checked by CareerConnect.</p>
+	<p class={hint}>Reviews are written by people on CareerConnect, and we don't check them.</p>
 
 	{#if form && 'posted' in form}
 		<p class="{successBox} mt-5" role="status">Thanks, your review was posted.</p>
@@ -117,7 +117,7 @@
 	{#if data.isOwner}
 		<p class="mt-5 text-ink/65">This is your company, so you can't review it. You can still see what people wrote.</p>
 	{:else if !data.canReview}
-		<p class="mt-5 text-ink/65">Only job seekers can write reviews. As a recruiter, you can read them.</p>
+		<p class="mt-5 text-ink/65">Only job seekers can write reviews, but you can still read them.</p>
 	{:else if !mine}
 		<form
 			method="POST"
