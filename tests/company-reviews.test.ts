@@ -308,12 +308,12 @@ test("page: other recruiters can't open the page at all", async () => {
 	assert.equal(selects.length, 1);
 });
 
-// opens a job posted by recruiter-1, whose company has 2 reviews averaging 4.5
+// a job by recruiter-1, their company has 2 reviews (4.5 on average)
 async function openJob(me: { role: string }) {
 	const posting = { id: '11111111-1111-4111-8111-111111111111', createdBy: 'recruiter-1', published: true, archived: false, status: 'open', applicationDeadline: null };
 	results = [
 		[{ posting, creatorName: 'Hiring company', creatorImage: null, companyProfile: company, ratingAverage: '4.5', ratingCount: 2 }],
-		// job seekers also look up their application and resumes first
+		// for job seekers the page also gets their application and resumes
 		...(me.role === 'job_seeker' ? [[], []] : []),
 		[{ total: 0 }],
 		[]
@@ -333,7 +333,7 @@ test("job page: recruiters only see the stars on their own company's jobs", asyn
 	const otherView = await openJob(otherRecruiter);
 	assert.equal(otherView.showReviews, false);
 	assert.equal(otherView.companyRating, null);
-	// and the raw numbers aren't sent to the page either
+	// the raw numbers don't get sent either
 	assert.ok(!('ratingAverage' in otherView));
 });
 
