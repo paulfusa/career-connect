@@ -114,11 +114,10 @@
 		<p class="{errorBox} mt-5" role="alert">{form.message}</p>
 	{/if}
 
+	<!-- recruiters only get here for their own company -->
 	{#if data.isOwner}
 		<p class="mt-5 text-ink/65">This is your company, so you can't review it. You can still see what people wrote.</p>
-	{:else if !data.canReview}
-		<p class="mt-5 text-ink/65">Only job seekers can write reviews, but you can still read them.</p>
-	{:else if !mine}
+	{:else if data.canReview && !mine}
 		<form
 			method="POST"
 			action="?/post"

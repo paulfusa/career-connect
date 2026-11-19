@@ -4,7 +4,7 @@ import { db } from '$lib/server/db';
 import { application, companyProfile, companyReview, follow, jobPosting, user } from '$lib/server/db/schema';
 import type { Actions, PageServerLoad } from './$types';
 import { parseJobSearch, postedAfter } from '$lib/server/job-search';
-import { toRating } from '$lib/server/company-reviews';
+import { canSeeReviews, toRating } from '$lib/server/company-reviews';
 import { isClosed } from '$lib/server/job-posting';
 import { todayEastern } from '$lib/server/application';
 
@@ -86,7 +86,8 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 			...posting,
 			closed: isClosed(posting, today),
 			applicationCount: mine ? countsByPosting.get(posting.id) ?? 0 : null,
-			rating: toRating(ratingAverage, ratingCount)
+			// recruiters only see the stars on their own postings
+			rating: canSeeReviews(locals.user, { recruiterId: posting.createdBy }) ? toRating(ratingAverage, ratingCount) : null
 		})),
 		mine,
 		archivedView,

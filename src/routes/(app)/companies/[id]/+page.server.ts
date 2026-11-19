@@ -2,7 +2,7 @@ import { error, fail } from '@sveltejs/kit';
 import { desc, eq } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import { companyProfile, companyReview, user } from '$lib/server/db/schema';
-import { canReviewCompany, isId, ONLY_JOB_SEEKERS, parseReview, ratingSummary, reviewProblem } from '$lib/server/company-reviews';
+import { canReviewCompany, canSeeReviews, isId, ONLY_JOB_SEEKERS, parseReview, ratingSummary, reviewProblem } from '$lib/server/company-reviews';
 import { deleteReview, editReview } from '$lib/server/company-reviews-db';
 import type { Actions, PageServerLoad } from './$types';
 
@@ -16,6 +16,7 @@ async function findCompany(id: string) {
 export const load: PageServerLoad = async ({ params, locals }) => {
 	const company = await findCompany(params.id);
 	if (!company) error(404, 'Company not found.');
+	if (!canSeeReviews(locals.user, company)) error(403, "Recruiters can only see their own company's reviews.");
 
 	const rows = await db
 		.select({

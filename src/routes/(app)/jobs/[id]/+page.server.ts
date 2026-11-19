@@ -2,7 +2,7 @@ import { error, fail } from '@sveltejs/kit';
 import { and, desc, eq, sql } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import { application, applicationOutcome, companyProfile, companyReview, jobPosting, resume, user } from '$lib/server/db/schema';
-import { toRating } from '$lib/server/company-reviews';
+import { canSeeReviews, toRating } from '$lib/server/company-reviews';
 import type { Actions, PageServerLoad } from './$types';
 import { applyProblem, parseApplication, todayEastern, withdrawProblem } from '$lib/server/application';
 import { canViewJobPosting, isClosed } from '$lib/server/job-posting';
@@ -70,9 +70,12 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 	const { decided, offered } = await decisionCounts(result.posting.id);
 
 	const { ratingAverage, ratingCount, ...job } = result;
+	// recruiters only see the reviews of their own company
+	const showReviews = canSeeReviews(locals.user, { recruiterId: result.posting.createdBy });
 	return {
 		...job,
-		companyRating: toRating(ratingAverage, ratingCount),
+		showReviews,
+		companyRating: showReviews ? toRating(ratingAverage, ratingCount) : null,
 		isOwner: result.posting.createdBy === locals.user!.id,
 		isJobSeeker,
 		resumes,

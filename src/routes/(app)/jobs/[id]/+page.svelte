@@ -48,8 +48,8 @@
 							{data.creatorName}
 						{/if}
 					</p>
-					<!-- US-09: stars link to the company's reviews -->
-					{#if data.companyProfile}
+					<!-- US-09: stars link to the company's reviews (recruiters only see their own) -->
+					{#if data.companyProfile && data.showReviews}
 						<a href="/companies/{data.companyProfile.id}" class="mt-2 inline-flex items-center gap-1.5 text-sm text-ink/65 hover:underline">
 							{#if data.companyRating}
 								<Stars rating={data.companyRating.average} />
@@ -149,7 +149,11 @@
 			<section class="mt-8 border-t border-white/60 dark:border-white/15 pt-6">
 				<!-- US-09: the name opens the company page with its reviews -->
 				<h2 class="font-display text-xl font-semibold">
-					About <a href="/companies/{data.companyProfile.id}" class="text-tide-deep hover:underline dark:text-tide">{data.companyProfile.name}</a>
+					{#if data.showReviews}
+						About <a href="/companies/{data.companyProfile.id}" class="text-tide-deep hover:underline dark:text-tide">{data.companyProfile.name}</a>
+					{:else}
+						About {data.companyProfile.name}
+					{/if}
 				</h2>
 
 				<p class="mt-3 whitespace-pre-line leading-7 text-ink/75">
@@ -171,12 +175,14 @@
 					</a>
 				{/if}
 
-				<a
-					href="/companies/{data.companyProfile.id}"
-					class="mt-3 block font-medium text-tide-deep dark:text-tide hover:underline"
-				>
-					See reviews of {data.companyProfile.name} →
-				</a>
+				{#if data.showReviews}
+					<a
+						href="/companies/{data.companyProfile.id}"
+						class="mt-3 block font-medium text-tide-deep dark:text-tide hover:underline"
+					>
+						See reviews of {data.companyProfile.name} →
+					</a>
+				{/if}
 			</section>
 		{/if}
 

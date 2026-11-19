@@ -36,8 +36,8 @@
 		{ href: '/jobs', label: 'Jobs' },
 		...(data.user.role === 'job_seeker' ? [{ href: '/resumes', label: 'Resumes' }] : []),
 		...(data.user.role === 'job_seeker' ? [{ href: '/applications', label: 'My Applications' }] : []),
-		// US-09: job seekers only
-		...(data.user.role === 'job_seeker' ? [{ href: '/reviews', label: 'My reviews' }] : []),
+		// US-09: job seekers see the reviews they wrote, recruiters the reviews of their company
+		data.user.role === 'job_seeker' ? { href: '/reviews', label: 'My reviews' } : { href: '/company/reviews', label: 'Company reviews' },
 		// US-19: job seekers find recruiters here and recruiters find job seekers
 		{ href: '/people', label: data.user.role === 'job_seeker' ? 'Recruiters' : 'Job seekers' },
 		{ href: '/following', label: 'Following' },
@@ -85,7 +85,8 @@
 						href={item.href}
 						aria-current={
 							page.url.pathname === item.href ||
-							(item.href === '/jobs' && page.url.pathname.startsWith('/jobs'))
+							(item.href === '/jobs' && page.url.pathname.startsWith('/jobs')) ||
+							(item.href === '/company/reviews' && page.url.pathname.startsWith('/companies/'))
 								? 'page'
 								: undefined
 						}

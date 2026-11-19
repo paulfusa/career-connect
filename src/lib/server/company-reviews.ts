@@ -51,3 +51,7 @@ export function reviewProblem(user: Reviewer, company: { recruiterId: string }):
 }
 
 export const canReviewCompany = (user: Reviewer, company: { recruiterId: string }) => reviewProblem(user, company) === null;
+
+// job seekers see every company's reviews, recruiters only their own company's
+export const canSeeReviews = (user: Reviewer, company: { recruiterId: string }) =>
+	user?.role === 'job_seeker' || user?.id === company.recruiterId;
