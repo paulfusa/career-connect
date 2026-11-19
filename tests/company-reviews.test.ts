@@ -84,8 +84,9 @@ const db = {
 };
 (globalThis as typeof globalThis & { __reviewDb: typeof db }).__reviewDb = db;
 
-const { parseReview, ratingSummary, canReviewCompany } = await import('../src/lib/server/company-reviews.ts');
+const { parseReview, ratingSummary, toRating, canReviewCompany } = await import('../src/lib/server/company-reviews.ts');
 const companyPage = await import('../src/routes/(app)/companies/[id]/+page.server.ts');
+const jobsPage = await import('../src/routes/(app)/jobs/+page.server.ts');
 
 const COMPANY_ID = '7d3e2a10-5b6c-4f8e-9a1b-2c3d4e5f6a7b';
 const company = { id: COMPANY_ID, recruiterId: 'recruiter-1', name: 'Northwind', description: 'We make apps.', location: 'Montreal', website: null };
@@ -150,6 +151,27 @@ test('average: none yet, one review, and rounding to one decimal', () => {
 	assert.deepEqual(ratingSummary([4, 2]), { average: 3, count: 2 });
 	assert.deepEqual(ratingSummary([5, 2]), { average: 3.5, count: 2 });
 	assert.deepEqual(ratingSummary([5, 4, 4]), { average: 4.3, count: 3 });
+});
+
+test('stars on job postings: the average from postgres is rounded, and no reviews means no stars', () => {
+	assert.deepEqual(toRating('4.3333333333333333', 3), { average: 4.3, count: 3 });
+	assert.deepEqual(toRating('5.0000000000000000', 1), { average: 5, count: 1 });
+	assert.equal(toRating(null, 0), null);
+	assert.equal(toRating(undefined, undefined), null);
+});
+
+test('job list: each posting gets the stars of its company', async () => {
+	const job = { archived: false, published: true, status: 'open', applicationDeadline: null };
+	results = [[
+		{ ...job, id: 'job-1', createdBy: 'recruiter-1', ratingAverage: '3.5000000000000000', ratingCount: 2 },
+		{ ...job, id: 'job-2', createdBy: 'recruiter-2', ratingAverage: null, ratingCount: 0 }
+	]];
+	const page = (await jobsPage.load({ url: new URL('http://localhost/jobs'), locals: { user: seeker } } as never)) as {
+		postings: Record<string, unknown>[];
+	};
+	assert.deepEqual(page.postings.map((posting) => posting.rating), [{ average: 3.5, count: 2 }, null]);
+	// the raw columns aren't sent to the page
+	assert.ok(!('ratingAverage' in page.postings[0]));
 });
 
 test("who can review: anyone signed in, but not the company's own recruiter", () => {

@@ -1,9 +1,10 @@
 import { fail, redirect } from '@sveltejs/kit';
 import { and, asc, count, desc, eq, getTableColumns, gte, ilike, inArray, isNull, or, sql, type SQL } from 'drizzle-orm';
 import { db } from '$lib/server/db';
-import { application, follow, jobPosting, user } from '$lib/server/db/schema';
+import { application, companyProfile, companyReview, follow, jobPosting, user } from '$lib/server/db/schema';
 import type { Actions, PageServerLoad } from './$types';
 import { parseJobSearch, postedAfter } from '$lib/server/job-search';
+import { toRating } from '$lib/server/company-reviews';
 import { isClosed } from '$lib/server/job-posting';
 import { todayEastern } from '$lib/server/application';
 
@@ -53,9 +54,19 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 		sortBy = [sql`coalesce(${jobPosting.salaryMax}, ${jobPosting.salaryMin}) desc nulls last`];
 	}
 
+	// US-09: reviews of the company of whoever posted the job
+	const companyReviews = sql`from ${companyReview} inner join ${companyProfile} on ${companyProfile.id} = ${companyReview.companyId}
+		where ${companyProfile.recruiterId} = ${jobPosting.createdBy}`;
+
 	const postings = await db
 		// US-19: also get the name and photo of the recruiter who posted each job
-		.select({ ...getTableColumns(jobPosting), creatorName: user.name, creatorImage: user.image })
+		.select({
+			...getTableColumns(jobPosting),
+			creatorName: user.name,
+			creatorImage: user.image,
+			ratingAverage: sql<string | null>`(select avg(${companyReview.rating}) ${companyReviews})`,
+			ratingCount: sql<number>`(select count(*)::int ${companyReviews})`
+		})
 		.from(jobPosting)
 		.innerJoin(user, eq(user.id, jobPosting.createdBy))
 		.where(and(...conditions))
@@ -71,10 +82,11 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 
 	// US-05: past-deadline jobs show as Closed too
 	return {
-		postings: postings.map((posting) => ({
+		postings: postings.map(({ ratingAverage, ratingCount, ...posting }) => ({
 			...posting,
 			closed: isClosed(posting, today),
-			applicationCount: mine ? countsByPosting.get(posting.id) ?? 0 : null
+			applicationCount: mine ? countsByPosting.get(posting.id) ?? 0 : null,
+			rating: toRating(ratingAverage, ratingCount)
 		})),
 		mine,
 		archivedView,

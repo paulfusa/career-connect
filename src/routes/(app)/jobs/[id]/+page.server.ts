@@ -1,7 +1,8 @@
 import { error, fail } from '@sveltejs/kit';
-import { and, desc, eq } from 'drizzle-orm';
+import { and, desc, eq, sql } from 'drizzle-orm';
 import { db } from '$lib/server/db';
-import { application, applicationOutcome, companyProfile, jobPosting, resume, user } from '$lib/server/db/schema';
+import { application, applicationOutcome, companyProfile, companyReview, jobPosting, resume, user } from '$lib/server/db/schema';
+import { toRating } from '$lib/server/company-reviews';
 import type { Actions, PageServerLoad } from './$types';
 import { applyProblem, parseApplication, todayEastern, withdrawProblem } from '$lib/server/application';
 import { canViewJobPosting, isClosed } from '$lib/server/job-posting';
@@ -19,7 +20,10 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 			posting: jobPosting,
 			creatorName: user.name,
 			creatorImage: user.image,
-			companyProfile: companyProfile
+			companyProfile: companyProfile,
+			// US-09: the company's average stars
+			ratingAverage: sql<string | null>`(select avg(${companyReview.rating}) from ${companyReview} where ${companyReview.companyId} = ${companyProfile.id})`,
+			ratingCount: sql<number>`(select count(*)::int from ${companyReview} where ${companyReview.companyId} = ${companyProfile.id})`
 		})
 		.from(jobPosting)
 		.innerJoin(user, eq(jobPosting.createdBy, user.id))
@@ -65,8 +69,10 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 	const submitted = await submittedCount(result.posting.id);
 	const { decided, offered } = await decisionCounts(result.posting.id);
 
+	const { ratingAverage, ratingCount, ...job } = result;
 	return {
-		...result,
+		...job,
+		companyRating: toRating(ratingAverage, ratingCount),
 		isOwner: result.posting.createdBy === locals.user!.id,
 		isJobSeeker,
 		resumes,

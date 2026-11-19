@@ -19,11 +19,20 @@ export function parseReview(form: FormData): { values: ReviewForm; errors: Revie
 	return { values: { rating, body }, errors };
 }
 
+const oneDecimal = (value: number) => Math.round(value * 10) / 10;
+
 // average with one decimal, null if there are no reviews yet
 export function ratingSummary(ratings: number[]): { average: number | null; count: number } {
 	if (ratings.length === 0) return { average: null, count: 0 };
 	const total = ratings.reduce((sum, rating) => sum + rating, 0);
-	return { average: Math.round((total / ratings.length) * 10) / 10, count: ratings.length };
+	return { average: oneDecimal(total / ratings.length), count: ratings.length };
+}
+
+// for the stars on job postings: postgres gives avg() back as text, and null when there are no reviews
+export function toRating(average: unknown, count: unknown): { average: number; count: number } | null {
+	const reviews = Number(count ?? 0);
+	if (!reviews || average === null || average === undefined) return null;
+	return { average: oneDecimal(Number(average)), count: reviews };
 }
 
 // anyone signed in, except the recruiter who owns the company

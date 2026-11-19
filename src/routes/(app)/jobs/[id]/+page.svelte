@@ -6,6 +6,7 @@
 	import OrgLogo from '$lib/components/OrgLogo.svelte';
 	import OutcomeMessage from '$lib/components/OutcomeMessage.svelte';
 	import ProfileAvatarLink from '$lib/components/ProfileAvatarLink.svelte';
+	import Stars from '$lib/components/Stars.svelte';
 	import { EMPLOYMENT_TYPES, WORK_MODES } from '$lib/profile-options';
 	import { glassPanel, primaryButton, successBox } from '$lib/ui';
 	import type { PageProps } from './$types';
@@ -47,6 +48,17 @@
 							{data.creatorName}
 						{/if}
 					</p>
+					<!-- US-09: the company's stars, they open its reviews -->
+					{#if data.companyProfile}
+						<a href="/companies/{data.companyProfile.id}" class="mt-2 inline-flex items-center gap-1.5 text-sm text-ink/65 hover:underline">
+							{#if data.companyRating}
+								<Stars rating={data.companyRating.average} />
+								{data.companyRating.average.toFixed(1)} · {data.companyRating.count} {data.companyRating.count === 1 ? 'review' : 'reviews'}
+							{:else}
+								No reviews yet
+							{/if}
+						</a>
+					{/if}
 				</div>
 			</div>
 	{#if data.isOwner}
@@ -161,9 +173,10 @@
 
 				<a
 					href="/companies/{data.companyProfile.id}"
-					class="mt-3 block font-medium text-tide-deep dark:text-tide hover:underline"
+					class="mt-5 block w-fit rounded-xl border border-white/60 bg-white/70 px-5 py-3 font-medium text-tide-deep hover:bg-white
+						dark:border-white/15 dark:bg-[#303034] dark:text-[#7dd3df] dark:hover:bg-[#404044]"
 				>
-					See reviews of {data.companyProfile.name} →
+					See reviews of {data.companyProfile.name}
 				</a>
 			</section>
 		{/if}

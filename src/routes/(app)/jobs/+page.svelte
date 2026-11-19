@@ -1,6 +1,7 @@
 <script lang="ts">
 	import OrgLogo from '$lib/components/OrgLogo.svelte';
 	import ProfileAvatarLink from '$lib/components/ProfileAvatarLink.svelte';
+	import Stars from '$lib/components/Stars.svelte';
 	import SuggestInput from '$lib/components/SuggestInput.svelte';
 	import { searchCities, searchCompanies } from '$lib/suggest.svelte';
 	import { EMPLOYMENT_TYPES, JOB_SORTS, POSTED_WITHIN, WORK_MODES } from '$lib/profile-options';
@@ -145,6 +146,13 @@
 								<a href="/jobs/{posting.id}" class="outline-none after:absolute after:inset-0 after:rounded-[28px]">{posting.title}</a>
 							</h2>
 							<p class="mt-1 text-ink/70">{posting.company} <span aria-hidden="true">·</span> {posting.location}</p>
+							<!-- US-09: only shows once the company has reviews -->
+							{#if posting.rating}
+								<p class="mt-1 flex items-center gap-1.5 text-sm text-ink/65">
+									<Stars rating={posting.rating.average} />
+									{posting.rating.average.toFixed(1)} · {posting.rating.count} {posting.rating.count === 1 ? 'review' : 'reviews'}
+								</p>
+							{/if}
 						</div>
 					</div>
 
