@@ -1,7 +1,10 @@
+import { fail } from '@sveltejs/kit';
 import { desc, eq } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import { companyProfile, companyReview } from '$lib/server/db/schema';
-import type { PageServerLoad } from './$types';
+import { isId, parseReview } from '$lib/server/company-reviews';
+import { deleteReview, editReview } from '$lib/server/company-reviews-db';
+import type { Actions, PageServerLoad } from './$types';
 
 // US-09: every review you wrote, newest first
 export const load: PageServerLoad = async ({ locals }) => {
@@ -30,4 +33,32 @@ export const load: PageServerLoad = async ({ locals }) => {
 			: [];
 
 	return { reviews, ownCompany: ownCompany ?? null };
+};
+
+// same as on the company page, but the company comes from the form
+const gone = "That review doesn't exist anymore.";
+
+export const actions: Actions = {
+	edit: async ({ request, locals }) => {
+		const form = await request.formData();
+		const companyId = form.get('companyId');
+		if (!isId(companyId)) return fail(404, { message: gone });
+
+		const { values, errors } = parseReview(form);
+		if (values.rating === null || Object.keys(errors).length > 0) return fail(400, { values, errors, companyId });
+
+		const saved = await editReview(companyId, locals.user!.id, { rating: values.rating, body: values.body });
+		if (!saved) return fail(404, { message: gone });
+
+		return { updated: true };
+	},
+
+	delete: async ({ request, locals }) => {
+		const companyId = (await request.formData()).get('companyId');
+		if (!isId(companyId)) return fail(404, { message: gone });
+
+		if (!(await deleteReview(companyId, locals.user!.id))) return fail(404, { message: gone });
+
+		return { deleted: true };
+	}
 };

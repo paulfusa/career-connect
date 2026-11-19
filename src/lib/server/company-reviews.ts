@@ -1,5 +1,8 @@
 import { REVIEW_LIMITS } from '../company-reviews.ts';
 
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+export const isId = (value: unknown): value is string => typeof value === 'string' && UUID.test(value);
+
 export type ReviewForm = { rating: number | null; body: string };
 export type ReviewErrors = { rating?: string; body?: string };
 

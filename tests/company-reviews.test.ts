@@ -109,6 +109,10 @@ async function runAction(name: string, me: object, values: Record<string, string
 	const request = new Request('http://localhost/', { method: 'POST', body: formOf(values) });
 	return companyPage.actions[name]({ locals: { user: me }, params: { id }, request } as never) as Promise<Result>;
 }
+async function runMyReviewsAction(name: string, me: object, values: Record<string, string>) {
+	const request = new Request('http://localhost/', { method: 'POST', body: formOf(values) });
+	return myReviewsPage.actions[name]({ locals: { user: me }, request } as never) as Promise<Result>;
+}
 const openPage = (me: object, id = COMPANY_ID) =>
 	companyPage.load({ locals: { user: me }, params: { id } } as never) as Promise<Record<string, unknown>>;
 
@@ -198,6 +202,34 @@ test('my reviews: a recruiter also gets a link to the reviews of their own compa
 	// a recruiter who hasn't made a company profile yet
 	results = [[], []];
 	assert.equal(((await myReviewsPage.load({ locals: { user: otherRecruiter } } as never)) as Record<string, unknown>).ownCompany, null);
+});
+
+test('my reviews: you can edit and delete your review right from the list', async () => {
+	const edited = await runMyReviewsAction('edit', seeker, { companyId: COMPANY_ID, rating: '2', body: good.body });
+	assert.equal(edited.updated, true);
+	assert.equal(updates[0].set.rating, 2);
+	assert.deepEqual(params(updates[0].where), [COMPANY_ID, 'seeker-1']);
+
+	const deletedResult = await runMyReviewsAction('delete', seeker, { companyId: COMPANY_ID });
+	assert.equal(deletedResult.deleted, true);
+	assert.deepEqual(params(deletes[0].where), [COMPANY_ID, 'seeker-1']);
+});
+
+test('my reviews: a bad company, a wrong form or a review that is gone is refused', async () => {
+	assert.equal((await runMyReviewsAction('edit', seeker, { ...good, companyId: 'nope' })).status, 404);
+	assert.equal((await runMyReviewsAction('delete', seeker, { companyId: 'nope' })).status, 404);
+
+	// the errors come back with the company, so the page knows which review they're for
+	const bad = await runMyReviewsAction('edit', seeker, { companyId: COMPANY_ID, rating: '', body: good.body });
+	assert.equal(bad.status, 400);
+	assert.equal(bad.data?.companyId, COMPANY_ID);
+	assert.equal(updates.length, 0);
+	assert.equal(deletes.length, 0);
+
+	updated = [];
+	deleted = [];
+	assert.equal((await runMyReviewsAction('edit', seeker, { ...good, companyId: COMPANY_ID })).data?.message, "That review doesn't exist anymore.");
+	assert.equal((await runMyReviewsAction('delete', seeker, { companyId: COMPANY_ID })).status, 404);
 });
 
 test("who can review: anyone signed in, but not the company's own recruiter", () => {

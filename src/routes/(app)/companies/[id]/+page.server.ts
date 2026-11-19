@@ -1,21 +1,16 @@
 import { error, fail } from '@sveltejs/kit';
-import { and, desc, eq } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import { companyProfile, companyReview, user } from '$lib/server/db/schema';
-import { canReviewCompany, parseReview, ratingSummary } from '$lib/server/company-reviews';
+import { canReviewCompany, isId, parseReview, ratingSummary } from '$lib/server/company-reviews';
+import { deleteReview, editReview } from '$lib/server/company-reviews-db';
 import type { Actions, PageServerLoad } from './$types';
 
-const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
 async function findCompany(id: string) {
-	if (!UUID.test(id)) return null;
+	if (!isId(id)) return null;
 	const [company] = await db.select().from(companyProfile).where(eq(companyProfile.id, id));
 	return company ?? null;
 }
-
-// your own review of this company
-const yours = (companyId: string, userId: string) =>
-	and(eq(companyReview.companyId, companyId), eq(companyReview.userId, userId));
 
 // US-09: company page with its reviews
 export const load: PageServerLoad = async ({ params, locals }) => {
@@ -71,29 +66,21 @@ export const actions: Actions = {
 	},
 
 	edit: async ({ params, request, locals }) => {
-		if (!UUID.test(params.id)) return fail(404, { message: 'Company not found.' });
+		if (!isId(params.id)) return fail(404, { message: 'Company not found.' });
 
 		const { values, errors } = parseReview(await request.formData());
 		if (values.rating === null || Object.keys(errors).length > 0) return fail(400, { values, errors, editing: true });
 
-		const changed = await db
-			.update(companyReview)
-			.set({ rating: values.rating, body: values.body, updatedAt: new Date() })
-			.where(yours(params.id, locals.user!.id))
-			.returning({ id: companyReview.id });
-		if (changed.length === 0) return fail(404, { message: "You haven't reviewed this company." });
+		const saved = await editReview(params.id, locals.user!.id, { rating: values.rating, body: values.body });
+		if (!saved) return fail(404, { message: "You haven't reviewed this company." });
 
 		return { updated: true };
 	},
 
 	delete: async ({ params, locals }) => {
-		if (!UUID.test(params.id)) return fail(404, { message: 'Company not found.' });
+		if (!isId(params.id)) return fail(404, { message: 'Company not found.' });
 
-		const deleted = await db
-			.delete(companyReview)
-			.where(yours(params.id, locals.user!.id))
-			.returning({ id: companyReview.id });
-		if (deleted.length === 0) return fail(404, { message: "You haven't reviewed this company." });
+		if (!(await deleteReview(params.id, locals.user!.id))) return fail(404, { message: "You haven't reviewed this company." });
 
 		return { deleted: true };
 	}
