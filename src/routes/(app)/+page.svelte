@@ -21,7 +21,7 @@
 
 <svelte:head><title>CareerConnect</title></svelte:head>
 
-<h1 class="font-display text-3xl font-semibold tracking-tight md:mt-14">{c.title}</h1>
+<h1 class="font-display text-3xl font-semibold tracking-tight">{c.title}</h1>
 
 <section class="{glassPanel} mt-5 grid min-h-72 place-items-center p-8 text-center">
 	<div class="max-w-sm">

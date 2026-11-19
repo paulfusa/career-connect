@@ -13,7 +13,7 @@
 
 <svelte:head><title>{title} · CareerConnect</title></svelte:head>
 
-<h1 class="font-display text-3xl font-semibold tracking-tight md:mt-14">{title}</h1>
+<h1 class="font-display text-3xl font-semibold tracking-tight">{title}</h1>
 <p class="mt-2 text-ink/65">Open someone's profile to follow them.</p>
 
 <form method="get" class="{glassPanel} mt-5 flex flex-wrap items-end gap-3 p-5">

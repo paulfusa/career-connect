@@ -12,11 +12,11 @@ export const field =
     'dark:file:bg-[#343438] dark:file:text-[#7dd3df] dark:file:hover:bg-[#444448]';
 
 export const primaryButton =
-    'w-full rounded-xl bg-tide py-3 font-semibold text-white shadow-lg shadow-tide/25 transition hover:bg-tide-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tide active:scale-[0.99] disabled:opacity-70 ' +
+    'w-full rounded-xl bg-tide py-3 font-semibold text-white shadow-lg shadow-tide/25 transition duration-150 hover:-translate-y-px hover:bg-tide-deep hover:shadow-xl hover:shadow-tide/30 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tide active:translate-y-0 active:scale-[0.98] disabled:translate-y-0 disabled:opacity-70 disabled:shadow-none ' +
     'dark:bg-[#238998] dark:hover:bg-[#2c9bad] dark:shadow-black/30';
 
 export const secondaryButton =
-    'rounded-xl border border-white/70 bg-white/60 px-4 py-2.5 font-semibold text-ink transition hover:bg-white/85 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tide disabled:opacity-70 ' +
+    'rounded-xl border border-white/70 bg-white/60 px-4 py-2.5 font-semibold text-ink shadow-sm shadow-ink/5 transition duration-150 hover:-translate-y-px hover:border-white hover:bg-white/90 hover:shadow-md hover:shadow-ink/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tide active:translate-y-0 active:scale-[0.98] disabled:translate-y-0 disabled:opacity-70 disabled:shadow-none ' +
     'dark:border-white/15 dark:bg-[#242427] dark:hover:bg-[#303034]';
 
 export const errorBox =

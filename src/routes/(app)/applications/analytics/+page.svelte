@@ -9,7 +9,7 @@
 
 <svelte:head><title>Application Analytics · CareerConnect</title></svelte:head>
 
-<div class="flex flex-wrap items-end justify-between gap-4 md:mt-14">
+<div class="flex flex-wrap items-end justify-between gap-4">
     <div>
         <p class="text-sm font-medium uppercase tracking-widest text-tide-deep dark:text-tide">Your job search</p>
         <h1 class="mt-1 font-display text-3xl font-semibold tracking-tight">Application Analytics</h1>

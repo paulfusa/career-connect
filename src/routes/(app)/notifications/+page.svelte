@@ -77,7 +77,7 @@
 
 <svelte:head><title>Notifications · CareerConnect</title></svelte:head>
 
-<div class="space-y-5 md:mt-14">
+<div class="space-y-5">
 	<div class="flex flex-wrap items-start justify-between gap-4">
 		<div class="min-w-0">
 			<h1 class="font-display text-3xl font-semibold tracking-tight">Notifications</h1>

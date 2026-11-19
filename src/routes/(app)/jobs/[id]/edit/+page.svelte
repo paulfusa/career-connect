@@ -8,7 +8,7 @@
 
 <svelte:head><title>Edit job posting · CareerConnect</title></svelte:head>
 
-<div class="md:mt-14">
+<div>
 	<a href="/jobs/{data.posting.id}" class="text-sm font-medium text-tide-deep hover:underline">← Back to posting</a>
 	<h1 class="mt-3 font-display text-3xl font-semibold tracking-tight">Edit job posting</h1>
 	<section class="{glassPanel} mt-6 p-6 sm:p-8">

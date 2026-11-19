@@ -30,7 +30,7 @@
 	{/if}
 {/snippet}
 
-<div class="space-y-5 md:mt-14">
+<div class="space-y-5">
 	<ProfileView user={data.target} profile={data.targetProfile} experience={data.experience} education={data.education} {below} />
 
 	{#if data.target.role === 'recruiter'}

@@ -22,7 +22,7 @@
     <title>Applications · {data.posting.title} · CareerConnect</title>
 </svelte:head>
 
-<div class="md:mt-14">
+<div>
     <a
         href="/jobs/{data.posting.id}"
         class="text-sm font-medium text-tide-deep dark:text-tide hover:underline"

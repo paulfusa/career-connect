@@ -32,7 +32,7 @@
 
 <svelte:head><title>Resumes · CareerConnect</title></svelte:head>
 
-<div class="space-y-5 md:mt-14">
+<div class="space-y-5">
 	<div>
 		<h1 class="font-display text-3xl font-semibold tracking-tight">Resumes</h1>
 		<p class="mt-2 text-ink/60">Keep your resumes here so they’re ready when you apply.</p>

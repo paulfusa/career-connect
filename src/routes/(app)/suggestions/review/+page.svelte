@@ -24,7 +24,7 @@
 
 <svelte:head><title>Review suggestions · CareerConnect</title></svelte:head>
 
-<h1 class="font-display text-3xl font-semibold tracking-tight md:mt-14">Review suggestions</h1>
+<h1 class="font-display text-3xl font-semibold tracking-tight">Review suggestions</h1>
 <p class="mt-2 text-ink/65">Feature ideas from job seekers and recruiters. Set a status so they know where their idea stands.</p>
 
 <nav aria-label="Filter by status" class="mt-5 flex flex-wrap gap-2">
