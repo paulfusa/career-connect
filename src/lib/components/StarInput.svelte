@@ -2,8 +2,8 @@
 	import { RATINGS, starFills } from '$lib/company-reviews';
 	import FieldError from './FieldError.svelte';
 
-	// US-09: a 0 button, then two radios per star, one for each half (arrow keys work too).
-	// The radios are see-through and sit right on top, so the "pick one" bubble points at the stars
+	// US-09: a 0 button, then two radios per star (left half and right half).
+	// They're invisible but sit right on top, so the browser's "pick one" popup shows at the stars
 	let { value = $bindable(null), error, errorId }: { value?: number | null; error?: string; errorId: string } = $props();
 	const fills = $derived(starFills(value ?? 0));
 	const radio = 'absolute inset-0 size-full cursor-pointer appearance-none opacity-0';

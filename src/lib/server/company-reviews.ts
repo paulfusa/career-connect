@@ -11,8 +11,8 @@ export function parseReview(form: FormData): { values: ReviewForm; errors: Revie
 	const rawRating = form.get('rating');
 	const rawBody = form.get('body');
 	// 0 to 5 in half stars: 0, 0.5, 1 ... 5
-	const number = typeof rawRating === 'string' && /^[0-5](\.[05])?$/.test(rawRating) ? Number(rawRating) : NaN;
-	const rating = number <= 5 ? number : null;
+	const number = typeof rawRating === 'string' && /^[0-5](\.[05])?$/.test(rawRating) ? Number(rawRating) : null;
+	const rating = number !== null && number <= 5 ? number : null;
 	const body = typeof rawBody === 'string' ? rawBody.trim() : '';
 
 	const errors: ReviewErrors = {};
