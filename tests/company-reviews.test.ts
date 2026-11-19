@@ -47,6 +47,7 @@ const db = {
 		const query = {
 			from(table: Table) { call.table = getTableName(table); return query; },
 			innerJoin() { return query; },
+			leftJoin() { return query; },
 			where(condition: SQL) { call.where = condition; return query; },
 			orderBy() { return query; },
 			limit() { return query; },
@@ -92,6 +93,7 @@ const jobsPage = await import('../src/routes/(app)/jobs/+page.server.ts');
 const myReviewsPage = await import('../src/routes/(app)/reviews/+page.server.ts');
 const companyProfilePage = await import('../src/routes/(app)/company/+page.server.ts');
 const companyReviewsLink = await import('../src/routes/(app)/company/reviews/+page.server.ts');
+const jobPage = await import('../src/routes/(app)/jobs/[id]/+page.server.ts');
 
 const COMPANY_ID = '7d3e2a10-5b6c-4f8e-9a1b-2c3d4e5f6a7b';
 const company = { id: COMPANY_ID, recruiterId: 'recruiter-1', name: 'Northwind', description: 'We make apps.', location: 'Montreal', website: null };
@@ -304,6 +306,35 @@ test("page: other recruiters can't open the page at all", async () => {
 	await assert.rejects(openPage(otherRecruiter), (err) => isHttpError(err, 403));
 	// stopped before the reviews were loaded
 	assert.equal(selects.length, 1);
+});
+
+// opens a job posted by recruiter-1, whose company has 2 reviews averaging 4.5
+async function openJob(me: { role: string }) {
+	const posting = { id: '11111111-1111-4111-8111-111111111111', createdBy: 'recruiter-1', published: true, archived: false, status: 'open', applicationDeadline: null };
+	results = [
+		[{ posting, creatorName: 'Hiring company', creatorImage: null, companyProfile: company, ratingAverage: '4.5', ratingCount: 2 }],
+		// job seekers also look up their application and resumes first
+		...(me.role === 'job_seeker' ? [[], []] : []),
+		[{ total: 0 }],
+		[]
+	];
+	return (await jobPage.load({ params: { id: posting.id }, locals: { user: me } } as never)) as Record<string, unknown>;
+}
+
+test("job page: recruiters only see the stars on their own company's jobs", async () => {
+	const seekerView = await openJob(seeker);
+	assert.equal(seekerView.showReviews, true);
+	assert.deepEqual(seekerView.companyRating, { average: 4.5, count: 2 });
+
+	const ownerView = await openJob(owner);
+	assert.equal(ownerView.showReviews, true);
+	assert.deepEqual(ownerView.companyRating, { average: 4.5, count: 2 });
+
+	const otherView = await openJob(otherRecruiter);
+	assert.equal(otherView.showReviews, false);
+	assert.equal(otherView.companyRating, null);
+	// and the raw numbers aren't sent to the page either
+	assert.ok(!('ratingAverage' in otherView));
 });
 
 test('who can see reviews: job seekers see all of them, recruiters only their own company', () => {
