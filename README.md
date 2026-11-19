@@ -111,6 +111,7 @@ The repository is set up with SvelteKit, Svelte, TypeScript, Tailwind CSS, Postg
 - [Sprint submissions and summary reports](docs/submissions/)
 - [AI setup](docs/ai-setup.md)
 - [Deadline reminders](docs/deadline-reminders.md)
+- [Demo data](docs/seed-data.md)
 - [CI/CD pipeline](docs/ci-cd.md)
 - [AI usage logs](AI_Log/)
 - User stories and acceptance tests: GitHub Issues

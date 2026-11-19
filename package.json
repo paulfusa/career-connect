@@ -18,7 +18,8 @@
 		"auth:schema": "auth generate --config src/lib/server/auth.ts --output src/lib/server/db/auth.schema.ts --yes",
 		"test": "node --experimental-strip-types --test \"tests/**/*.test.ts\" \"src/lib/**/*.test.ts\"",
 		"lint": "eslint .",
-		"test:coverage": "node --experimental-strip-types --experimental-test-coverage --test-coverage-exclude=\"**/*.test.ts\" --test-coverage-lines=80 --test-coverage-branches=80 --test \"tests/**/*.test.ts\" \"src/lib/**/*.test.ts\""
+		"test:coverage": "node --experimental-strip-types --experimental-test-coverage --test-coverage-exclude=\"**/*.test.ts\" --test-coverage-lines=80 --test-coverage-branches=80 --test \"tests/**/*.test.ts\" \"src/lib/**/*.test.ts\"",
+		"db:seed": "tsx --env-file=.env scripts/seed.ts"
 	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
