@@ -41,6 +41,10 @@
 					{ href: '/applications', label: 'My Applications', icon: 'send' as const }
 				]
 			: []),
+		// US-09: My reviews for job seekers, Company reviews for recruiters
+		data.user.role === 'job_seeker'
+			? { href: '/reviews', label: 'My reviews', icon: 'star' }
+			: { href: '/company/reviews', label: 'Company reviews', icon: 'star' },
 		// US-19: job seekers find recruiters here and recruiters find job seekers
 		{ href: '/people', label: data.user.role === 'job_seeker' ? 'Recruiters' : 'Job seekers', icon: 'users' },
 		{ href: '/following', label: 'Following', icon: 'userCheck' },
@@ -101,7 +105,8 @@
 						href={item.href}
 						aria-current={
 							page.url.pathname === item.href ||
-							(item.href === '/jobs' && page.url.pathname.startsWith('/jobs'))
+							(item.href === '/jobs' && page.url.pathname.startsWith('/jobs')) ||
+							(item.href === '/company/reviews' && page.url.pathname.startsWith('/companies/'))
 								? 'page'
 								: undefined
 						}

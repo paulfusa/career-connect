@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm';
-import { pgTable, integer, text, timestamp, boolean, date, uuid, unique, index, check, jsonb } from 'drizzle-orm/pg-core';
+import { pgTable, integer, text, timestamp, boolean, date, uuid, unique, uniqueIndex, index, check, jsonb, numeric } from 'drizzle-orm/pg-core';
 import type { ParsedResume, ResumeReview } from '../resume-ai';
 import { user } from './auth.schema';
 
@@ -44,7 +44,6 @@ export const companyProfile = pgTable('company_profile', {
 
     recruiterId: text('recruiter_id')
         .notNull()
-        .unique()
         .references(() => user.id, { onDelete: 'cascade' }),
 
     name: text('name').notNull(),
@@ -54,8 +53,34 @@ export const companyProfile = pgTable('company_profile', {
 
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull()
-});
+}, (t) => [
+    // US-34: several companies per recruiter, but not two with the same name
+    uniqueIndex('company_profile_recruiter_name_unique').on(t.recruiterId, sql`trim(both '-' from regexp_replace(lower(${t.name}), '[^a-z0-9]+', '-', 'g'))`)
+]);
 
+// US-09: reviews of a company, one per person per company
+export const companyReview = pgTable(
+	'company_review',
+	{
+		id: uuid('id').primaryKey().defaultRandom(),
+		// company name in lowercase with dashes (see companySlug)
+		companySlug: text('company_slug').notNull(),
+		// the name the way it was written
+		companyName: text('company_name').notNull(),
+		userId: userId(),
+		// 0 to 5, in half stars
+		rating: numeric('rating', { precision: 2, scale: 1, mode: 'number' }).notNull(),
+		body: text('body').notNull(),
+		createdAt: timestamp('created_at').defaultNow().notNull(),
+		updatedAt: timestamp('updated_at').defaultNow().notNull()
+	},
+	(t) => [
+		unique('company_review_company_user_unique').on(t.companySlug, t.userId),
+		index('company_review_user_id_idx').on(t.userId),
+		check('company_review_rating_check', sql`${t.rating} between 0 and 5 and ${t.rating} * 2 = round(${t.rating} * 2)`),
+		check('company_review_slug_check', sql`${t.companySlug} ~ '^[a-z0-9]+(-[a-z0-9]+)*$'`)
+	]
+);
 
 export const experience = pgTable(
 	'experience',
@@ -239,3 +264,4 @@ export type FeatureSuggestion = typeof featureSuggestion.$inferSelect;
 
 export * from './auth.schema';
 export type CompanyProfile = typeof companyProfile.$inferSelect;
+export type CompanyReview = typeof companyReview.$inferSelect;

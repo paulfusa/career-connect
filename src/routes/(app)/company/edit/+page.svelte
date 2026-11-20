@@ -19,8 +19,9 @@
 
 <div class="space-y-5">
     <div>
-        <h1 class="font-display text-2xl font-semibold">
-            Company Profile
+        <a href="/company" class="text-sm font-medium text-tide-deep hover:underline dark:text-tide">← Your companies</a>
+        <h1 class="mt-3 font-display text-2xl font-semibold">
+            {data.company || form?.success ? 'Company Profile' : 'Add a company'}
         </h1>
         <p class="mt-2 text-sm text-ink/60">
             Manage your company information so job seekers
@@ -38,6 +39,8 @@
         {/if}
 
     <form method="POST" action="?/save" class="{glassPanel} space-y-5 p-6">
+        <!-- US-34: empty for a new company -->
+        <input type="hidden" name="id" value={form?.id ?? data.company?.id ?? ''} />
         <label class="block">
             <span class={label}>Company Name</span>
             

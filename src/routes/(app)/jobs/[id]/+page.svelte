@@ -6,6 +6,7 @@
 	import OrgLogo from '$lib/components/OrgLogo.svelte';
 	import OutcomeMessage from '$lib/components/OutcomeMessage.svelte';
 	import ProfileAvatarLink from '$lib/components/ProfileAvatarLink.svelte';
+	import Stars from '$lib/components/Stars.svelte';
 	import { EMPLOYMENT_TYPES, WORK_MODES } from '$lib/profile-options';
 	import { glassPanel, primaryButton, successBox } from '$lib/ui';
 	import type { PageProps } from './$types';
@@ -36,7 +37,20 @@
 			<div class="flex min-w-0 items-start gap-4">
 				<OrgLogo name={posting.company} domain={posting.companyDomain} />
 				<div class="min-w-0">
-					<p class="text-sm font-medium uppercase tracking-widest text-tide-deep dark:text-tide">{posting.company}</p>
+					<!-- US-09: stars next to the company name, click them to see the reviews -->
+					<div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+						<p class="text-sm font-medium uppercase tracking-widest text-tide-deep dark:text-tide">{posting.company}</p>
+						{#if data.showReviews}
+							<a href="/companies/{data.companySlug}" class="inline-flex items-center gap-1.5 text-sm text-ink/65 hover:underline">
+								{#if data.companyRating}
+									<Stars rating={data.companyRating.average} />
+									{data.companyRating.average.toFixed(1)} · {data.companyRating.count} {data.companyRating.count === 1 ? 'review' : 'reviews'}
+								{:else}
+									No reviews yet
+								{/if}
+							</a>
+						{/if}
+					</div>
 					<h1 class="mt-2 font-display text-3xl font-semibold tracking-tight">{posting.title}</h1>
 					<p class="mt-2 text-ink/65">
 						{posting.location} <span aria-hidden="true">·</span> Posted by
@@ -135,8 +149,13 @@
 		
 		{#if data.companyProfile}
 			<section class="mt-8 border-t border-white/60 dark:border-white/15 pt-6">
+				<!-- US-09: the name opens the company page with its reviews -->
 				<h2 class="font-display text-xl font-semibold">
-					About {data.companyProfile.name}
+					{#if data.showReviews}
+						About <a href="/companies/{data.companySlug}" class="text-tide-deep hover:underline dark:text-tide">{data.companyProfile.name}</a>
+					{:else}
+						About {data.companyProfile.name}
+					{/if}
 				</h2>
 
 				<p class="mt-3 whitespace-pre-line leading-7 text-ink/75">
@@ -157,6 +176,24 @@
 						Visit company website →
 					</a>
 				{/if}
+
+				{#if data.showReviews}
+					<a
+						href="/companies/{data.companySlug}"
+						class="mt-3 block font-medium text-tide-deep dark:text-tide hover:underline"
+					>
+						See reviews of {data.companyProfile.name} →
+					</a>
+				{/if}
+			</section>
+		{/if}
+
+		<!-- US-09: no About box, so the reviews link goes here -->
+		{#if data.showReviews && !data.companyProfile}
+			<section class="mt-8 border-t border-white/60 dark:border-white/15 pt-6">
+				<a href="/companies/{data.companySlug}" class="block font-medium text-tide-deep dark:text-tide hover:underline">
+					See reviews of {posting.company} →
+				</a>
 			</section>
 		{/if}
 
