@@ -12,7 +12,7 @@ export const load: PageServerLoad = async ({ locals }) => {
         error(403, 'Only recruiters can manage company profiles.');
     }
 
-    // US-09: a recruiter can have several companies
+    // US-34: a recruiter can have several companies
     const companies = await db
         .select()
         .from(companyProfile)

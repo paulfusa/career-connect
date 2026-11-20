@@ -31,7 +31,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 		})
 		.from(jobPosting)
 		.innerJoin(user, eq(jobPosting.createdBy, user.id))
-		// US-09: the recruiter's profile for this job's company
+		// US-34: the recruiter's profile for this job's company
 		.leftJoin(
 			companyProfile,
 			and(eq(companyProfile.recruiterId, jobPosting.createdBy), eq(slugOf(companyProfile.name), company))

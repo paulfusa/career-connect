@@ -21,7 +21,7 @@
         </p>
     </div>
 
-    <!-- US-09: a recruiter can have several companies -->
+    <!-- US-34: a recruiter can have several companies -->
     {#if data.companies.length > 0}
         {#each data.companies as company (company.id)}
         <div class="{glassPanel} overflow-hidden">

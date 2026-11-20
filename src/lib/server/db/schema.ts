@@ -54,7 +54,7 @@ export const companyProfile = pgTable('company_profile', {
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull()
 }, (t) => [
-    // US-09: several companies per recruiter, but not two with the same name
+    // US-34: several companies per recruiter, but not two with the same name
     uniqueIndex('company_profile_recruiter_name_unique').on(t.recruiterId, sql`trim(both '-' from regexp_replace(lower(${t.name}), '[^a-z0-9]+', '-', 'g'))`)
 ]);
 

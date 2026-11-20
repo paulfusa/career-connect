@@ -39,7 +39,7 @@
         {/if}
 
     <form method="POST" action="?/save" class="{glassPanel} space-y-5 p-6">
-        <!-- US-09: empty for a new company -->
+        <!-- US-34: empty for a new company -->
         <input type="hidden" name="id" value={form?.id ?? data.company?.id ?? ''} />
         <label class="block">
             <span class={label}>Company Name</span>

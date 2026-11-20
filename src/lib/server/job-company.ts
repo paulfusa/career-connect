@@ -2,7 +2,7 @@ import { companySlug } from '$lib/company-reviews';
 import { yourCompanies } from '$lib/server/company-reviews-db';
 import { parseJobPosting } from '$lib/server/job-posting';
 
-// US-09: recruiters can only post jobs for their own companies
+// US-34: recruiters can only post jobs for their own companies
 
 // https://www.intel.com/ -> intel.com, for the job's logo
 export function domainOf(website: string | null): string | null {

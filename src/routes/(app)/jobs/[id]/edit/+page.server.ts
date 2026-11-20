@@ -38,7 +38,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 					createdAt: posting.createdAt,
 					updatedAt: posting.updatedAt
 		},
-		// US-09: for the company dropdown
+		// US-34: for the company dropdown
 		companies: (await yourCompanies(locals.user!.id)).map((company) => company.name)
 	};
 };
@@ -46,7 +46,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 export const actions: Actions = {
 	save: async ({ request, params, locals }) => {
 		const form = await request.formData();
-		// US-09: has to be one of your companies
+		// US-34: has to be one of your companies
 		const wrongCompany = locals.user!.role === 'recruiter' ? await checkJobCompany(locals.user!.id, form) : null;
 		if (wrongCompany) return fail(400, wrongCompany);
 

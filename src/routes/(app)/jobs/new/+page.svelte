@@ -14,7 +14,7 @@
 	<p class="mt-2 text-ink/60">Share an opportunity with job seekers on CareerConnect.</p>
 
 	<section class="{glassPanel} mt-6 p-6 sm:p-8">
-		<!-- US-09: you need a company before you can post -->
+		<!-- US-34: you need a company before you can post -->
 		{#if data.companies.length === 0}
 			<p class="font-medium">You need a company profile before you can post a job.</p>
 			<a href="/company/edit" class="mt-3 inline-block font-medium text-tide-deep hover:underline dark:text-tide">Create Company Profile →</a>
