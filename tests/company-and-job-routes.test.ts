@@ -26,24 +26,48 @@ const job = {
 	requirements: 'Java experience',
 	applicationDeadline: '2099-10-23'
 };
+// US-34: the recruiter's company, as yourCompanies() returns it
+const acmeCompany = { slug: 'acme', name: 'Acme', website: null };
 
-test('company pages: only recruiters, each seeing their own company', async () => {
+test('company pages: only recruiters, each seeing their own companies', async () => {
 	for (const page of [company, companyEdit]) {
 		const denied = await run(() => page.load(event({ user: seeker })));
 		assert.deepEqual(denied, { kind: 'error', status: 403, message: 'Only recruiters can manage company profiles.' });
-		fake.db.results.push([{ name: 'Acme' }]);
-		assert.deepEqual(await page.load(event({ user: recruiter })), { company: { name: 'Acme' } });
-		assert.deepEqual(fake.db.queries.at(-1)!.params, ['recruiter-1']);
-		assert.deepEqual(await page.load(event({ user: recruiter })), { company: null });
 	}
+
+	// US-34: a recruiter can have several companies
+	fake.db.results.push([{ name: 'Acme' }]);
+	assert.deepEqual(await company.load(event({ user: recruiter })), { companies: [{ name: 'Acme', slug: 'acme', rating: null }] });
+	assert.deepEqual(fake.db.queries[0].params, ['recruiter-1']);
+	assert.deepEqual(await company.load(event({ user: recruiter })), { companies: [] });
+
+	// the edit page opens one of yours with ?id=, and no id means a new one
+	const edit = `http://localhost/company/edit?id=${id}`;
+	assert.deepEqual(await companyEdit.load(event({ user: recruiter })), { company: null });
+	fake.db.results.push([{ name: 'Acme' }]);
+	assert.deepEqual(await companyEdit.load(event({ user: recruiter, url: edit })), { company: { name: 'Acme' } });
+	assert.deepEqual(fake.db.queries.at(-1)!.params, [id, 'recruiter-1']);
+	assert.deepEqual(await run(() => companyEdit.load(event({ user: recruiter, url: edit }))), {
+		kind: 'error',
+		status: 404,
+		message: 'Company not found.'
+	});
 });
 
-test('company save: creates or updates the recruiter’s own company', async () => {
+test('company save: adds a new company or updates one of yours', async () => {
+	fake.db.results.push([], [{ id: 'company-1' }]);
 	const r = await run(() => companyEdit.actions.save(event({ user: recruiter, form: acme })));
 	assert.equal(r.kind === 'ok' && (r.data as { message: string }).message, 'Company profile saved successfully.');
-	const [upsert] = fake.db.queries;
-	assert.deepEqual(upsert.values, { recruiterId: 'recruiter-1', name: 'Acme', description: 'We build tools.', location: 'Montréal', website: null });
-	assert.ok(upsert.conflict, 'saving twice updates the same row');
+	const insert = fake.db.queries[1];
+	assert.equal(insert.op, 'insert');
+	assert.deepEqual(insert.values, { recruiterId: 'recruiter-1', name: 'Acme', description: 'We build tools.', location: 'Montréal', website: null });
+
+	// US-34: with an id it updates that company instead
+	fake.db.reset();
+	fake.db.results.push([{ id, name: 'Acme' }]);
+	const updated = await run(() => companyEdit.actions.save(event({ user: recruiter, form: { ...acme, id } })));
+	assert.equal(updated.kind === 'ok' && (updated.data as { message: string }).message, 'Company profile saved successfully.');
+	assert.deepEqual(fake.db.queries.map((q) => q.op), ['select', 'update']);
 });
 
 test('company save: job seekers and invalid fields are refused without saving', async () => {
@@ -58,19 +82,22 @@ test('company save: job seekers and invalid fields are refused without saving', 
 
 test('new job: recruiters create a posting and land on it; others are refused', async () => {
 	assert.deepEqual(await run(() => newJob.load(event({ user: seeker }))), { kind: 'error', status: 403, message: 'Only recruiters can create job postings.' });
-	assert.deepEqual(await newJob.load(event({ user: recruiter })), {});
+	// US-34: the company list only has your companies
+	fake.db.results.push([acmeCompany]);
+	assert.deepEqual(await newJob.load(event({ user: recruiter })), { companies: ['Acme'] });
 
-	fake.db.results.push([{ id }]);
+	fake.db.results.push([acmeCompany], [{ id }]);
 	const r = await run(() => newJob.actions.create(event({ user: recruiter, form: job })));
 	assert.deepEqual(r, { kind: 'redirect', status: 303, location: `/jobs/${id}` });
-	assert.equal((fake.db.queries[0].values as { createdBy: string }).createdBy, 'recruiter-1');
+	assert.equal((fake.db.queries.at(-1)!.values as { createdBy: string }).createdBy, 'recruiter-1');
 
 	const denied = await run(() => newJob.actions.create(event({ user: seeker, form: job })));
 	assert.equal(denied.kind === 'fail' && denied.status, 403);
+	fake.db.results.push([acmeCompany]);
 	const invalid = await run(() => newJob.actions.create(event({ user: recruiter, form: { ...job, title: '' } })));
 	assert.equal(invalid.kind === 'fail' && invalid.status, 400);
 	assert.ok(invalid.kind === 'fail' && (invalid.data.errors as Record<string, string>).title);
-	assert.equal(fake.db.queries.length, 1);
+	assert.equal(fake.db.queries.filter((q) => q.op === 'insert').length, 1);
 });
 
 test('edit job: only the recruiter who posted it can open the editor', async () => {
@@ -89,20 +116,22 @@ test('edit job: only the recruiter who posted it can open the editor', async () 
 });
 
 test('edit job: saving and deleting are limited to the owner’s posting', async () => {
-	fake.db.results.push([{ id }]);
+	// US-34: each save first looks up your companies
+	fake.db.results.push([acmeCompany], [{ id }]);
 	assert.deepEqual(await run(() => editJob.actions.save(event({ user: recruiter, params: { id }, form: job }))), {
 		kind: 'redirect',
 		status: 303,
 		location: `/jobs/${id}?saved=1`
 	});
-	assert.deepEqual(fake.db.queries[0].params?.slice(-2), [id, 'recruiter-1']);
+	assert.deepEqual(fake.db.queries.at(-1)!.params?.slice(-2), [id, 'recruiter-1']);
 
-	fake.db.results.push([]); // someone else's posting: the scoped update changes nothing
+	fake.db.results.push([acmeCompany], []); // someone else's posting: the scoped update changes nothing
 	assert.deepEqual(await run(() => editJob.actions.save(event({ user: recruiter, params: { id }, form: job }))), {
 		kind: 'fail',
 		status: 404,
 		data: { message: 'Job posting not found.' }
 	});
+	fake.db.results.push([acmeCompany]);
 	const invalid = await run(() => editJob.actions.save(event({ user: recruiter, params: { id }, form: { ...job, title: '' } })));
 	assert.equal(invalid.kind === 'fail' && invalid.status, 400);
 	const denied = await run(() => editJob.actions.save(event({ user: seeker, params: { id }, form: job })));
