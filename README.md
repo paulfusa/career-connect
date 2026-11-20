@@ -48,7 +48,7 @@ Then open http://localhost:5173 in your browser.
 # Testing
 Run the linter with `pnpm lint`, the type check with `pnpm check`, the automated tests with `pnpm test`, and the tests with a coverage report with `pnpm test:coverage`.
 
-Our CI/CD pipeline on GitHub Actions runs all of these, plus CodeQL static analysis and a production build, on every pull request, and publishes the built app on every merge to main. See [CI/CD pipeline](docs/ci-cd.md).
+Our CI/CD pipeline on GitHub Actions runs all of these, plus CodeQL static analysis and a production build, on every pull request, and publishes the built app on every merge to main. See [CI/CD pipeline](docs/ci-cd.md) and [Unit tests](docs/testing.md).
 
 Acceptance tests are GitHub issues with the `Acceptance Test` label, linked to the user story they test.
 
@@ -111,6 +111,8 @@ The repository is set up with SvelteKit, Svelte, TypeScript, Tailwind CSS, Postg
 - [Sprint submissions and summary reports](docs/submissions/)
 - [AI setup](docs/ai-setup.md)
 - [Deadline reminders](docs/deadline-reminders.md)
+- [Demo data](docs/seed-data.md)
 - [CI/CD pipeline](docs/ci-cd.md)
+- [Unit tests](docs/testing.md)
 - [AI usage logs](AI_Log/)
 - User stories and acceptance tests: GitHub Issues

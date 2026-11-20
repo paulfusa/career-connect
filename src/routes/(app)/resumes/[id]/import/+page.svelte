@@ -62,7 +62,7 @@
 
 <svelte:head><title>Fill profile from resume · CareerConnect</title></svelte:head>
 
-<div class="space-y-5 md:mt-14">
+<div class="space-y-5">
 	<div>
 		<a href="/resumes" class="text-sm font-medium text-tide-deep hover:underline">← Resumes</a>
 		<h1 class="mt-3 font-display text-3xl font-semibold tracking-tight">Fill profile from resume</h1>

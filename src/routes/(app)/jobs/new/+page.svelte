@@ -8,7 +8,7 @@
 
 <svelte:head><title>Create a job posting · CareerConnect</title></svelte:head>
 
-<div class="md:mt-14">
+<div>
 	<a href="/jobs" class="text-sm font-medium text-tide-deep hover:underline">← All job postings</a>
 	<h1 class="mt-3 font-display text-3xl font-semibold tracking-tight">Create a job posting</h1>
 	<p class="mt-2 text-ink/60">Share an opportunity with job seekers on CareerConnect.</p>

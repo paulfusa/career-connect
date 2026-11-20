@@ -17,7 +17,7 @@
     <title>Company Profile · CareerConnect</title>
 </svelte:head>
 
-<div class="space-y-5 md:mt-14">
+<div class="space-y-5">
     <div>
         <a href="/company" class="text-sm font-medium text-tide-deep hover:underline dark:text-tide">← Your companies</a>
         <h1 class="mt-3 font-display text-2xl font-semibold">

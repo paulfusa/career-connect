@@ -1,4 +1,4 @@
-import { and, eq, gte, isNotNull, lte, sql } from 'drizzle-orm';
+import { and, eq, gte, inArray, isNotNull, lte, sql } from 'drizzle-orm';
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { jobPosting, notification, user } from './db/schema.ts';
 
@@ -28,7 +28,8 @@ export function buildDeadlineReminderInsert(db: DeadlineReminderDatabase) {
 			isNotNull(jobPosting.applicationDeadline),
 			gte(jobPosting.applicationDeadline, today),
 			lte(jobPosting.applicationDeadline, sql`${today} + 3`),
-			eq(user.role, 'recruiter'),
+			// US-06: admins can post jobs too
+			inArray(user.role, ['recruiter', 'admin']),
 			eq(user.emailVerified, true)
 		));
 

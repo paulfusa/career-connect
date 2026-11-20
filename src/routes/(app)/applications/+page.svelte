@@ -9,7 +9,7 @@
 
 <svelte:head><title>My Applications · CareerConnect</title></svelte:head>
 
-<div class="flex flex-wrap items-end justify-between gap-4 md:mt-14">
+<div class="flex flex-wrap items-end justify-between gap-4">
     <h1 class="font-display text-3xl font-semibold tracking-tight">My Applications</h1>
     <a
         href="/applications/analytics"

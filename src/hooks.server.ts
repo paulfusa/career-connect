@@ -2,6 +2,7 @@ import { redirect, type Handle } from '@sveltejs/kit';
 import { building } from '$app/environment';
 import { auth } from '$lib/server/auth';
 import { svelteKitHandler } from 'better-auth/svelte-kit';
+import { viewAs, VIEW_AS_COOKIE } from '$lib/server/view-as';
 
 // Public routes that do not require a verified account
 const PUBLIC_PATHS = [
@@ -21,7 +22,9 @@ const handleBetterAuth: Handle = async ({ event, resolve }) => {
 
 	if (session) {
 		event.locals.session = session.session;
-		event.locals.user = session.user;
+		// US-06: admins see the job seeker or recruiter view they picked
+		const choice = session.user.role === 'admin' ? event.cookies.get(VIEW_AS_COOKIE) : undefined;
+		event.locals.user = viewAs(session.user, choice);
 	}
 
 	const { pathname } = event.url;
