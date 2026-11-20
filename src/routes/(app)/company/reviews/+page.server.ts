@@ -7,7 +7,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 	const me = locals.user;
 	if (!me || me.role !== 'recruiter') error(403, 'Only recruiters have company reviews.');
 
-	// a name with no letters or numbers can't have a company page
+	// skip names like "!!!", they can't have a page
 	const companies = (await yourCompanies(me.id)).filter((company) => company.slug);
 	const ratings = await ratingsFor(companies.map((company) => company.slug));
 

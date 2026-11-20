@@ -8,14 +8,14 @@ import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	if (locals.user!.role !== 'recruiter') error(403, 'Only recruiters can create job postings.');
-	// US-09: the company is picked from your companies
+	// US-09: for the company dropdown
 	return { companies: (await yourCompanies(locals.user!.id)).map((company) => company.name) };
 };
 
 export const actions: Actions = {
 	create: async ({ request, locals }) => {
 		const form = await request.formData();
-		// US-09: only for one of your companies
+		// US-09: has to be one of your companies
 		const wrongCompany = locals.user!.role === 'recruiter' ? await checkJobCompany(locals.user!.id, form) : null;
 		if (wrongCompany) return fail(400, wrongCompany);
 

@@ -188,7 +188,7 @@
 			</section>
 		{/if}
 
-		<!-- US-09: no About box (the company has no profile), so the reviews link goes here -->
+		<!-- US-09: no About box, so the reviews link goes here -->
 		{#if data.showReviews && !data.companyProfile}
 			<section class="mt-8 border-t border-white/60 dark:border-white/15 pt-6">
 				<a href="/companies/{data.companySlug}" class="block font-medium text-tide-deep dark:text-tide hover:underline">

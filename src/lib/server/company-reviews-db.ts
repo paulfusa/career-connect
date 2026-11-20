@@ -8,11 +8,11 @@ import { toRating } from '$lib/server/company-reviews';
 // companySlug, but in SQL
 export const slugOf = (name: SQLWrapper) => sql<string>`trim(both '-' from regexp_replace(lower(${name}), '[^a-z0-9]+', '-', 'g'))`;
 
-// your companies are your company profiles (a recruiter can have several)
+// your companies = your company profiles
 export const yourCompanySlugs = (userId: string) =>
 	sql`select ${slugOf(companyProfile.name)} from ${companyProfile} where ${companyProfile.recruiterId} = ${userId}`;
 
-// same thing with the names, for the Company reviews page and the job posting form
+// same thing with the names
 export async function yourCompanies(userId: string) {
 	return db
 		.select({ slug: slugOf(companyProfile.name), name: companyProfile.name, website: companyProfile.website })

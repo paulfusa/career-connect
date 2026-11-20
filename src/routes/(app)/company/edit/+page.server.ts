@@ -9,7 +9,7 @@ import { slugOf } from '$lib/server/company-reviews-db';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-// Load one of the recruiter's companies (US-09: ?id= edits that one, without it you add a new one)
+// Load the company to edit (US-09: ?id= is one of yours, no id means a new one)
 export const load: PageServerLoad = async ({ locals, url }) => {
     if (!locals.user || locals.user.role !== 'recruiter') {
         error(403, 'Only recruiters can manage company profiles.');
@@ -64,7 +64,7 @@ export const actions = {
             });
         }
 
-        // US-09: your companies, to find the one you're editing and to stop two with the same name
+        // US-09: your companies, to find this one and check the name isn't taken
         const yours = await db
             .select({ id: companyProfile.id, name: companyProfile.name })
             .from(companyProfile)
@@ -85,7 +85,7 @@ export const actions = {
                 .set({ name, description, location, website: website || null, updatedAt: new Date() })
                 .where(and(eq(companyProfile.id, current.id), eq(companyProfile.recruiterId, locals.user.id)));
 
-            // US-09: a new name goes on your jobs at this company too, so they still belong to it
+            // US-09: rename the company on your jobs too
             if (current.name !== name) {
                 await db
                     .update(jobPosting)

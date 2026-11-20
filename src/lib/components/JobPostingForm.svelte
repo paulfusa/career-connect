@@ -20,7 +20,7 @@
 		submitLabel: string;
 		values: Partial<JobPostingInput>;
 		errors?: Partial<Record<keyof JobPostingInput, string>>;
-		// US-09: the recruiter's companies, a job can only be for one of them
+		// US-09: your companies, the job has to be for one of them
 		companies: string[];
 	} = $props();
 

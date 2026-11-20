@@ -106,7 +106,7 @@ const seeker = { id: 'seeker-1', role: 'job_seeker' };
 const owner = { id: 'recruiter-1', role: 'recruiter' };
 const otherRecruiter = { id: 'recruiter-2', role: 'recruiter' };
 const good = { rating: '4', body: 'Quick replies and a clear interview process.' };
-// after finding the company, the page looks up your companies (your company profiles)
+// after finding the company, the page looks up your company profiles
 const notYours = [[]];
 const northwind = { slug: SLUG, name: 'Northwind', website: 'https://www.northwind.com/jobs' };
 const yoursIsNorthwind = [[northwind]];
@@ -543,7 +543,7 @@ test('delete: nothing to delete, or a bad address, is refused', async () => {
 	assert.equal(deletes.length, 1);
 });
 
-// US-09: a recruiter can have several companies, and only posts jobs for them
+// several companies per recruiter, and jobs only for those
 const jobForm = { title: 'Engineer', location: 'Montreal', employmentType: 'full_time', workMode: 'on_site', description: 'Build things.', requirements: 'Some code.', applicationDeadline: '2026-12-31', status: 'open' };
 const JOB_ID = '11111111-1111-4111-8111-111111111111';
 const COMPANY_ID = '22222222-2222-4222-8222-222222222222';
