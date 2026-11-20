@@ -1,6 +1,6 @@
-import { and, eq, inArray, sql, type SQLWrapper } from 'drizzle-orm';
+import { and, asc, eq, inArray, sql, type SQLWrapper } from 'drizzle-orm';
 import { db } from '$lib/server/db';
-import { companyProfile, companyReview, jobPosting } from '$lib/server/db/schema';
+import { companyProfile, companyReview } from '$lib/server/db/schema';
 import { toRating } from '$lib/server/company-reviews';
 
 // US-09: database stuff for company reviews
@@ -8,20 +8,17 @@ import { toRating } from '$lib/server/company-reviews';
 // companySlug, but in SQL
 export const slugOf = (name: SQLWrapper) => sql<string>`trim(both '-' from regexp_replace(lower(${name}), '[^a-z0-9]+', '-', 'g'))`;
 
-// your companies: the one on your company profile and the ones on your job postings
+// your companies are your company profiles (a recruiter can have several)
 export const yourCompanySlugs = (userId: string) =>
-	sql`select ${slugOf(companyProfile.name)} from ${companyProfile} where ${companyProfile.recruiterId} = ${userId}
-		union select ${slugOf(jobPosting.company)} from ${jobPosting} where ${jobPosting.createdBy} = ${userId}`;
+	sql`select ${slugOf(companyProfile.name)} from ${companyProfile} where ${companyProfile.recruiterId} = ${userId}`;
 
-// same thing with the names, for the Company reviews page (profile first)
-export async function yourCompanies(userId: string): Promise<{ slug: string; name: string }[]> {
-	const profiles = await db.select({ slug: slugOf(companyProfile.name), name: companyProfile.name }).from(companyProfile).where(eq(companyProfile.recruiterId, userId));
-	const postings = await db.select({ slug: slugOf(jobPosting.company), name: jobPosting.company }).from(jobPosting).where(eq(jobPosting.createdBy, userId));
-	const companies = new Map<string, string>();
-	for (const { slug, name } of [...profiles, ...postings]) {
-		if (slug && !companies.has(slug)) companies.set(slug, name);
-	}
-	return [...companies].map(([slug, name]) => ({ slug, name }));
+// same thing with the names, for the Company reviews page and the job posting form
+export async function yourCompanies(userId: string) {
+	return db
+		.select({ slug: slugOf(companyProfile.name), name: companyProfile.name, website: companyProfile.website })
+		.from(companyProfile)
+		.where(eq(companyProfile.recruiterId, userId))
+		.orderBy(asc(companyProfile.name));
 }
 
 // average stars for a list of companies, only the ones that have reviews

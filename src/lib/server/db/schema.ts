@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm';
-import { pgTable, integer, text, timestamp, boolean, date, uuid, unique, index, check, jsonb, numeric } from 'drizzle-orm/pg-core';
+import { pgTable, integer, text, timestamp, boolean, date, uuid, unique, uniqueIndex, index, check, jsonb, numeric } from 'drizzle-orm/pg-core';
 import type { ParsedResume, ResumeReview } from '../resume-ai';
 import { user } from './auth.schema';
 
@@ -44,7 +44,6 @@ export const companyProfile = pgTable('company_profile', {
 
     recruiterId: text('recruiter_id')
         .notNull()
-        .unique()
         .references(() => user.id, { onDelete: 'cascade' }),
 
     name: text('name').notNull(),
@@ -54,7 +53,10 @@ export const companyProfile = pgTable('company_profile', {
 
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull()
-});
+}, (t) => [
+    // US-09: a recruiter can have several companies, but not two with the same name (same rule as companySlug)
+    uniqueIndex('company_profile_recruiter_name_unique').on(t.recruiterId, sql`trim(both '-' from regexp_replace(lower(${t.name}), '[^a-z0-9]+', '-', 'g'))`)
+]);
 
 // US-09: reviews of a company, one per person per company
 export const companyReview = pgTable(

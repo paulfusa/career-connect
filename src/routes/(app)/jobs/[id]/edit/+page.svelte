@@ -17,6 +17,7 @@
 			submitLabel="Save changes"
 			values={form?.values ?? data.posting}
 			errors={form?.errors}
+			companies={data.companies}
 		/>
 	</section>
 </div>

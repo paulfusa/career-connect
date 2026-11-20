@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { registerHooks } from 'node:module';
 import { PgDialect } from 'drizzle-orm/pg-core';
 import { getTableName, type SQL, type Table } from 'drizzle-orm';
-import { isHttpError } from '@sveltejs/kit';
+import { isHttpError, isRedirect } from '@sveltejs/kit';
 
 // US-09: the review form, the average, and the real company page with a fake db (same setup as follow.test.ts)
 registerHooks({
@@ -29,7 +29,7 @@ registerHooks({
 });
 
 const dialect = new PgDialect();
-type Select = { table: string; fields: Record<string, unknown>; where?: SQL };
+type Select = { table: string; fields: Record<string, unknown>; where?: SQL; join?: SQL };
 let selects: Select[] = [];
 // what each select returns, in order
 let results: unknown[][] = [];
@@ -47,7 +47,7 @@ const db = {
 		const query = {
 			from(table: Table) { call.table = getTableName(table); return query; },
 			innerJoin() { return query; },
-			leftJoin() { return query; },
+			leftJoin(_table: Table, condition: SQL) { call.join = condition; return query; },
 			where(condition: SQL) { call.where = condition; return query; },
 			orderBy() { return query; },
 			groupBy() { return query; },
@@ -95,6 +95,10 @@ const myReviewsPage = await import('../src/routes/(app)/reviews/+page.server.ts'
 const companyProfilePage = await import('../src/routes/(app)/company/+page.server.ts');
 const companyReviewsPage = await import('../src/routes/(app)/company/reviews/+page.server.ts');
 const jobPage = await import('../src/routes/(app)/jobs/[id]/+page.server.ts');
+const newJobPage = await import('../src/routes/(app)/jobs/new/+page.server.ts');
+const editJobPage = await import('../src/routes/(app)/jobs/[id]/edit/+page.server.ts');
+const editCompanyPage = await import('../src/routes/(app)/company/edit/+page.server.ts');
+const { checkJobCompany, domainOf } = await import('../src/lib/server/job-company.ts');
 
 const SLUG = 'northwind';
 const profile = { name: 'Northwind', description: 'We make apps.', location: 'Montreal', website: null };
@@ -102,8 +106,10 @@ const seeker = { id: 'seeker-1', role: 'job_seeker' };
 const owner = { id: 'recruiter-1', role: 'recruiter' };
 const otherRecruiter = { id: 'recruiter-2', role: 'recruiter' };
 const good = { rating: '4', body: 'Quick replies and a clear interview process.' };
-// after finding the company, the page looks up your companies (profile, then your jobs)
-const notYours = [[], []];
+// after finding the company, the page looks up your companies (your company profiles)
+const notYours = [[]];
+const northwind = { slug: SLUG, name: 'Northwind', website: 'https://www.northwind.com/jobs' };
+const yoursIsNorthwind = [[northwind]];
 
 const formOf = (values: Record<string, string>) => {
 	const form = new FormData();
@@ -229,8 +235,8 @@ test("job list: each job shows its own company's stars, not the recruiter's prof
 		postings: Record<string, unknown>[];
 	};
 	assert.deepEqual(recruiterView.postings.map((posting) => posting.rating), [{ average: 3.5, count: 2 }, null]);
-	// their companies come from their profile and their jobs
-	assert.deepEqual(sqlOf(selects[1].fields.yourCompany).params, ['recruiter-1', 'recruiter-1']);
+	// their companies are their company profiles
+	assert.deepEqual(sqlOf(selects[1].fields.yourCompany).params, ['recruiter-1']);
 });
 
 test('my reviews: only the reviews you wrote', async () => {
@@ -320,8 +326,8 @@ test('page: shows the reviews of this company, which one is yours, and the avera
 
 	// the profile and the reviews are both found by the name
 	assert.deepEqual(params(selects[0].where), [SLUG]);
-	assert.equal(selects[3].table, 'company_review');
-	assert.deepEqual(params(selects[3].where), [SLUG]);
+	assert.equal(selects[2].table, 'company_review');
+	assert.deepEqual(params(selects[2].where), [SLUG]);
 	assert.deepEqual(page.company, { slug: SLUG, name: 'Northwind', profile });
 	const reviews = page.reviews as Record<string, unknown>[];
 	assert.deepEqual(reviews.map((review) => review.mine), [true, false]);
@@ -343,24 +349,19 @@ test("page: a company that's only on job postings, or only in old reviews, still
 });
 
 test("page: a recruiter can read their own companies' reviews but can't review them", async () => {
-	// the company on their profile
-	results = [[profile], [{ slug: SLUG, name: 'Northwind' }], [], []];
+	results = [[profile], ...yoursIsNorthwind, []];
 	const page = await openPage(owner);
 	assert.equal(page.isOwner, true);
 	assert.equal(page.canReview, false);
 	assert.deepEqual(page.summary, { average: null, count: 0 });
 	assert.deepEqual(params(selects[1].where), ['recruiter-1']);
-
-	// or a company they posted a job for
-	results = [[profile], [], [{ slug: SLUG, name: 'NORTHWIND' }], []];
-	assert.equal((await openPage(otherRecruiter)).isOwner, true);
 });
 
 test("page: other recruiters can't open the page at all", async () => {
 	results = [[profile], ...notYours];
 	await assert.rejects(openPage(otherRecruiter), (err) => isHttpError(err, 403));
 	// stopped before the reviews were loaded
-	assert.equal(selects.length, 3);
+	assert.equal(selects.length, 2);
 });
 
 // a Northwind job whose company has 2 reviews (4.5 on average)
@@ -380,7 +381,6 @@ test("job page: shows the stars of the job's company, recruiters only for their 
 	const seekerView = await openJob(seeker);
 	assert.equal(seekerView.showReviews, true);
 	assert.deepEqual(seekerView.companyRating, { average: 4.5, count: 2 });
-	assert.equal(seekerView.aboutThisCompany, true);
 	const count = sqlOf(selects[0].fields.ratingCount).sql;
 	assert.ok(count.includes(`"company_review"."company_slug" = ${jobCompanySlug}`), count);
 
@@ -391,57 +391,59 @@ test("job page: shows the stars of the job's company, recruiters only for their 
 	const otherView = await openJob(otherRecruiter);
 	assert.equal(otherView.showReviews, false);
 	assert.equal(otherView.companyRating, null);
-	assert.equal(otherView.aboutThisCompany, false);
 	// the raw numbers don't get sent either
 	assert.ok(!('ratingAverage' in otherView) && !('yourCompany' in otherView));
 });
 
-test("job page: a job at another company doesn't link the recruiter's profile to the reviews", async () => {
-	// Hiring company's profile is Intel, but this job is at Lionfish
-	const page = await openJob(seeker, { companyProfile: { ...profile, name: 'Intel' }, companySlug: 'lionfish-cyber-security', ratingAverage: null, ratingCount: 0 });
+test("job page: the About box is the recruiter's profile for this job's company", async () => {
+	await openJob(seeker);
+	const join = sqlOf(selects[0].join).sql;
+	assert.ok(join.includes('"company_profile"."recruiter_id" = "job_posting"."created_by"'), join);
+	assert.ok(join.includes(`= ${jobCompanySlug}`), join);
+
+	// no profile for it, but the page still links to the company's reviews
+	const page = await openJob(seeker, { companyProfile: null, companySlug: 'lionfish-cyber-security', ratingAverage: null, ratingCount: 0 });
 	assert.equal(page.showReviews, true);
 	assert.equal(page.companySlug, 'lionfish-cyber-security');
 	assert.equal(page.companyRating, null);
-	assert.equal(page.aboutThisCompany, false);
 });
 
 test('company reviews: a recruiter sees each of their companies with its stars', async () => {
 	results = [
-		[{ slug: SLUG, name: 'Northwind' }],
-		[{ slug: SLUG, name: 'NORTHWIND' }, { slug: 'lionfish-cyber-security', name: 'Lionfish Cyber Security' }, { slug: '', name: '!!!' }],
+		[{ slug: 'lionfish-cyber-security', name: 'Lionfish Cyber Security', website: null }, northwind, { slug: '', name: '!!!', website: null }],
 		[{ slug: SLUG, average: '4.0000000000000000', count: 1 }]
 	];
 	const page = (await companyReviewsPage.load({ locals: { user: owner } } as never)) as Record<string, unknown>;
-	// uses the profile's spelling, and skips '!!!'
+	// skips '!!!', it can't have a page
 	assert.deepEqual(page.companies, [
-		{ slug: SLUG, name: 'Northwind', rating: { average: 4, count: 1 } },
-		{ slug: 'lionfish-cyber-security', name: 'Lionfish Cyber Security', rating: null }
+		{ slug: 'lionfish-cyber-security', name: 'Lionfish Cyber Security', rating: null },
+		{ slug: SLUG, name: 'Northwind', rating: { average: 4, count: 1 } }
 	]);
 	assert.deepEqual(params(selects[0].where), ['recruiter-1']);
-	assert.deepEqual(params(selects[1].where), ['recruiter-1']);
-	assert.deepEqual(params(selects[2].where), [SLUG, 'lionfish-cyber-security']);
+	assert.deepEqual(params(selects[1].where), ['lionfish-cyber-security', SLUG]);
 
-	// no profile and no jobs yet, so the page asks them to make a profile
+	// no company profile yet, so the page asks them to make one
 	selects = [];
-	results = [[], []];
+	results = [[]];
 	assert.deepEqual(await companyReviewsPage.load({ locals: { user: otherRecruiter } } as never), { companies: [] });
-	assert.equal(selects.length, 2);
+	assert.equal(selects.length, 1);
 
 	await assert.rejects(async () => companyReviewsPage.load({ locals: { user: seeker } } as never), (err) => isHttpError(err, 403));
 });
 
-test('company profile: shows the stars of your company', async () => {
-	results = [[profile], [{ slug: SLUG, average: '4.2500000000000000', count: 2 }]];
-	const page = (await companyProfilePage.load({ locals: { user: owner } } as never)) as Record<string, unknown>;
-	assert.deepEqual(page.rating, { average: 4.3, count: 2 });
-	assert.equal(page.companySlug, SLUG);
-	assert.deepEqual(params(selects[1].where), [SLUG]);
+test('company profile: lists all your companies, each with its stars', async () => {
+	results = [[{ ...profile, id: 'c1' }, { ...profile, id: 'c2', name: 'Lionfish Cyber Security' }], [{ slug: SLUG, average: '4.2500000000000000', count: 2 }]];
+	const page = (await companyProfilePage.load({ locals: { user: owner } } as never)) as { companies: Record<string, unknown>[] };
+	assert.deepEqual(page.companies.map(({ id, slug, rating }) => ({ id, slug, rating })), [
+		{ id: 'c1', slug: SLUG, rating: { average: 4.3, count: 2 } },
+		{ id: 'c2', slug: 'lionfish-cyber-security', rating: null }
+	]);
+	assert.deepEqual(params(selects[0].where), ['recruiter-1']);
+	assert.deepEqual(params(selects[1].where), [SLUG, 'lionfish-cyber-security']);
 
-	// no reviews yet, or no company yet
-	results = [[profile], []];
-	assert.equal(((await companyProfilePage.load({ locals: { user: owner } } as never)) as Record<string, unknown>).rating, null);
+	// no company yet
 	results = [[]];
-	assert.equal(((await companyProfilePage.load({ locals: { user: otherRecruiter } } as never)) as Record<string, unknown>).rating, null);
+	assert.deepEqual(((await companyProfilePage.load({ locals: { user: otherRecruiter } } as never)) as Record<string, unknown>).companies, []);
 });
 
 test('post: a review is saved for this company and the signed-in user', async () => {
@@ -482,7 +484,7 @@ test("post: recruiters can't post a review, and neither can an admin about their
 		assert.equal(result.data?.message, 'Only job seekers can review companies.');
 	}
 
-	results = [[profile], [{ slug: SLUG, name: 'Northwind' }], []];
+	results = [[profile], ...yoursIsNorthwind];
 	const admin = await runAction('post', { id: 'admin-1', role: 'job_seeker' }, good);
 	assert.equal(admin.status, 403);
 	assert.equal(admin.data?.message, "You can't review your own company.");
@@ -539,4 +541,114 @@ test('delete: nothing to delete, or a bad address, is refused', async () => {
 
 	assert.equal((await runAction('delete', seeker, {}, 'Not A Slug')).status, 404);
 	assert.equal(deletes.length, 1);
+});
+
+// US-09: a recruiter can have several companies, and only posts jobs for them
+const jobForm = { title: 'Engineer', location: 'Montreal', employmentType: 'full_time', workMode: 'on_site', description: 'Build things.', requirements: 'Some code.', applicationDeadline: '2026-12-31', status: 'open' };
+const JOB_ID = '11111111-1111-4111-8111-111111111111';
+const COMPANY_ID = '22222222-2222-4222-8222-222222222222';
+async function runAs(page: { actions: Record<string, (event: never) => unknown> }, name: string, values: Record<string, string>, params = {}) {
+	const request = new Request('http://localhost/', { method: 'POST', body: formOf(values) });
+	return page.actions[name]({ locals: { user: owner }, params, request } as never) as Promise<Result>;
+}
+
+test('job company: the logo comes from the company website', () => {
+	assert.equal(domainOf('https://www.northwind.com/jobs'), 'northwind.com');
+	assert.equal(domainOf('http://intel.ca'), 'intel.ca');
+	assert.equal(domainOf(null), null);
+	assert.equal(domainOf('not a website'), null);
+});
+
+test('job company: a job can only be for one of your companies', async () => {
+	// any spelling works, and the form gets the real name and website
+	results = [[northwind]];
+	const form = formOf({ ...jobForm, company: ' NORTHWIND ' });
+	assert.equal(await checkJobCompany('recruiter-1', form), null);
+	assert.equal(form.get('company'), 'Northwind');
+	assert.equal(form.get('companyDomain'), 'northwind.com');
+	assert.deepEqual(params(selects[0].where), ['recruiter-1']);
+
+	// someone else's company, or none picked
+	for (const company of ['Intel', '']) {
+		results = [[northwind]];
+		const wrong = await checkJobCompany('recruiter-1', formOf({ ...jobForm, company }));
+		assert.equal(wrong?.errors.company, 'Pick one of your companies.', company);
+		assert.equal(wrong?.values.title, 'Engineer');
+	}
+});
+
+test('posting a job: the form lists your companies and only saves jobs for them', async () => {
+	results = [[northwind]];
+	assert.deepEqual(await newJobPage.load({ locals: { user: owner } } as never), { companies: ['Northwind'] });
+
+	results = [[northwind]];
+	const wrong = await runAs(newJobPage, 'create', { ...jobForm, company: 'Intel' });
+	assert.equal(wrong.status, 400);
+	assert.equal(inserts.length, 0);
+
+	results = [[northwind]];
+	inserted = [{ id: JOB_ID }];
+	await assert.rejects(runAs(newJobPage, 'create', { ...jobForm, company: 'northwind' }), (err) => isRedirect(err) && err.location === `/jobs/${JOB_ID}`);
+	assert.equal(inserts[0].table, 'job_posting');
+	assert.equal(inserts[0].values.company, 'Northwind');
+	assert.equal(inserts[0].values.companyDomain, 'northwind.com');
+});
+
+test('editing a job: it still has to be for one of your companies', async () => {
+	results = [[{ ...jobForm, id: JOB_ID, company: 'Northwind' }], [northwind]];
+	const page = (await editJobPage.load({ locals: { user: owner }, params: { id: JOB_ID } } as never)) as Record<string, unknown>;
+	assert.deepEqual(page.companies, ['Northwind']);
+
+	results = [[northwind]];
+	const wrong = await runAs(editJobPage, 'save', { ...jobForm, company: 'Intel' }, { id: JOB_ID });
+	assert.equal(wrong.status, 400);
+	assert.equal(updates.length, 0);
+
+	results = [[northwind]];
+	updated = [{ id: JOB_ID }];
+	await assert.rejects(runAs(editJobPage, 'save', { ...jobForm, company: 'Northwind' }, { id: JOB_ID }), (err) => isRedirect(err));
+	assert.equal(updates[0].set.company, 'Northwind');
+});
+
+const lionfish = { name: 'Lionfish Cyber Security', description: 'We keep you safe.', location: 'Montreal', website: '' };
+
+test('adding a company: you can add another one, but not the same name twice', async () => {
+	results = [[{ id: COMPANY_ID, name: 'Northwind' }]];
+	inserted = [{ id: 'new-company' }];
+	const added = await runAs(editCompanyPage, 'save', lionfish);
+	assert.equal(added.success, true);
+	assert.equal(added.id, 'new-company');
+	assert.equal(inserts[0].table, 'company_profile');
+	assert.equal(inserts[0].values.recruiterId, 'recruiter-1');
+
+	results = [[{ id: COMPANY_ID, name: 'Northwind' }]];
+	const twice = await runAs(editCompanyPage, 'save', { ...lionfish, name: 'NORTHWIND' });
+	assert.equal(twice.status, 400);
+	assert.equal(twice.data?.message, 'You already have a company called NORTHWIND.');
+
+	results = [[]];
+	assert.equal((await runAs(editCompanyPage, 'save', { ...lionfish, name: '!!!' })).status, 400);
+	assert.equal(inserts.length, 1);
+});
+
+test('editing a company: only your own, and a new name goes on your jobs too', async () => {
+	results = [[{ id: COMPANY_ID, name: 'Northwind' }]];
+	const saved = await runAs(editCompanyPage, 'save', { ...lionfish, id: COMPANY_ID, name: 'Northwind Labs' });
+	assert.equal(saved.id, COMPANY_ID);
+	assert.equal(updates[0].table, 'company_profile');
+	assert.deepEqual(params(updates[0].where), [COMPANY_ID, 'recruiter-1']);
+	// your Northwind jobs become Northwind Labs jobs
+	assert.equal(updates[1].table, 'job_posting');
+	assert.equal(updates[1].set.company, 'Northwind Labs');
+	assert.deepEqual(params(updates[1].where), ['recruiter-1', SLUG]);
+
+	// someone else's company
+	results = [[{ id: COMPANY_ID, name: 'Northwind' }]];
+	assert.equal((await runAs(editCompanyPage, 'save', { ...lionfish, id: 'not-yours' })).status, 404);
+
+	// the edit page only opens your own companies, and no id means a new one
+	results = [[]];
+	const url = (query: string) => new URL(`http://localhost/company/edit${query}`);
+	await assert.rejects(async () => editCompanyPage.load({ locals: { user: owner }, url: url(`?id=${COMPANY_ID}`) } as never), (err) => isHttpError(err, 404));
+	assert.deepEqual(await editCompanyPage.load({ locals: { user: owner }, url: url('') } as never), { company: null });
 });

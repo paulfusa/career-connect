@@ -2,8 +2,9 @@
 	import { enhance } from '$app/forms';
 	import FieldError from '$lib/components/FieldError.svelte';
 	import SuggestInput from '$lib/components/SuggestInput.svelte';
-	import { searchCities, searchCompanies } from '$lib/suggest.svelte';
+	import { searchCities } from '$lib/suggest.svelte';
 	import { EMPLOYMENT_TYPES, LIMITS, WORK_MODES } from '$lib/profile-options';
+	import { companySlug } from '$lib/company-reviews';
 	import { withPending } from '$lib/forms';
 	import type { JobPostingInput } from '$lib/server/job-posting';
 	import { errorBox, field, label, primaryButton, secondaryButton } from '$lib/ui';
@@ -12,12 +13,15 @@
 		action,
 		submitLabel,
 		values,
-		errors
+		errors,
+		companies
 	}: {
 		action: string;
 		submitLabel: string;
 		values: Partial<JobPostingInput>;
 		errors?: Partial<Record<keyof JobPostingInput, string>>;
+		// US-09: the recruiter's companies, a job can only be for one of them
+		companies: string[];
 	} = $props();
 
 	let pending = $state(false);
@@ -33,19 +37,13 @@
 	<div class="grid gap-5 sm:grid-cols-2">
 		<label class="block">
 			<span class={label}>Company</span>
-			<SuggestInput
-				name="company"
-				search={searchCompanies}
-				domainName="companyDomain"
-				value={values.company}
-				domain={values.companyDomain}
-				required
-				maxlength={LIMITS.short}
-				placeholder="Start typing a company"
-				aria-invalid={!!errors?.company}
-				aria-describedby="company-error"
-				class={field}
-			/>
+			<select name="company" required aria-invalid={!!errors?.company} aria-describedby="company-error" class={field}>
+				<option value="">Choose one of your companies</option>
+				{#each companies as company (company)}
+					<option value={company} selected={companySlug(company) === companySlug(values.company ?? '')}>{company}</option>
+				{/each}
+			</select>
+			<a href="/company/edit" class="mt-1 inline-block text-sm font-medium text-tide-deep hover:underline dark:text-tide">Add a company</a>
 			<FieldError id="company-error" message={errors?.company} />
 		</label>
 		<label class="block">

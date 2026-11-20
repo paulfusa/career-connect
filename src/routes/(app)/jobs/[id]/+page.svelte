@@ -149,9 +149,9 @@
 		
 		{#if data.companyProfile}
 			<section class="mt-8 border-t border-white/60 dark:border-white/15 pt-6">
-				<!-- US-09: only links to the reviews if the profile is the job's company -->
+				<!-- US-09: the name opens the company page with its reviews -->
 				<h2 class="font-display text-xl font-semibold">
-					{#if data.aboutThisCompany}
+					{#if data.showReviews}
 						About <a href="/companies/{data.companySlug}" class="text-tide-deep hover:underline dark:text-tide">{data.companyProfile.name}</a>
 					{:else}
 						About {data.companyProfile.name}
@@ -177,7 +177,7 @@
 					</a>
 				{/if}
 
-				{#if data.aboutThisCompany}
+				{#if data.showReviews}
 					<a
 						href="/companies/{data.companySlug}"
 						class="mt-3 block font-medium text-tide-deep dark:text-tide hover:underline"
@@ -188,8 +188,8 @@
 			</section>
 		{/if}
 
-		<!-- US-09: the About box is another company or there isn't one, so the reviews link goes here -->
-		{#if data.showReviews && !data.aboutThisCompany}
+		<!-- US-09: no About box (the company has no profile), so the reviews link goes here -->
+		{#if data.showReviews && !data.companyProfile}
 			<section class="mt-8 border-t border-white/60 dark:border-white/15 pt-6">
 				<a href="/companies/{data.companySlug}" class="block font-medium text-tide-deep dark:text-tide hover:underline">
 					See reviews of {posting.company} →

@@ -4,6 +4,8 @@ import { db } from '$lib/server/db';
 import { jobPosting } from '$lib/server/db/schema';
 import { deleteJobPosting } from '$lib/server/job-posting-delete';
 import { editJobPosting } from '$lib/server/job-posting-edit';
+import { yourCompanies } from '$lib/server/company-reviews-db';
+import { checkJobCompany } from '$lib/server/job-company';
 import type { Actions, PageServerLoad } from './$types';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -35,16 +37,23 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 					salaryMax: posting.salaryMax,
 					createdAt: posting.createdAt,
 					updatedAt: posting.updatedAt
-		}
+		},
+		// US-09: the company is picked from your companies
+		companies: (await yourCompanies(locals.user!.id)).map((company) => company.name)
 	};
 };
 
 export const actions: Actions = {
 	save: async ({ request, params, locals }) => {
+		const form = await request.formData();
+		// US-09: only for one of your companies
+		const wrongCompany = locals.user!.role === 'recruiter' ? await checkJobCompany(locals.user!.id, form) : null;
+		if (wrongCompany) return fail(400, wrongCompany);
+
 		const result = await editJobPosting(
 			locals.user!,
 			params.id,
-			await request.formData(),
+			form,
 			async (id, ownerId, values) => {
 				const [posting] = await db
 					.update(jobPosting)

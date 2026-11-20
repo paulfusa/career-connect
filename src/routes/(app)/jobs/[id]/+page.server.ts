@@ -4,7 +4,6 @@ import { db } from '$lib/server/db';
 import { application, applicationOutcome, companyProfile, companyReview, jobPosting, resume, user } from '$lib/server/db/schema';
 import { canSeeReviews, toRating } from '$lib/server/company-reviews';
 import { slugOf, yourCompanySlugs } from '$lib/server/company-reviews-db';
-import { companySlug } from '$lib/company-reviews';
 import type { Actions, PageServerLoad } from './$types';
 import { applyProblem, parseApplication, todayEastern, withdrawProblem } from '$lib/server/application';
 import { canViewJobPosting, isClosed } from '$lib/server/job-posting';
@@ -32,9 +31,10 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 		})
 		.from(jobPosting)
 		.innerJoin(user, eq(jobPosting.createdBy, user.id))
+		// US-09: recruiters can have several companies, so use the one this job is for
 		.leftJoin(
 			companyProfile,
-			eq(companyProfile.recruiterId, jobPosting.createdBy)
+			and(eq(companyProfile.recruiterId, jobPosting.createdBy), eq(slugOf(companyProfile.name), company))
 		)
 		.where(eq(jobPosting.id, params.id));
 
@@ -81,8 +81,6 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 		...job,
 		showReviews,
 		companyRating: showReviews ? toRating(ratingAverage, ratingCount) : null,
-		// the About box shows the recruiter's profile, which isn't always the job's company
-		aboutThisCompany: showReviews && !!job.companyProfile && companySlug(job.companyProfile.name) === job.companySlug,
 		isOwner: result.posting.createdBy === locals.user!.id,
 		isJobSeeker,
 		resumes,
