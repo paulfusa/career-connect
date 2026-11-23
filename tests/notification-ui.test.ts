@@ -175,7 +175,9 @@ test('notification layout: both roles expose one header bell independently of wr
 		const nav = html.match(/<nav[\s\S]*?<\/nav>/)?.[0] ?? '';
 		assert.match(header, /Career[\s\S]*aria-label="Notifications, 1 unread"/);
 		assert.doesNotMatch(nav, /Notifications|notification-preview/);
-		assert.equal((html.match(/aria-expanded="false"/g) ?? []).length, 1);
+		assert.equal((html.match(/aria-expanded="false"/g) ?? []).length, 2);
+		assert.match(html, /aria-controls="mobile-navigation"/);
+		assert.match(html, /aria-label="Open navigation menu"/);
 		assert.ok(html.includes('action="/logout"'));
 		assert.ok(html.includes('INBOX_CHILD'));
 		assert.equal(html.includes('My Applications'), role === 'job_seeker');
