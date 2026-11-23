@@ -90,7 +90,7 @@
 		id="notification-preview-{id}"
 		hidden={!open}
 		aria-label="Latest notifications"
-		class="absolute right-0 top-full mt-2 max-h-[min(28rem,calc(100dvh-8rem))] w-[min(22rem,calc(100vw-2rem))] overflow-y-auto overscroll-contain rounded-2xl border border-ink/10 bg-white shadow-xl dark:border-white/15 dark:bg-[#1b1b20]"
+		class="fixed inset-x-4 top-24 z-50 max-h-[min(28rem,calc(100dvh-8rem))] w-auto overflow-y-auto overscroll-contain rounded-2xl border border-ink/10 bg-white shadow-xl dark:border-white/15 dark:bg-[#1b1b20] sm:absolute sm:inset-x-auto sm:right-0 sm:top-full sm:mt-2 sm:w-88"
 	>
 		<div class="flex items-center justify-between gap-2 border-b border-ink/10 px-4 py-2">
 			<h2 class="font-display font-semibold">Notifications</h2>
