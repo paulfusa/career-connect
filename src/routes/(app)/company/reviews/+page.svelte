@@ -1,4 +1,5 @@
 <script lang="ts">
+	import SectionTabs from '$lib/components/SectionTabs.svelte';
 	import Stars from '$lib/components/Stars.svelte';
 	import { glassPanel } from '$lib/ui';
 	import type { PageProps } from './$types';
@@ -7,6 +8,8 @@
 </script>
 
 <svelte:head><title>Company reviews · CareerConnect</title></svelte:head>
+
+<SectionTabs section="jobs" />
 
 <h1 class="font-display text-3xl font-semibold tracking-tight md:mt-14">Company reviews</h1>
 <p class="mt-2 text-ink/65">Reviews of the companies on your Company Profile.</p>

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import SectionTabs from '$lib/components/SectionTabs.svelte';
 	import Avatar from '$lib/components/Avatar.svelte';
 	import { field, glassPanel, label, primaryButton, secondaryButton } from '$lib/ui';
 	import type { PageProps } from './$types';
@@ -12,6 +13,8 @@
 </script>
 
 <svelte:head><title>{title} · CareerConnect</title></svelte:head>
+
+<SectionTabs section="people" />
 
 <h1 class="font-display text-3xl font-semibold tracking-tight">{title}</h1>
 <p class="mt-2 text-ink/65">Open someone's profile to follow them.</p>

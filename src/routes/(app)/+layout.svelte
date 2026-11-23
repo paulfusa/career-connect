@@ -32,28 +32,21 @@
 	});
 
 	const roleLabel = { job_seeker: 'Job seeker', recruiter: 'Recruiter' };
-	let nav = $derived<{ href: string; label: string; icon: IconName }[]>([
+	// one link per area; related pages are tabs inside it (SectionTabs), and `also` keeps the area highlighted on them
+	let nav = $derived<{ href: string; label: string; icon: IconName; also?: string[] }[]>([
 		{ href: '/', label: 'Home', icon: 'home' },
-		{ href: '/jobs', label: 'Jobs', icon: 'briefcase' },
+		{ href: '/jobs', label: 'Jobs', icon: 'briefcase', also: ['/jobs/', '/matches', '/reviews', '/company/reviews', '/companies/'] },
 		...(data.user.role === 'job_seeker'
 			? [
-					{ href: '/matches', label: 'Job matches', icon: 'sparkles' as const },
-					{ href: '/resumes', label: 'Resumes', icon: 'file' as const },
-					{ href: '/applications', label: 'My Applications', icon: 'send' as const }
+					{ href: '/applications', label: 'My Applications', icon: 'send' as const, also: ['/applications/'] },
+					{ href: '/resumes', label: 'Resumes', icon: 'file' as const, also: ['/resumes/'] }
 				]
 			: []),
-		// US-09: My reviews for job seekers, Company reviews for recruiters
-		data.user.role === 'job_seeker'
-			? { href: '/reviews', label: 'My reviews', icon: 'star' }
-			: { href: '/company/reviews', label: 'Company reviews', icon: 'star' },
-		// US-19: job seekers find recruiters here and recruiters find job seekers
-		{ href: '/people', label: data.user.role === 'job_seeker' ? 'Recruiters' : 'Job seekers', icon: 'users' },
-		{ href: '/following', label: 'Following', icon: 'userCheck' },
-		// US-06: suggestions for everyone, review page for admins
-		{ href: '/suggestions', label: 'Suggest a feature', icon: 'lightbulb' },
-		...(data.user.isAdmin ? [{ href: '/suggestions/review', label: 'Review suggestions', icon: 'clipboardCheck' as const }] : []),
-		{ href: '/settings', label: 'Settings', icon: 'settings' }
+		{ href: '/people', label: 'People', icon: 'users', also: ['/following'] },
+		{ href: '/settings', label: 'Settings', icon: 'settings', also: ['/suggestions'] }
 	]);
+	const isCurrent = (item: { href: string; also?: string[] }, path: string) =>
+		path === item.href || !!item.also?.some((prefix) => path.startsWith(prefix));
 
 	// one style for every sidebar row; the current page gets a tinted background and a teal icon
 	const navItem =
@@ -104,13 +97,7 @@
 				{#each nav as item (item.href)}
 					<a
 						href={item.href}
-						aria-current={
-							page.url.pathname === item.href ||
-							(item.href === '/jobs' && page.url.pathname.startsWith('/jobs')) ||
-							(item.href === '/company/reviews' && page.url.pathname.startsWith('/companies/'))
-								? 'page'
-								: undefined
-						}
+						aria-current={isCurrent(item, page.url.pathname) ? 'page' : undefined}
 							class={navItem}
 					>
 						<Icon name={item.icon} class={navIcon} />

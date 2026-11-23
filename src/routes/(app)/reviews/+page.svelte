@@ -1,4 +1,5 @@
 <script lang="ts">
+	import SectionTabs from '$lib/components/SectionTabs.svelte';
 	import { enhance } from '$app/forms';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import ConfirmDialog from '$lib/components/ConfirmDialog.svelte';
@@ -50,6 +51,8 @@
 </script>
 
 <svelte:head><title>My reviews · CareerConnect</title></svelte:head>
+
+<SectionTabs section="jobs" />
 
 <h1 class="font-display text-3xl font-semibold tracking-tight md:mt-14">My reviews</h1>
 <p class="mt-2 text-ink/65">The reviews you wrote about companies.</p>

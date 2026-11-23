@@ -1,4 +1,5 @@
 <script lang="ts">
+	import SectionTabs from '$lib/components/SectionTabs.svelte';
 	import OrgLogo from '$lib/components/OrgLogo.svelte';
 	import ProfileAvatarLink from '$lib/components/ProfileAvatarLink.svelte';
 	import Stars from '$lib/components/Stars.svelte';
@@ -14,6 +15,8 @@
 
 <svelte:head><title>Jobs · CareerConnect</title></svelte:head>
 
+<SectionTabs section="jobs" />
+
 <div class="flex flex-wrap items-end justify-between gap-4">
 	<div>
 		<p class="text-sm font-medium uppercase tracking-widest text-tide-deep dark:text-tide">CareerConnect</p>
@@ -23,24 +26,6 @@
 		<a href="/jobs/new" class={primaryButton + ' px-5 text-center sm:w-auto'}>Create a posting</a>
 	{/if}
 </div>
-
-{#if data.user.role === 'recruiter'}
-	<nav class="mt-5 inline-flex gap-1 rounded-2xl bg-white/45 p-1 ring-1 ring-white/60 dark:bg-[#242427] dark:ring-white/10">
-		{#each [
-			{ href: '/jobs', label: 'All postings', current: !data.mine },
-			{ href: '/jobs?mine', label: 'Active postings', current: data.mine && !data.archivedView },
-			{ href: '/jobs?mine&archived=1', label: 'Archived postings', current: data.archivedView }
-		] as tab (tab.href)}
-			<a
-				href={tab.href}
-				aria-current={tab.current ? 'page' : undefined}
-				class="rounded-xl px-4 py-2 text-sm font-medium text-ink/65 transition hover:text-ink focus-visible:outline-2 focus-visible:outline-tide aria-[current=page]:bg-white/85 aria-[current=page]:text-ink aria-[current=page]:shadow-sm dark:aria-[current=page]:bg-[#444448] dark:aria-[current=page]:text-white"
-			>
-				{tab.label}
-			</a>
-		{/each}
-	</nav>
-{/if}
 
 <form method="get" class="{glassPanel} mt-6 grid gap-4 p-5 sm:grid-cols-2 lg:grid-cols-3">
 	

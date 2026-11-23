@@ -1,4 +1,5 @@
 <script lang="ts">
+	import SectionTabs from '$lib/components/SectionTabs.svelte';
 	import { enhance } from '$app/forms';
 	import OrgLogo from '$lib/components/OrgLogo.svelte';
 	import { withPending } from '$lib/forms';
@@ -19,6 +20,8 @@
 </script>
 
 <svelte:head><title>Job matches · CareerConnect</title></svelte:head>
+
+<SectionTabs section="jobs" />
 
 <div class="space-y-5">
 	<div>
