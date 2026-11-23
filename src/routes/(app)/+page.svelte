@@ -2,6 +2,8 @@
 	import OnboardingDialog from '$lib/components/OnboardingDialog.svelte';
 	import { glassPanel } from '$lib/ui';
 	import type { PageProps } from './$types';
+	import StatCard from '$lib/components/dashboard/StatCard.svelte';
+	import RecentApplications from '$lib/components/dashboard/RecentApplications.svelte';
 
 	let { data }: PageProps = $props();
 
@@ -20,7 +22,73 @@
 
 <svelte:head><title>CareerConnect</title></svelte:head>
 
-<h1 class="font-display text-3xl font-semibold tracking-tight">{c.title}</h1>
+<div class="mb-8">
+	<p class="mb-2 text-sm font-semibold text-tide-deep">
+		{data.user.role === 'recruiter'
+			? 'Recruiter Dashboard'
+			: 'Job Seeker Dashboard'}
+	</p>
+
+	<h1 class="font-display text-3xl font-bold tracking-tight text-ink sm:text-4xl">
+		Welcome back, {data.user.name.split(' ')[0]}!
+	</h1>
+
+	<p class="mt-3 text-base text-ink/60">
+		{data.user.role === 'recruiter'
+			? "Here's what's happening with your hiring."
+			: "Here's what's happening with your job search."}
+	</p>
+</div>
+
+<section class="mb-8">
+	<h2 class="mb-5 text-xl font-semibold text-ink">
+		Overview
+	</h2>
+
+	<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">	
+		{#if data.user.role === 'recruiter'}
+			<StatCard
+				title="Active Job Postings"
+				value={data.stats.activePostings ?? 0}
+			/>
+			<StatCard
+				title="Total Applications"
+				value={data.stats.totalApplications}
+			/>
+			<StatCard
+				title="Awaiting Review"
+				value={data.stats.awaitingReview ?? 0}
+			/>
+			<StatCard
+				title="Interviews"
+				value={data.stats.interviews}
+			/>
+
+		{:else}
+			<StatCard
+				title="Total Applications"
+				value={data.stats.totalApplications}
+			/>
+			<StatCard
+				title="Under Review"
+				value={data.stats.underReview ?? 0}
+			/>
+			<StatCard
+				title="Interviews"
+				value={data.stats.interviews}
+			/>
+			<StatCard
+				title="Job Offers"
+				value={data.stats.offers ?? 0}
+			/>
+		{/if}
+	</div>
+</section>
+
+<RecentApplications
+	applications={data.recentApplications ?? []}
+	role={data.user.role}
+/>
 
 <section class="{glassPanel} mt-5 grid min-h-72 place-items-center p-8 text-center">
 	<div class="max-w-sm">
