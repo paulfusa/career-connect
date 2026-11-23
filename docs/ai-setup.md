@@ -1,9 +1,10 @@
-# AI setup (resume review and profile autofill)
+# AI setup (resume review, profile autofill and job matching)
 
-CareerConnect has two Generative AI features, both on the **Resumes** page for job seekers:
+CareerConnect has three Generative AI features for job seekers. The first two are on the **Resumes** page, and the third has its own **Job matches** page:
 
 - **Review**: written feedback on a resume, optionally tailored to one of the job postings.
 - **Fill profile**: reads a resume and offers to add its experience, education, skills and contact details to your profile.
+- **Job matches**: suggests open postings that fit your profile and, optionally, a resume, with a match level, the reason, and what you're missing.
 
 They are optional. If the three `AI_*` settings in `.env` are empty, the buttons don't appear and the rest of the app works as usual.
 
@@ -74,6 +75,7 @@ Model names change. If the one above is refused, use a current "Flash" model nam
 3. The answer is cleaned up and checked before anything is shown or saved:
    - Autofill items go through the same validation as the profile forms, so a wrong date from the model is dropped instead of saved. Nothing is added to a profile until the user ticks it and confirms.
    - Reviews are saved with the resume, so reopening the page doesn't run the model again.
+   - Job matching (`src/lib/server/job-match.ts`) only sends the model open, published postings you haven't applied to, at most the 12 closest to your profile. Your name, email and phone from the profile are not sent. Jobs are labelled `J1`, `J2`…, so an answer pointing at a job that wasn't sent is dropped, as is any match level outside Strong, Good and Partial. Saved matches are checked again each time the page opens, so a job that closed disappears.
 4. The prompts tell the model to treat the resume as data and to never invent facts. AI output can still be wrong, which is why both pages say so.
 
 The pipeline (PDF → text → model → structured data → feedback) follows the approach of the open-source [interviewstreet/hiring-agent](https://github.com/interviewstreet/hiring-agent) project, reimplemented inside this app. Unlike that tool, the review gives written feedback and no numeric score, because model scores vary from run to run.

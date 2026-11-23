@@ -1,4 +1,5 @@
 <script lang="ts">
+	import SectionTabs from '$lib/components/SectionTabs.svelte';
 	import { enhance } from '$app/forms';
 	import ConfirmDialog from '$lib/components/ConfirmDialog.svelte';
 	import { SUGGESTION_STATUSES, type SuggestionStatus } from '$lib/feature-suggestions';
@@ -23,6 +24,8 @@
 </script>
 
 <svelte:head><title>Review suggestions · CareerConnect</title></svelte:head>
+
+<SectionTabs section="settings" />
 
 <h1 class="font-display text-3xl font-semibold tracking-tight">Review suggestions</h1>
 <p class="mt-2 text-ink/65">Feature ideas from job seekers and recruiters. Set a status so they know where their idea stands.</p>

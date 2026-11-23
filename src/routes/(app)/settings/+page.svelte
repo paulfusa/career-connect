@@ -1,5 +1,6 @@
 
 <script lang="ts">
+	import SectionTabs from '$lib/components/SectionTabs.svelte';
     import { glassPanel } from '$lib/ui';
     import { page } from '$app/state';
     import { onMount } from 'svelte';
@@ -29,6 +30,8 @@
 <svelte:head>
     <title>Settings · CareerConnect</title>
 </svelte:head>
+
+<SectionTabs section="settings" />
 
 <div class="space-y-5">
     <div>

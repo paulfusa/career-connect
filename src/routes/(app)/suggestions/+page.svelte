@@ -1,4 +1,5 @@
 <script lang="ts">
+	import SectionTabs from '$lib/components/SectionTabs.svelte';
 	import { enhance } from '$app/forms';
 	import ConfirmDialog from '$lib/components/ConfirmDialog.svelte';
 	import FieldError from '$lib/components/FieldError.svelte';
@@ -26,6 +27,8 @@
 </script>
 
 <svelte:head><title>Suggest a feature · CareerConnect</title></svelte:head>
+
+<SectionTabs section="settings" />
 
 <h1 class="font-display text-3xl font-semibold tracking-tight">Suggest a feature</h1>
 <p class="mt-2 text-ink/65">

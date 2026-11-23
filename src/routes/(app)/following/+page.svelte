@@ -1,4 +1,5 @@
 <script lang="ts">
+	import SectionTabs from '$lib/components/SectionTabs.svelte';
 	import { enhance } from '$app/forms';
 	import { errorBox, glassPanel, secondaryButton, successBox } from '$lib/ui';
 	import type { PageProps } from './$types';
@@ -11,6 +12,8 @@
 </script>
 
 <svelte:head><title>Following · CareerConnect</title></svelte:head>
+
+<SectionTabs section="people" />
 
 <h1 class="font-display text-3xl font-semibold tracking-tight">Following</h1>
 
