@@ -110,7 +110,7 @@
 					{#each notifications as notification (notification.id)}
 						{@const link = safeNotificationLink(notification.link)}
 						<li class="p-4 {notification.readAt === null ? 'bg-tide/5' : ''}">
-							<p class="break-words text-sm font-semibold [overflow-wrap:anywhere]">{notification.title}</p>
+							<p class="wrap-anywhere text-sm font-semibold">{notification.title}</p>
 							<div class="mt-1 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-xs">
 								<span class="text-ink/65">{notification.readAt === null ? 'Unread' : 'Read'}</span>
 								{#if link}
@@ -122,6 +122,6 @@
 				</ul>
 			{/if}
 		</div>
-		<a href="/notifications" data-sveltekit-reload data-sveltekit-preload-data="off" class="flex min-h-11 items-center justify-center border-t border-ink/10 px-4 py-3 text-sm font-semibold text-tide hover:bg-mist dark:hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-tide">View all notifications</a>
+		<a href="/notifications" data-sveltekit-reload data-sveltekit-preload-data="off" class="flex min-h-11 items-center justify-center border-t border-ink/10 px-4 py-3 text-sm font-semibold text-tide hover:bg-mist dark:hover:bg-white/10 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-tide">View all notifications</a>
 	</section>
 </div>

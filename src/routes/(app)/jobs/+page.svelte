@@ -12,15 +12,6 @@
 	let { data }: PageProps = $props();
 	let searching = $derived(Object.values(data.search).some((value) => value !== ''));
 	let filtersOpen = $state(false);
-
-	let hasAdvancedFilters = $derived(
-		Object.entries(data.search).some(
-			([key, value]) =>
-				!['keyword', 'sort'].includes(key) &&
-				value !== '' &&
-				value !== 'off'
-		)
-	);
 	let activeFilterCount = $derived(
 		[
 			data.search.company,
