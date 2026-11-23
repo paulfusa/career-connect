@@ -84,7 +84,7 @@
                 Choose how CareerConnect looks on your device.
             </p>
 
-            <div class="mt-4 grid gap-3 sm:grid-cols-3">
+            <div class="mt-4 grid grid-cols-3 gap-2 sm:gap-3">
                 {#each [
                     { value: 'light', label: 'Light', icon: '☀' },
                     { value: 'dark', label: 'Dark', icon: '☾' },
