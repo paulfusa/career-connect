@@ -20,11 +20,16 @@ type Application = {
 	} = $props();
 
 	const statusStyles: Record<string, string> = {
-		applied: 'bg-sky/15 text-ink',
-		under_review: 'bg-amber-500/15 text-amber-700 dark:text-amber-300',
-		interview: 'bg-lilac/20 text-ink',
-		offered: 'bg-green-500/15 text-green-700 dark:text-green-300',
-		rejected: 'bg-red-500/15 text-red-700 dark:text-red-300'
+		applied:
+			'bg-sky/15 text-sky-800 ring-1 ring-inset ring-sky-500/20 dark:text-sky-200',
+		under_review:
+			'bg-amber-500/15 text-amber-800 ring-1 ring-inset ring-amber-500/20 dark:text-amber-300',
+		interview:
+			'bg-lilac/20 text-purple-800 ring-1 ring-inset ring-purple-500/20 dark:text-purple-300',
+		offered:
+			'bg-green-500/15 text-green-800 ring-1 ring-inset ring-green-500/20 dark:text-green-300',
+		rejected:
+			'bg-red-500/15 text-red-800 ring-1 ring-inset ring-red-500/20 dark:text-red-300'
 	};
 
 	const statusLabels: Record<string, string> = {
@@ -57,11 +62,12 @@ type Application = {
 		</div>
 
 		<a
-			href="/applications"
-			class="text-sm font-semibold text-tide-deep hover:underline"
+			href={role === 'recruiter' ? '/jobs?mine' : '/applications'}
+			class="text-sm font-semibold text-tide-deep transition hover:underline focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tide"
 		>
-			View all
+			{role === 'recruiter' ? 'View my postings' : 'View all'}
 		</a>
+
 	</div>
 
 	{#if applications.length === 0}
@@ -101,53 +107,58 @@ type Application = {
 
 	{:else}
 		<div class="overflow-x-auto">
-			<table class="w-full min-w-[600px] text-left">
+			<table class="w-full text-left">
 				<thead class="bg-ink/5 text-xs uppercase tracking-wide text-ink/60">
 					<tr>
-						<th class="px-6 py-4 font-semibold">Job Position</th>
-						<th class="px-6 py-4 font-semibold">
+						<th class="px-3 py-3 sm:px-4 font-semibold">Job Position</th>
+						<th class="hidden px-3 py-3 font-semibold sm:table-cell sm:px-4">
 							{role === 'recruiter' ? 'Applicant' : 'Company'}
 						</th>
-						<th class="px-6 py-4 font-semibold">Status</th>
-						<th class="px-6 py-4 font-semibold">Applied</th>
+						<th class="px-3 py-3 sm:px-4 font-semibold">Status</th>
+						<th class="hidden px-3 py-3 font-semibold sm:table-cell sm:px-4">
+							Applied
+						</th>
 					</tr>
 				</thead>
 				<tbody class="divide-y divide-ink/10">
 					{#each applications as app (app.id)}
 						<tr class="transition-colors duration-150 hover:bg-tide/5">
-						<td class="px-6 py-4 font-semibold">
-							<a
-								href={role === 'recruiter'
-									? `/jobs/${app.jobPostingId}/applications`
-									: `/jobs/${app.jobPostingId}`}
-								class="inline-flex items-center gap-2 text-ink transition-colors hover:text-tide-deep hover:underline focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tide"
-							>
-								{app.jobTitle}
-								<svg
-									class="h-4 w-4 shrink-0 opacity-40"
-									viewBox="0 0 24 24"
-									fill="none"
-									stroke="currentColor"
-									stroke-width="2"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									aria-hidden="true"
+							<td class="px-3 py-3 sm:px-4 font-semibold">
+								<a
+									href={role === 'recruiter'
+										? `/jobs/${app.jobPostingId}/applications`
+										: `/jobs/${app.jobPostingId}`}
+									class="inline-flex items-center gap-2 text-ink transition-colors hover:text-tide-deep hover:underline focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tide"
 								>
-									<path d="M7 17 17 7M8 7h9v9" />
-								</svg>
-							</a>
-						</td>
-							<td class="px-6 py-4 text-sm text-ink/70">
+									{app.jobTitle}
+									<svg
+										class="h-4 w-4 shrink-0 opacity-40"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										aria-hidden="true"
+									>
+										<path d="M7 17 17 7M8 7h9v9" />
+									</svg>
+								</a>
+								<p class="mt-1 text-xs font-normal text-ink/60 sm:hidden">
+									{app.company ?? app.applicantName ?? '—'}
+								</p>
+							</td>
+							<td class="hidden px-3 py-3 text-sm text-ink/70 sm:table-cell sm:px-4">
 								{app.company ?? app.applicantName ?? '—'}
 							</td>
-							<td class="px-6 py-4">
+							<td class="px-3 py-3 sm:px-4">
 								<span
-									class={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${statusStyles[app.status] ?? 'bg-ink/10 text-ink'}`}
+									class={`inline-flex whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-semibold ${statusStyles[app.status] ?? 'bg-ink/10 text-ink'}`}
 								>
 									{statusLabels[app.status] ?? app.status}
 								</span>
 							</td>
-							<td class="px-6 py-4 text-sm text-ink/60">
+							<td class="hidden px-3 py-3 text-sm text-ink/60 sm:table-cell sm:px-4">
 								{formatDate(app.createdAt)}
 							</td>
 						</tr>

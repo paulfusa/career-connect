@@ -11,6 +11,7 @@
 	let { data, children }: LayoutProps = $props();
 	let signingOutUserId = $state<string | null>(null);
 	let sessionExpired = $state(false);
+	let mobileMenuOpen = $state(false);
 	let notificationContextValid = $derived(signingOutUserId !== data.user.id && !sessionExpired && notificationContextIsCurrent(
 		data.notificationOwnerId, data.user.id, data.notificationSessionExpiresAt
 	));
@@ -73,14 +74,60 @@
 		<a href="/" class="min-w-0 font-display text-2xl font-semibold tracking-tight">
 			Career<span class="text-tide">Connect</span>
 		</a>
-		<NotificationBell
-			unreadCount={notificationContextValid ? data.notificationUnreadCount : null}
-			ownerId={data.user.id}
-			contextValid={notificationContextValid}
-		/>
+		<div class="flex items-center gap-2">
+			<NotificationBell
+				unreadCount={notificationContextValid ? data.notificationUnreadCount : null}
+				ownerId={data.user.id}
+				contextValid={notificationContextValid}
+			/>
+
+			<button
+				type="button"
+				aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+				aria-expanded={mobileMenuOpen}
+				aria-controls="mobile-navigation"
+				onclick={() => (mobileMenuOpen = !mobileMenuOpen)}
+				class="flex h-10 w-10 items-center justify-center rounded-xl
+					border border-ink/10 bg-white/60 text-ink transition
+					hover:bg-white/80 focus-visible:outline-2
+					focus-visible:outline-offset-2 focus-visible:outline-tide
+					dark:bg-white/10 dark:hover:bg-white/15 md:hidden"
+			>
+				{#if mobileMenuOpen}
+					<svg
+						class="h-5 w-5"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						aria-hidden="true"
+					>
+						<path d="M6 6l12 12M18 6 6 18" />
+					</svg>
+				{:else}
+					<svg
+						class="h-5 w-5"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						aria-hidden="true"
+					>
+						<path d="M4 7h16M4 12h16M4 17h16" />
+					</svg>
+				{/if}
+			</button>
+		</div>
 	</header>
 
-	<aside class="app-sidebar md:sticky md:top-10 md:self-start">
+	<aside
+		id="mobile-navigation"
+		class={`app-sidebar md:sticky md:top-10 md:self-start ${
+			mobileMenuOpen ? 'block' : 'hidden md:block'
+		}`}
+	>
 		<section class="{glassPanel} p-5">
 			<div class="flex items-center gap-4 md:flex-col md:items-start">
 				<Avatar name={data.user.name} image={data.user.image} />
@@ -95,11 +142,14 @@
 
 			<nav aria-label="Main navigation" class="mt-5 grid gap-1 min-[360px]:grid-cols-2 md:flex md:flex-col">
 				{#each nav as item (item.href)}
+					
 					<a
 						href={item.href}
+						onclick={() => (mobileMenuOpen = false)}
 						aria-current={isCurrent(item, page.url.pathname) ? 'page' : undefined}
-							class={navItem}
+						class={navItem}
 					>
+
 						<Icon name={item.icon} class={navIcon} />
 						{item.label}
 					</a>

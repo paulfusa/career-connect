@@ -1,5 +1,5 @@
 import { fail } from '@sveltejs/kit';
-import { eq, count, and, desc } from 'drizzle-orm';
+import { eq, count, and, desc, gte, lte } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import { application, jobPosting, profile, user } from '$lib/server/db/schema';
 import { MAX_ANSWER_LENGTH, QUESTIONS } from '$lib/onboarding';
@@ -69,6 +69,41 @@ export const load: PageServerLoad = async ({ locals }) => {
 	if (me.role === 'recruiter') {
 		const owner = eq(jobPosting.createdBy, me.id);
 
+		const montrealDate = new Intl.DateTimeFormat('en-CA', {
+			timeZone: 'America/Toronto',
+			year: 'numeric',
+			month: '2-digit',
+			day: '2-digit'
+		});
+
+		const todayString = montrealDate.format(new Date());
+
+		const sevenDaysLater = new Date(`${todayString}T12:00:00Z`);
+		sevenDaysLater.setUTCDate(sevenDaysLater.getUTCDate() + 7);
+
+		const deadlineString = montrealDate.format(sevenDaysLater);
+
+		const upcomingDeadlines = await db
+			.select({
+				id: jobPosting.id,
+				title: jobPosting.title,
+				applicationDeadline: jobPosting.applicationDeadline
+			})
+			.from(jobPosting)
+			.where(
+				and(
+					owner,
+					eq(jobPosting.status, 'open'),
+					eq(jobPosting.published, true),
+					eq(jobPosting.archived, false),
+					gte(jobPosting.applicationDeadline, todayString),
+					lte(jobPosting.applicationDeadline, deadlineString)
+				)
+			)
+			.orderBy(jobPosting.applicationDeadline)
+			.limit(5);
+
+
 		const [activePostings, totalApplications, awaitingReview, interviews] =
 			await Promise.all([
 				db.select({ value: count() })
@@ -125,7 +160,8 @@ export const load: PageServerLoad = async ({ locals }) => {
 				awaitingReview: awaitingReview[0].value,
 				interviews: interviews[0].value
 			},
-			recentApplications
+			recentApplications,
+			upcomingDeadlines
 		};
 	}
 
