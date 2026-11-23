@@ -37,6 +37,7 @@
 		{ href: '/jobs', label: 'Jobs', icon: 'briefcase' },
 		...(data.user.role === 'job_seeker'
 			? [
+					{ href: '/matches', label: 'Job matches', icon: 'sparkles' as const },
 					{ href: '/resumes', label: 'Resumes', icon: 'file' as const },
 					{ href: '/applications', label: 'My Applications', icon: 'send' as const }
 				]

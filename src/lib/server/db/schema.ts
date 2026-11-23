@@ -1,6 +1,7 @@
 import { sql } from 'drizzle-orm';
 import { pgTable, integer, text, timestamp, boolean, date, uuid, unique, uniqueIndex, index, check, jsonb, numeric } from 'drizzle-orm/pg-core';
 import type { ParsedResume, ResumeReview } from '../resume-ai';
+import type { StoredMatch } from '../job-match';
 import { user } from './auth.schema';
 
 export const passwordResetCooldown = pgTable('password_reset_cooldown', {
@@ -163,6 +164,15 @@ export const resume = pgTable(
 	},
 	(t) => [index('resume_user_id_idx').on(t.userId)]
 );
+
+// US-31: the latest AI job suggestions, one row per job seeker. Job details are read live when shown
+export const jobMatch = pgTable('job_match', {
+	userId: userId().primaryKey(),
+	resumeId: uuid('resume_id').references(() => resume.id, { onDelete: 'set null' }),
+	matches: jsonb('matches').$type<StoredMatch[]>().notNull(),
+	model: text('model').notNull(),
+	updatedAt: timestamp('updated_at').defaultNow().notNull()
+});
 
 // US-15: a job seeker's application to a posting, with the resume they picked
 export const application = pgTable(
