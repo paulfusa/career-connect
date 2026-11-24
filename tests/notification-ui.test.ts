@@ -169,7 +169,7 @@ test('notification layout: both roles expose one header bell independently of wr
 		const html = render(Layout, { props: { data: data({ user: { ...user, role } }) as never, children, params: {} } }).body;
 		assert.ok(html.includes('Main navigation'));
 		// the sidebar links sit in a grid on small screens; the bell must still stay in the header
-		assert.ok(html.includes('min-[360px]:grid-cols-2'));
+		assert.ok(html.includes('min-[390px]:grid-cols-2'));
 		assert.ok(html.includes('Notifications'));
 		const header = html.match(/<header[\s\S]*?<\/header>/)?.[0] ?? '';
 		const nav = html.match(/<nav[\s\S]*?<\/nav>/)?.[0] ?? '';

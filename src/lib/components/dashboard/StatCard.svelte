@@ -5,13 +5,15 @@
 		value,
 		description = '',
 		variant = 'default',
-		icon = 'document'
+		icon = 'document',
+		href
 	}: {
 		title: string;
 		value: number | string;
 		description?: string;
 		variant?: 'default' | 'attention' | 'success';
 		icon?: 'briefcase' | 'document' | 'clock' | 'calendar' | 'offer';
+		href: string;
 	} = $props();
 
 	const accents = {
@@ -21,12 +23,14 @@
 	};
 </script>
 
-<div
-	class="group relative overflow-hidden rounded-2xl border border-ink/10
-		bg-white/80 p-3 shadow-sm transition-all duration-200
-		hover:-translate-y-1 hover:border-tide/30 hover:shadow-lg
-		dark:bg-white/5 sm:p-5"
->
+	<a
+		{href}
+		class="group relative block min-w-0 overflow-hidden rounded-2xl border border-ink/10
+			bg-white/80 p-3 shadow-sm transition-all duration-200
+			hover:-translate-y-1 hover:border-tide/30 hover:shadow-lg
+			focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tide
+			active:scale-[0.98] dark:bg-white/5 sm:p-5"
+	>
 	<div class="flex items-center justify-between gap-3">
 		<p class="min-w-0 text-xs font-medium leading-snug text-ink/65 sm:text-sm">
 			{title}
@@ -78,4 +82,4 @@
 		class="absolute inset-x-0 bottom-0 h-1 bg-tide/0
 			transition-colors duration-200 group-hover:bg-tide/60"
 	></div>
-</div>
+</a>

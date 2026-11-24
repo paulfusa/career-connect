@@ -26,6 +26,19 @@
 				: ''
 		].filter(Boolean).length
 	);
+	let recruiterFilterLabel = $derived(
+		data.appStatus === 'all'
+			? 'Postings with applications'
+			: data.appStatus === 'applied'
+				? 'Applications awaiting review'
+				: data.appStatus === 'interview'
+					? 'Interview-stage applications'
+					: null
+	);
+
+	let activePostingFilterLabel = $derived(
+		data.activeOnly ? 'Active job postings' : null
+	);
 </script>
 
 <svelte:head><title>Jobs · CareerConnect</title></svelte:head>
@@ -43,10 +56,18 @@
 </div>
 
 <form method="get" class="{glassPanel} mt-6 space-y-4 p-4 sm:p-5">
-	
+
 	{#if data.mine}
 		<input type="hidden" name="mine" />
 		{#if data.archivedView}<input type="hidden" name="archived" value="1" />{/if}
+	{/if}
+
+	{#if data.appStatus}
+		<input type="hidden" name="appStatus" value={data.appStatus} />
+	{/if}
+
+	{#if data.activeOnly}
+		<input type="hidden" name="activeOnly" value="1" />
 	{/if}
 
 	<div class="flex min-w-0 flex-col gap-3 xl:flex-row xl:items-end">
@@ -98,14 +119,16 @@
 		</div>
 		{#if searching}
 			<a
-				href={data.archivedView ? '/jobs?mine&archived=1' : data.mine ? '/jobs?mine' : '/jobs'}
+				href={data.mine
+					? `/jobs?mine${data.archivedView ? '&archived=1' : ''}${data.appStatus ? `&appStatus=${data.appStatus}` : ''}`
+					: '/jobs'}
 				class="self-center text-sm font-semibold text-tide-deep underline underline-offset-4 hover:text-tide dark:text-tide"
 			>
 				Clear Filters
 			</a>
 		{/if}
 	</div>
-	
+
 <div
 	id="advanced-job-filters"
 	class={filtersOpen ? 'block' : 'hidden'}
@@ -207,7 +230,23 @@
 </div>
 </form>
 
+{#if recruiterFilterLabel || activePostingFilterLabel}
+	<div class="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-tide/20 bg-tide/5 px-4 py-3">
+		<p class="text-sm font-medium text-ink">
+			Showing:
+			<span class="font-semibold text-tide-deep dark:text-tide">
+				{activePostingFilterLabel ?? recruiterFilterLabel}
+			</span>
+		</p>
 
+		<a
+			href={data.archivedView ? '/jobs?mine&archived=1' : '/jobs?mine'}
+			class="text-sm font-semibold text-tide-deep underline underline-offset-4 dark:text-tide"
+		>
+			Show All Postings
+		</a>
+	</div>
+{/if}
 
 {#if data.postings.length}
 	<section class="mt-6 grid gap-4">
@@ -299,11 +338,36 @@
 {:else}
 	<section class="{glassPanel} mt-6 grid min-h-64 place-items-center p-8 text-center">
 		<div>
-			{#if searching}
-				<h2 class="font-display text-xl font-semibold">No jobs match your search</h2>
-				<p class="mt-2 text-ink/60">Try different words or fewer filters.</p>
-				<a href={data.archivedView ? '/jobs?mine&archived=1' : data.mine ? '/jobs?mine' : '/jobs'} class="mt-5 inline-block font-semibold text-tide-deep dark:text-tide underline underline-offset-4">Clear search</a>
-			{:else if data.mine}
+
+				{#if (recruiterFilterLabel || activePostingFilterLabel) && !searching}
+					<h2 class="font-display text-xl font-semibold">
+						No matching job postings
+					</h2>
+					<p class="mt-2 text-ink/60">
+						No postings currently match "{activePostingFilterLabel ?? recruiterFilterLabel}".
+					</p>
+					<a
+						href="/jobs?mine"
+						class="mt-5 inline-block font-semibold text-tide-deep underline underline-offset-4 dark:text-tide"
+					>
+						Show All Postings
+					</a>
+					{:else if searching}
+						<h2 class="font-display text-xl font-semibold">
+							No jobs match your search
+						</h2>
+						<p class="mt-2 text-ink/60">
+							Try different words or fewer filters.
+						</p>
+						<a
+							href={data.mine
+								? `/jobs?mine${data.archivedView ? '&archived=1' : ''}${data.appStatus ? `&appStatus=${data.appStatus}` : ''}${data.activeOnly ? '&activeOnly=1' : ''}`
+								: '/jobs'}
+							class="mt-5 inline-block font-semibold text-tide-deep underline underline-offset-4 dark:text-tide"
+						>
+							Clear search
+						</a>
+					{:else if data.mine}
 				{#if data.archivedView}
 					<h2 class="font-display text-xl font-semibold">No archived postings</h2>
 					<p class="mt-2 text-ink/60">Postings you archive will be listed here.</p>

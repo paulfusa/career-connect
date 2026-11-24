@@ -106,7 +106,57 @@ type Application = {
 	</div>
 
 	{:else}
-		<div class="overflow-x-auto">
+		<!-- Mobile application cards -->
+		<div class="divide-y divide-ink/10 sm:hidden">
+			{#each applications as app (app.id)}
+				<div class="min-w-0 p-4">
+					<a
+						href={role === 'recruiter'
+							? `/jobs/${app.jobPostingId}/applications`
+							: `/jobs/${app.jobPostingId}`}
+						class="group flex min-w-0 items-start justify-between gap-3 rounded-lg focus-visible:outline-2 focus-visible:outline-tide"
+					>
+						<div class="min-w-0 flex-1">
+							<h3 class="wrap-anywhere text-sm font-semibold text-ink transition group-hover:text-tide-deep dark:group-hover:text-tide">
+								{app.jobTitle}
+							</h3>
+							<p class="mt-1 wrap-anywhere text-xs text-ink/60">
+								{role === 'recruiter'
+									? app.applicantName ?? 'Unknown applicant'
+									: app.company ?? 'Unknown company'}
+							</p>
+						</div>
+
+						<svg
+							class="mt-0.5 size-4 shrink-0 text-ink/40"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							aria-hidden="true"
+						>
+							<path d="M7 17 17 7M8 7h9v9" />
+						</svg>
+					</a>
+
+					<div class="mt-3 flex flex-wrap items-center justify-between gap-2">
+						<span
+							class={`inline-flex rounded-full px-3 py-1.5 text-xs font-semibold ${statusStyles[app.status] ?? 'bg-ink/10 text-ink'}`}
+						>
+							{statusLabels[app.status] ?? app.status}
+						</span>
+
+						<time class="text-xs text-ink/60" datetime={app.createdAt.toISOString()}>
+							{formatDate(app.createdAt)}
+						</time>
+					</div>
+				</div>
+			{/each}
+		</div>
+
+		<div class="hidden overflow-x-auto sm:block">
 			<table class="w-full text-left">
 				<thead class="bg-ink/5 text-xs uppercase tracking-wide text-ink/60">
 					<tr>

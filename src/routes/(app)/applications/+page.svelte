@@ -4,6 +4,11 @@
     import type { PageProps } from './$types';
 
     let { data }: PageProps = $props();
+    let activeStatusLabel = $derived(
+        data.status
+            ? APPLICATION_STATUSES[data.status as keyof typeof APPLICATION_STATUSES]
+            : null
+    );
     const formatDate = (date: Date) => date.toLocaleDateString('en-CA', { dateStyle: 'medium' });
 </script>
 
@@ -23,12 +28,50 @@
     </a>
 </div>
 
+{#if activeStatusLabel}
+	<div class="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-tide/20 bg-tide/5 px-4 py-3">
+		<p class="text-sm font-medium text-ink">
+			Showing applications:
+			<span class="font-semibold text-tide-deep dark:text-tide">
+				{activeStatusLabel}
+			</span>
+		</p>
+
+		<a
+			href="/applications"
+			class="text-sm font-semibold text-tide-deep underline underline-offset-4 hover:text-tide dark:text-tide"
+		>
+			Show All Applications
+		</a>
+	</div>
+{/if}
+
 {#if data.applications.length === 0}
     <section class="{glassPanel} mt-5 p-8 text-center">
-        <p class="font-medium">You haven't applied to any jobs yet.</p>
-        <a href="/jobs" class="mt-4 inline-block font-medium text-tide-deep dark:text-tide hover:underline">
-            Browse job postings
-        </a>
+
+        {#if activeStatusLabel}
+            <p class="font-medium">
+                No applications with status "{activeStatusLabel}".
+            </p>
+            <p class="mt-2 text-sm text-ink/60">
+                You can view all your applications to see their current statuses.
+            </p>
+            <a
+                href="/applications"
+                class="mt-4 inline-block font-medium text-tide-deep hover:underline dark:text-tide"
+            >
+                Show All Applications
+            </a>
+        {:else}
+            <p class="font-medium">You haven't applied to any jobs yet.</p>
+            <a
+                href="/jobs"
+                class="mt-4 inline-block font-medium text-tide-deep hover:underline dark:text-tide"
+            >
+                Browse job postings
+            </a>
+        {/if}
+
     </section>
 {:else}
     <section class="mt-5 space-y-4" aria-label="Your applications">

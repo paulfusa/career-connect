@@ -103,33 +103,47 @@ export const load: PageServerLoad = async ({ locals }) => {
 			.orderBy(jobPosting.applicationDeadline)
 			.limit(5);
 
+			const [activePostings, totalApplications, awaitingReview, interviews] =
+				await Promise.all([
+					// Active job postings
+					db.select({ value: count() })
+						.from(jobPosting)
+						.where(and(
+							owner,
+							eq(jobPosting.status, 'open'),
+							eq(jobPosting.published, true),
+							eq(jobPosting.archived, false)
+						)),
 
-		const [activePostings, totalApplications, awaitingReview, interviews] =
-			await Promise.all([
-				db.select({ value: count() })
-					.from(jobPosting)
-					.where(and(
-						owner,
-						eq(jobPosting.status, 'open'),
-						eq(jobPosting.published, true),
-						eq(jobPosting.archived, false)
-					)),
+					// Total applications on non-archived postings
+					db.select({ value: count() })
+						.from(application)
+						.innerJoin(jobPosting, eq(application.jobPostingId, jobPosting.id))
+						.where(and(
+							owner,
+							eq(jobPosting.archived, false)
+						)),
 
-				db.select({ value: count() })
-					.from(application)
-					.innerJoin(jobPosting, eq(application.jobPostingId, jobPosting.id))
-					.where(owner),
+					// Applications awaiting review
+					db.select({ value: count() })
+						.from(application)
+						.innerJoin(jobPosting, eq(application.jobPostingId, jobPosting.id))
+						.where(and(
+							owner,
+							eq(jobPosting.archived, false),
+							eq(application.status, 'applied')
+						)),
 
-				db.select({ value: count() })
-					.from(application)
-					.innerJoin(jobPosting, eq(application.jobPostingId, jobPosting.id))
-					.where(and(owner, eq(application.status, 'applied'))),
-
-				db.select({ value: count() })
-					.from(application)
-					.innerJoin(jobPosting, eq(application.jobPostingId, jobPosting.id))
-					.where(and(owner, eq(application.status, 'interview')))
-			]);
+					// Applications in the interview stage
+					db.select({ value: count() })
+						.from(application)
+						.innerJoin(jobPosting, eq(application.jobPostingId, jobPosting.id))
+						.where(and(
+							owner,
+							eq(jobPosting.archived, false),
+							eq(application.status, 'interview')
+						))
+				]);
 
 			const recentApplications = await db
 				.select({

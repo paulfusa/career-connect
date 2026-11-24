@@ -45,10 +45,10 @@
 		{#if role === 'job_seeker'}
 			{#if interviews > 0}
 				<a
-					href="/applications"
-					class="flex items-center justify-between gap-4 rounded-xl border border-ink/10 p-4 transition hover:border-tide/40 hover:bg-tide/5"
+					href="/applications?status=interview"
+					class="flex items-center justify-between gap-2 rounded-xl border border-ink/10 p-4 transition hover:border-tide/40 hover:bg-tide/5 sm:gap-4"
 				>
-					<div>
+						<div class="min-w-0 flex-1">
 						<p class="font-semibold text-ink">Interviews</p>
 						<p class="mt-1 text-sm text-ink/60">
 							You have {interviews} application{interviews === 1 ? '' : 's'} in the interview stage.
@@ -62,11 +62,11 @@
 
 			{#if offers > 0}
 				<a
-					href="/applications"
-					class="flex items-center justify-between gap-4 rounded-xl border border-ink/10 p-4 transition hover:border-tide/40 hover:bg-tide/5"
+					href="/applications?status=offered"
+					class="flex items-center justify-between gap-2 rounded-xl border border-ink/10 p-4 transition hover:border-tide/40 hover:bg-tide/5 sm:gap-4"
 				>
-					<div>
-						<p class="font-semibold text-ink">Job Offers</p>
+						<div class="min-w-0 flex-1">
+					<p class="font-semibold text-ink">Job Offers</p>
 						<p class="mt-1 text-sm text-ink/60">
 							You have {offers} job offer{offers === 1 ? '' : 's'} to view.
 						</p>
@@ -88,10 +88,10 @@
 		{:else}
 			{#if awaitingReview > 0}
 				<a
-					href="/jobs?mine"
-					class="flex items-center justify-between gap-4 rounded-xl border border-ink/10 p-4 transition hover:border-tide/40 hover:bg-tide/5"
+					href="/jobs?mine&appStatus=applied"
+					class="flex items-center justify-between gap-2 rounded-xl border border-ink/10 p-4 transition hover:border-tide/40 hover:bg-tide/5 sm:gap-4"
 				>
-					<div>
+					<div class="min-w-0 flex-1">
 						<p class="font-semibold text-ink">Applications awaiting review</p>
 						<p class="mt-1 text-sm text-ink/60">
 							You have {awaitingReview} application{awaitingReview === 1 ? '' : 's'} to review.
@@ -108,10 +108,11 @@
 					href={`/jobs/${deadline.id}`}
 					class="block rounded-xl border border-ink/10 p-4 transition hover:border-tide/40 hover:bg-tide/5"
 				>
-					<div class="flex items-start justify-between gap-3">
-						<div>
-							<p class="font-semibold text-ink">
-								{deadline.title}
+
+						<div class="flex min-w-0 flex-col items-start gap-3 sm:flex-row sm:justify-between">
+							<div class="min-w-0">
+								<p class="wrap-anywhere font-semibold text-ink">
+									{deadline.title}
 							</p>
 							<p class="mt-1 text-sm text-ink/60">
 								Application deadline approaching
@@ -119,7 +120,8 @@
 						</div>
 
 						{#if deadline.applicationDeadline}
-							<span class="shrink-0 rounded-lg bg-orange-500/10 px-3 py-1 text-xs font-semibold text-orange-700 dark:text-orange-300">
+
+							<span class="inline-flex shrink-0 self-start rounded-lg bg-orange-500/10 px-3 py-1 text-xs font-semibold whitespace-nowrap text-orange-700 dark:text-orange-300">
 								{formatDate(deadline.applicationDeadline)}
 							</span>
 						{/if}

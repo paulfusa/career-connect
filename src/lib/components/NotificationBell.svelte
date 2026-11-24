@@ -6,6 +6,27 @@
 	let { unreadCount, ownerId, contextValid = true }: { unreadCount: number | null; ownerId: string; contextValid?: boolean } = $props();
 	const id = $props.id();
 	let open = $state(false);
+	$effect(() => {
+		if (!open) return;
+
+		const mediaQuery = window.matchMedia('(max-width: 639px)');
+		const body = document.body;
+		const previousOverflow = body.style.overflow;
+
+		function updateScrollLock() {
+			body.style.overflow = mediaQuery.matches
+				? 'hidden'
+				: previousOverflow;
+		}
+
+		updateScrollLock();
+		mediaQuery.addEventListener('change', updateScrollLock);
+
+		return () => {
+			mediaQuery.removeEventListener('change', updateScrollLock);
+			body.style.overflow = previousOverflow;
+		};
+	});
 	let loading = $state(false);
 	let notifications = $state<NotificationItem[] | null>(null);
 	let container: HTMLDivElement;
@@ -85,6 +106,15 @@
 			</span>
 		{/if}
 	</button>
+
+	{#if open}
+		<button
+			type="button"
+			aria-label="Close notification panel"
+			onclick={() => close(true)}
+			class="fixed inset-0 z-40 bg-black/40 sm:hidden"
+		></button>
+	{/if}
 
 	<section
 		id="notification-preview-{id}"

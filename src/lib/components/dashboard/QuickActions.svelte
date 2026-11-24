@@ -41,10 +41,10 @@
 				icon: 'document'
 			},
             {
-				title: 'Browse Jobs',
-				description: 'Explore all published job opportunities',
-				href: '/jobs',
-				icon: 'search'
+				title: 'Review Applications',
+				description: 'Review candidates who applied to your job postings',
+				href: '/jobs?mine&appStatus=all',
+				icon: 'users'
 			}
 
 		]
@@ -65,8 +65,8 @@
 		{#each selectedActions as action (action.title)}
 			<a
 				href={action.href}
-				class="group flex items-center gap-4 rounded-2xl border border-ink/10
-					bg-white/70 p-5 shadow-sm transition-all duration-200
+					class="group flex min-w-0 items-center gap-3 rounded-2xl border border-ink/10
+						bg-white/70 p-4 shadow-sm transition-all duration-200 sm:gap-4 sm:p-5
 					hover:-translate-y-1 hover:border-tide/40 hover:shadow-lg
 					focus-visible:outline-2 focus-visible:outline-offset-2
 					focus-visible:outline-tide dark:bg-white/5"
@@ -104,7 +104,7 @@
 					<h3 class="font-semibold text-ink transition-colors group-hover:text-tide-deep">
 						{action.title}
 					</h3>
-					<p class="mt-1 text-sm text-ink/60">
+					<p class="mt-1 wrap-anywhere text-sm text-ink/60">
 						{action.description}
 					</p>
 				</div>

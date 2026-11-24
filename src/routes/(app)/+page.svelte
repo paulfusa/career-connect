@@ -42,12 +42,14 @@
 				value={data.stats.activePostings ?? 0}
 				description="Currently open positions"
 				icon="briefcase"
+				href="/jobs?mine&activeOnly=1"
 			/>
 			<StatCard
 				title="Total Applications"
 				value={data.stats.totalApplications}
 				description="Applications received"
 				icon="document"
+				href="/jobs?mine&appStatus=all"
 			/>
 			<StatCard
 				title="Awaiting Review"
@@ -55,6 +57,7 @@
 				description="Applications needing review"
 				variant="attention"
 				icon="clock"
+				href="/jobs?mine&appStatus=applied"
 			/>
 			<StatCard
 				title="Interviews"
@@ -62,6 +65,7 @@
 				description="Candidates in interview stage"
 				variant="success"
 				icon="calendar"
+				href="/jobs?mine&appStatus=interview"
 			/>
 		{:else}
 			<StatCard
@@ -69,6 +73,7 @@
 				value={data.stats.totalApplications}
 				description="Applications submitted"
 				icon="document"
+				href="/applications"
 			/>
 			<StatCard
 				title="Under Review"
@@ -76,12 +81,14 @@
 				description="Applications being reviewed"
 				variant="attention"
 				icon="clock"
+				href="/applications?status=under_review"
 			/>
 			<StatCard
 				title="Interviews"
 				value={data.stats.interviews}
 				description="Applications in interview stage"
 				icon="calendar"
+				href="/applications?status=interview"
 			/>
 			<StatCard
 				title="Job Offers"
@@ -89,6 +96,7 @@
 				description="Offers received"
 				variant="success"
 				icon="offer"
+				href="/applications?status=offered"
 			/>
 		{/if}
 	</div>

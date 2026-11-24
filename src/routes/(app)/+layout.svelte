@@ -51,7 +51,7 @@
 
 	// one style for every sidebar row; the current page gets a tinted background and a teal icon
 	const navItem =
-		'group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-ink/70 transition ' +
+		'group flex min-w-0 min-h-11 items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-ink/70 transition ' +
 		'hover:bg-white/60 hover:text-ink focus-visible:outline-2 focus-visible:outline-tide ' +
 		'aria-[current=page]:bg-white/80 aria-[current=page]:text-ink aria-[current=page]:shadow-sm aria-[current=page]:shadow-ink/5 ' +
 		'dark:hover:bg-white/10 dark:hover:text-white dark:aria-[current=page]:bg-white/12 dark:aria-[current=page]:text-white';
@@ -140,7 +140,10 @@
 				</div>
 			</div>
 
-			<nav aria-label="Main navigation" class="mt-5 grid gap-1 min-[360px]:grid-cols-2 md:flex md:flex-col">
+			<nav
+				aria-label="Main navigation"
+				class="mt-5 grid grid-cols-1 gap-2 min-[390px]:grid-cols-2 md:flex md:flex-col"
+			>
 				{#each nav as item (item.href)}
 					
 					<a
@@ -196,7 +199,7 @@
 						dark:hover:bg-rose-950/40 dark:hover:text-rose-300
 						focus-visible:outline-2 focus-visible:outline-tide"
 				>
-					<Icon name="logOut" class="size-[18px] text-ink/40 transition group-hover:text-rose-600 dark:text-white/40 dark:group-hover:text-rose-300" />
+					<Icon name="logOut" class="size-4.5 text-ink/40 transition group-hover:text-rose-600 dark:text-white/40 dark:group-hover:text-rose-300" />
 					Log out
 				</button>
 			</form>
