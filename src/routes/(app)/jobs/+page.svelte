@@ -84,7 +84,7 @@
 		<div class="flex w-full shrink-0 gap-2 xl:w-auto">
 			<button
 				type="submit"
-				class={primaryButton + ' min-w-0 flex-1 justify-center xl:flex-none'}
+				class={primaryButton + ' min-w-0 flex-1 justify-center xl:w-auto xl:flex-none xl:px-6'}
 			>
 				Search
 			</button>
@@ -214,7 +214,7 @@
 	<div class="flex flex-wrap items-center gap-3 sm:col-span-2 lg:col-span-3">
 		<button
 			type="submit"
-			class={primaryButton + ' inline-flex min-w-max items-center justify-center whitespace-nowrap px-5 py-3'}
+			class={primaryButton + ' inline-flex min-w-max items-center justify-center whitespace-nowrap px-5 py-3 sm:w-auto'}
 		>
 			Apply Filters
 		</button>
@@ -257,10 +257,10 @@
 					<div class="flex min-w-0 items-start gap-4">
 						<OrgLogo name={posting.company} domain={posting.companyDomain} />
 						<div class="min-w-0">
-							<h2 class="font-display text-xl font-semibold">
+							<h2 class="font-display text-xl font-semibold wrap-anywhere">
 								<a href="/jobs/{posting.id}" class="outline-none after:absolute after:inset-0 after:rounded-[28px]">{posting.title}</a>
 							</h2>
-							<p class="mt-1 text-ink/70">{posting.company} <span aria-hidden="true">·</span> {posting.location}</p>
+							<p class="mt-1 wrap-anywhere text-ink/70">{posting.company} <span aria-hidden="true">·</span> {posting.location}</p>
 							<!-- US-09: only shows once the company has reviews -->
 							{#if posting.rating}
 								<p class="mt-1 flex items-center gap-1.5 text-sm text-ink/65">
@@ -301,8 +301,8 @@
 					{/if}
 					</div>
 				</div>
-				<p class="mt-4 line-clamp-3 whitespace-pre-line text-sm leading-6 text-ink/70">{posting.description}</p>
-				<div class="mt-4 flex items-center justify-between gap-3">
+				<p class="mt-4 line-clamp-3 whitespace-pre-line wrap-anywhere text-sm leading-6 text-ink/70">{posting.description}</p>
+				<div class="mt-4 flex-wrap items-center justify-between gap-3">
 					<div class="flex flex-wrap items-center gap-x-4 gap-y-1">
 						<p class="text-xs text-ink/50">Posted {posting.createdAt.toLocaleDateString()}</p>
 						{#if data.mine}
