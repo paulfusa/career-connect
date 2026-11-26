@@ -35,7 +35,7 @@
 		Overview
 	</h2>
 
-	<div class="grid grid-cols-2 gap-3 sm:gap-4 2xl:grid-cols-4">
+	<div class="grid grid-cols-1 gap-3 min-[375px]:grid-cols-2 sm:gap-4 2xl:grid-cols-4">
 		{#if data.user.role === 'recruiter'}
 			<StatCard
 				title="Active Job Postings"

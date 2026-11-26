@@ -69,7 +69,7 @@
 <Backdrop />
 
 {#key data.user.id}
-<div class="mx-auto grid max-w-6xl gap-6 px-4 py-6 md:grid-cols-[17rem_minmax(0,1fr)] md:gap-8 md:py-10">
+<div class="mx-auto grid max-w-6xl gap-6 px-4 py-6 lg:grid-cols-[17rem_minmax(0,1fr)] md:gap-8 md:py-10">
 	<header class="relative z-20 col-span-full flex min-w-0 items-center justify-between gap-3">
 		<a href="/" class="min-w-0 font-display text-2xl font-semibold tracking-tight">
 			Career<span class="text-tide">Connect</span>
@@ -91,7 +91,7 @@
 					border border-ink/10 bg-white/60 text-ink transition
 					hover:bg-white/80 focus-visible:outline-2
 					focus-visible:outline-offset-2 focus-visible:outline-tide
-					dark:bg-white/10 dark:hover:bg-white/15 md:hidden"
+					dark:bg-white/10 dark:hover:bg-white/15 lg:hidden"
 			>
 				{#if mobileMenuOpen}
 					<svg
@@ -124,12 +124,12 @@
 
 	<aside
 		id="mobile-navigation"
-		class={`app-sidebar md:sticky md:top-10 md:self-start ${
-			mobileMenuOpen ? 'block' : 'hidden md:block'
+		class={`app-sidebar lg:sticky lg:top-10 lg:self-start ${
+			mobileMenuOpen ? 'block' : 'hidden lg:block'
 		}`}
 	>
 		<section class="{glassPanel} p-5">
-			<div class="flex items-center gap-4 md:flex-col md:items-start">
+			<div class="flex items-center gap-4 lg:flex-col lg:items-start">
 				<Avatar name={data.user.name} image={data.user.image} />
 				<div class="min-w-0">
 					<p class="truncate font-display text-lg font-semibold">{data.user.name}</p>
@@ -142,7 +142,7 @@
 
 			<nav
 				aria-label="Main navigation"
-				class="mt-5 grid grid-cols-1 gap-2 min-[390px]:grid-cols-2 md:flex md:flex-col"
+				class="mt-5 grid grid-cols-1 gap-2 min-[390px]:grid-cols-2 lg:flex lg:flex-col"
 			>
 				{#each nav as item (item.href)}
 					
