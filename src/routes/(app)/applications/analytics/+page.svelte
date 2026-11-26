@@ -66,7 +66,7 @@
         Applications by status
     </h2>
 
-    <div class="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+    <div class="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-5">
         {#each data.statusCounts as item (item.status)}
             <article
                 class="{glassPanel} p-4

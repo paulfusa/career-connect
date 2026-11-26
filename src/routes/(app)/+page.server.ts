@@ -163,7 +163,10 @@ export const load: PageServerLoad = async ({ locals }) => {
 					user,
 					eq(application.userId, user.id)
 				)
-				.where(eq(jobPosting.createdBy, me.id))
+				.where(and(
+					owner,
+					eq(jobPosting.archived, false)
+				))
 				.orderBy(desc(application.createdAt))
 				.limit(5);
 
