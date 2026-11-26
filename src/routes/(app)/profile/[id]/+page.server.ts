@@ -1,5 +1,5 @@
 import { error, fail, redirect } from '@sveltejs/kit';
-import { and, count, desc, eq } from 'drizzle-orm';
+import { eq, count, and, desc} from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import { follow, jobPosting, profile, user } from '$lib/server/db/schema';
 import { canSeeProfile, followProblem } from '$lib/server/follow';

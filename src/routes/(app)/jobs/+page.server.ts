@@ -15,7 +15,16 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 	// /jobs?mine shows a recruiter only the postings they created; job seekers always get the full list
 	const mine = locals.user!.role === 'recruiter' && url.searchParams.has('mine');
 	const archivedView = mine && url.searchParams.get('archived') === '1';
+	const activeOnly = mine && !archivedView && url.searchParams.get('activeOnly') === '1';
 	const search = parseJobSearch(url.searchParams);
+	const requestedAppStatus = mine ? url.searchParams.get('appStatus') : null;
+
+	const appStatus =
+		requestedAppStatus === 'all' ||
+		requestedAppStatus === 'applied' ||
+		requestedAppStatus === 'interview'
+			? requestedAppStatus
+			: null;
 	const today = todayEastern();
 	const conditions: (SQL | undefined)[] = [
 		mine
@@ -25,11 +34,32 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 					or(eq(jobPosting.published, true), eq(jobPosting.createdBy, locals.user!.id))
 				)
 	];
+	if (activeOnly) {
+    conditions.push(
+        eq(jobPosting.status, 'open'),
+        eq(jobPosting.published, true)
+    );
+	}
 	if (search.keyword) conditions.push(or(ilike(jobPosting.title, `%${search.keyword}%`), ilike(jobPosting.description, `%${search.keyword}%`)));
 	if (search.company) conditions.push(ilike(jobPosting.company, `%${search.company}%`));
 	if (search.location) conditions.push(ilike(jobPosting.location, `%${search.location}%`));
 	if (search.employmentType) conditions.push(eq(jobPosting.employmentType, search.employmentType));
 	if (search.workMode) conditions.push(eq(jobPosting.workMode, search.workMode));
+	if (appStatus) {
+		const statusCondition =
+			appStatus === 'all'
+				? sql``
+				: sql`and ${application.status} = ${appStatus}`;
+
+		conditions.push(sql`
+			exists (
+				select 1
+				from ${application}
+				where ${application.jobPostingId} = ${jobPosting.id}
+				${statusCondition}
+			)
+		`);
+	}
 
 	// US-28: only jobs whose minimum salary is at least what you typed (no minimum salary = hidden)
 	if (search.minSalary) conditions.push(gte(jobPosting.salaryMin, Number(search.minSalary)));
@@ -93,7 +123,9 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 		})),
 		mine,
 		archivedView,
-		search
+		search,
+		appStatus,
+		activeOnly
 	};
 };
 

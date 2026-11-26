@@ -11,6 +11,34 @@
 
 	let { data }: PageProps = $props();
 	let searching = $derived(Object.values(data.search).some((value) => value !== ''));
+	let filtersOpen = $state(false);
+	let activeFilterCount = $derived(
+		[
+			data.search.company,
+			data.search.location,
+			data.search.employmentType,
+			data.search.workMode,
+			data.search.minSalary,
+			data.search.postedWithin,
+			data.search.openOnly === 'on' ? 'on' : '',
+			data.user.role === 'job_seeker' && data.search.following === 'on'
+				? 'on'
+				: ''
+		].filter(Boolean).length
+	);
+	let recruiterFilterLabel = $derived(
+		data.appStatus === 'all'
+			? 'Postings with applications'
+			: data.appStatus === 'applied'
+				? 'Applications awaiting review'
+				: data.appStatus === 'interview'
+					? 'Interview-stage applications'
+					: null
+	);
+
+	let activePostingFilterLabel = $derived(
+		data.activeOnly ? 'Active job postings' : null
+	);
 </script>
 
 <svelte:head><title>Jobs · CareerConnect</title></svelte:head>
@@ -27,26 +55,97 @@
 	{/if}
 </div>
 
-<form method="get" class="{glassPanel} mt-6 grid gap-4 p-5 sm:grid-cols-2 lg:grid-cols-3">
-	
+<form method="get" class="{glassPanel} mt-6 space-y-4 p-4 sm:p-5">
+
 	{#if data.mine}
 		<input type="hidden" name="mine" />
 		{#if data.archivedView}<input type="hidden" name="archived" value="1" />{/if}
 	{/if}
 
-	<label class="block">
-		<span class={label}>Keyword</span>
-		<input name="keyword" value={data.search.keyword} placeholder="Job title or description" class={field} />
-	</label>
+	{#if data.appStatus}
+		<input type="hidden" name="appStatus" value={data.appStatus} />
+	{/if}
 
-	<!-- US-28: same suggestions as the posting form. {#key} resets the box when the search changes, so Clear search empties it -->
-	<label class="block">
-		<span class={label}>Company</span>
-		{#key data.search.company}
-			<SuggestInput name="company" search={searchCompanies} value={data.search.company} placeholder="e.g. Shopify" class={field} />
-		{/key}
-	</label>
+	{#if data.activeOnly}
+		<input type="hidden" name="activeOnly" value="1" />
+	{/if}
 
+	<div class="flex min-w-0 flex-col gap-3 xl:flex-row xl:items-end">
+		<label class="min-w-0 flex-1">
+			<span class={label}>Find a job</span>
+			<input
+				name="keyword"
+				value={data.search.keyword}
+				placeholder="Job title, keyword or description..."
+				class={field}
+			/>
+		</label>
+
+		<div class="flex w-full shrink-0 gap-2 xl:w-auto">
+			<button
+				type="submit"
+				class={primaryButton + ' min-w-0 flex-1 justify-center xl:flex-none'}
+			>
+				Search
+			</button>
+
+			<button
+				type="button"
+				aria-expanded={filtersOpen}
+				aria-controls="advanced-job-filters"
+				onclick={() => (filtersOpen = !filtersOpen)}
+				class="flex min-w-0 flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-xl border border-ink/15 px-4 py-2.5 text-sm font-semibold text-ink transition hover:bg-ink/5 focus-visible:outline-2 focus-visible:outline-tide dark:border-white/15 dark:hover:bg-white/10 xl:flex-none"
+			>
+				<svg
+					class="h-4 w-4"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					aria-hidden="true"
+				>
+					<path d="M4 7h16M7 12h10M10 17h4" />
+				</svg>
+				{filtersOpen ? 'Hide Filters' : 'More Filters'}
+				{#if activeFilterCount > 0}
+					<span
+						class="inline-flex min-w-5 items-center justify-center rounded-full bg-tide px-1.5 py-0.5 text-xs font-bold text-white"
+					>
+						{activeFilterCount}
+					</span>
+				{/if}
+			</button>
+		</div>
+		{#if searching}
+			<a
+				href={data.mine
+					? `/jobs?mine${data.archivedView ? '&archived=1' : ''}${data.appStatus ? `&appStatus=${data.appStatus}` : ''}`
+					: '/jobs'}
+				class="self-center text-sm font-semibold text-tide-deep underline underline-offset-4 hover:text-tide dark:text-tide"
+			>
+				Clear Filters
+			</a>
+		{/if}
+	</div>
+
+<div
+	id="advanced-job-filters"
+	class={filtersOpen ? 'block' : 'hidden'}
+>
+	<div class="grid gap-4 border-t border-ink/10 pt-5 sm:grid-cols-2 lg:grid-cols-3">
+		<label class="block">
+			<span class={label}>Company</span>
+			{#key data.search.company}
+				<SuggestInput
+					name="company"
+					search={searchCompanies}
+					value={data.search.company}
+					placeholder="e.g. Shopify"
+					class={field}
+				/>
+			{/key}
+		</label>
 	<label class="block">
 		<span class={label}>Location</span>
 		{#key data.search.location}
@@ -112,11 +211,42 @@
 			<span class="text-sm font-medium">From people I follow</span>
 		</label>
 	{/if}
+	<div class="flex flex-wrap items-center gap-3 sm:col-span-2 lg:col-span-3">
+		<button
+			type="submit"
+			class={primaryButton + ' inline-flex min-w-max items-center justify-center whitespace-nowrap px-5 py-3'}
+		>
+			Apply Filters
+		</button>
 
-	<div class="flex items-end">
-		<button type="submit" class={primaryButton}>Search</button>
+		{#if activeFilterCount > 0}
+			<span class="text-sm text-ink/60">
+				{activeFilterCount} active filter{activeFilterCount === 1 ? '' : 's'}
+			</span>
+		{/if}
 	</div>
+
+	</div>
+</div>
 </form>
+
+{#if recruiterFilterLabel || activePostingFilterLabel}
+	<div class="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-tide/20 bg-tide/5 px-4 py-3">
+		<p class="text-sm font-medium text-ink">
+			Showing:
+			<span class="font-semibold text-tide-deep dark:text-tide">
+				{activePostingFilterLabel ?? recruiterFilterLabel}
+			</span>
+		</p>
+
+		<a
+			href={data.archivedView ? '/jobs?mine&archived=1' : '/jobs?mine'}
+			class="text-sm font-semibold text-tide-deep underline underline-offset-4 dark:text-tide"
+		>
+			Show All Postings
+		</a>
+	</div>
+{/if}
 
 {#if data.postings.length}
 	<section class="mt-6 grid gap-4">
@@ -208,11 +338,36 @@
 {:else}
 	<section class="{glassPanel} mt-6 grid min-h-64 place-items-center p-8 text-center">
 		<div>
-			{#if searching}
-				<h2 class="font-display text-xl font-semibold">No jobs match your search</h2>
-				<p class="mt-2 text-ink/60">Try different words or fewer filters.</p>
-				<a href={data.archivedView ? '/jobs?mine&archived=1' : data.mine ? '/jobs?mine' : '/jobs'} class="mt-5 inline-block font-semibold text-tide-deep dark:text-tide underline underline-offset-4">Clear search</a>
-			{:else if data.mine}
+
+				{#if (recruiterFilterLabel || activePostingFilterLabel) && !searching}
+					<h2 class="font-display text-xl font-semibold">
+						No matching job postings
+					</h2>
+					<p class="mt-2 text-ink/60">
+						No postings currently match "{activePostingFilterLabel ?? recruiterFilterLabel}".
+					</p>
+					<a
+						href="/jobs?mine"
+						class="mt-5 inline-block font-semibold text-tide-deep underline underline-offset-4 dark:text-tide"
+					>
+						Show All Postings
+					</a>
+					{:else if searching}
+						<h2 class="font-display text-xl font-semibold">
+							No jobs match your search
+						</h2>
+						<p class="mt-2 text-ink/60">
+							Try different words or fewer filters.
+						</p>
+						<a
+							href={data.mine
+								? `/jobs?mine${data.archivedView ? '&archived=1' : ''}${data.appStatus ? `&appStatus=${data.appStatus}` : ''}${data.activeOnly ? '&activeOnly=1' : ''}`
+								: '/jobs'}
+							class="mt-5 inline-block font-semibold text-tide-deep underline underline-offset-4 dark:text-tide"
+						>
+							Clear search
+						</a>
+					{:else if data.mine}
 				{#if data.archivedView}
 					<h2 class="font-display text-xl font-semibold">No archived postings</h2>
 					<p class="mt-2 text-ink/60">Postings you archive will be listed here.</p>

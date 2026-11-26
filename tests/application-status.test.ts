@@ -154,22 +154,47 @@ test('US-20: malformed application and job IDs cannot reach the database', async
     assert.equal(queries.length, 0);
 });
 
+
 test('US-20: My Applications queries the signed-in applicant and returns job, date and status', async () => {
     returnedRows = [{ id: applicationId, title: 'Developer', appliedAt: new Date(), status: 'interview' }];
-    const result = await load({ locals: { user: { id: 'applicant-1', role: 'job_seeker' } } } as never);
-    assert.deepEqual(result, { applications: returnedRows });
+
+    const result = await load({
+        locals: { user: { id: 'applicant-1', role: 'job_seeker' } },
+        url: new URL('http://localhost/applications')
+    } as never);
+
+    assert.deepEqual(result, {
+        applications: returnedRows,
+        status: null
+    });
+
     assert.deepEqual(queries[0].params, ['applicant-1']);
     assert.match(queries[0].sql, /"application"\."user_id" = \$/);
     assert.deepEqual(Object.keys(selectedFields), ['id', 'jobPostingId', 'title', 'company', 'appliedAt', 'status']);
 });
 
 test('US-20: My Applications supports no applications', async () => {
-    assert.deepEqual(await load({ locals: { user: { id: 'new-applicant', role: 'job_seeker' } } } as never), { applications: [] });
+    const result = await load({
+        locals: { user: { id: 'new-applicant', role: 'job_seeker' } },
+        url: new URL('http://localhost/applications')
+    } as never);
+
+    assert.deepEqual(result, {
+        applications: [],
+        status: null
+    });
 });
 
 test('US-20: My Applications denies recruiters and guests before querying', async () => {
     for (const user of [owner, undefined]) {
-        await assert.rejects(async () => load({ locals: { user } } as never), (err) => isHttpError(err, 403));
+        await assert.rejects(
+            async () => load({
+                locals: { user },
+                url: new URL('http://localhost/applications')
+            } as never),
+            (err) => isHttpError(err, 403)
+        );
     }
+
     assert.equal(queries.length, 0);
 });

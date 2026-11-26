@@ -6,6 +6,27 @@
 	let { unreadCount, ownerId, contextValid = true }: { unreadCount: number | null; ownerId: string; contextValid?: boolean } = $props();
 	const id = $props.id();
 	let open = $state(false);
+	$effect(() => {
+		if (!open) return;
+
+		const mediaQuery = window.matchMedia('(max-width: 639px)');
+		const body = document.body;
+		const previousOverflow = body.style.overflow;
+
+		function updateScrollLock() {
+			body.style.overflow = mediaQuery.matches
+				? 'hidden'
+				: previousOverflow;
+		}
+
+		updateScrollLock();
+		mediaQuery.addEventListener('change', updateScrollLock);
+
+		return () => {
+			mediaQuery.removeEventListener('change', updateScrollLock);
+			body.style.overflow = previousOverflow;
+		};
+	});
 	let loading = $state(false);
 	let notifications = $state<NotificationItem[] | null>(null);
 	let container: HTMLDivElement;
@@ -86,11 +107,20 @@
 		{/if}
 	</button>
 
+	{#if open}
+		<button
+			type="button"
+			aria-label="Close notification panel"
+			onclick={() => close(true)}
+			class="fixed inset-0 z-40 bg-black/40 sm:hidden"
+		></button>
+	{/if}
+
 	<section
 		id="notification-preview-{id}"
 		hidden={!open}
 		aria-label="Latest notifications"
-		class="absolute right-0 top-full mt-2 max-h-[min(28rem,calc(100dvh-8rem))] w-[min(22rem,calc(100vw-2rem))] overflow-y-auto overscroll-contain rounded-2xl border border-ink/10 bg-white shadow-xl dark:border-white/15 dark:bg-[#1b1b20]"
+		class="fixed inset-x-4 top-24 z-50 max-h-[min(28rem,calc(100dvh-8rem))] w-auto overflow-y-auto overscroll-contain rounded-2xl border border-ink/10 bg-white shadow-xl dark:border-white/15 dark:bg-[#1b1b20] sm:absolute sm:inset-x-auto sm:right-0 sm:top-full sm:mt-2 sm:w-88"
 	>
 		<div class="flex items-center justify-between gap-2 border-b border-ink/10 px-4 py-2">
 			<h2 class="font-display font-semibold">Notifications</h2>
@@ -110,7 +140,7 @@
 					{#each notifications as notification (notification.id)}
 						{@const link = safeNotificationLink(notification.link)}
 						<li class="p-4 {notification.readAt === null ? 'bg-tide/5' : ''}">
-							<p class="break-words text-sm font-semibold [overflow-wrap:anywhere]">{notification.title}</p>
+							<p class="wrap-anywhere text-sm font-semibold">{notification.title}</p>
 							<div class="mt-1 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-xs">
 								<span class="text-ink/65">{notification.readAt === null ? 'Unread' : 'Read'}</span>
 								{#if link}
@@ -122,6 +152,6 @@
 				</ul>
 			{/if}
 		</div>
-		<a href="/notifications" data-sveltekit-reload data-sveltekit-preload-data="off" class="flex min-h-11 items-center justify-center border-t border-ink/10 px-4 py-3 text-sm font-semibold text-tide hover:bg-mist dark:hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-tide">View all notifications</a>
+		<a href="/notifications" data-sveltekit-reload data-sveltekit-preload-data="off" class="flex min-h-11 items-center justify-center border-t border-ink/10 px-4 py-3 text-sm font-semibold text-tide hover:bg-mist dark:hover:bg-white/10 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-tide">View all notifications</a>
 	</section>
 </div>

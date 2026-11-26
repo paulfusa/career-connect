@@ -84,7 +84,7 @@
                 Choose how CareerConnect looks on your device.
             </p>
 
-            <div class="mt-4 grid gap-3 sm:grid-cols-3">
+            <div class="mt-4 grid grid-cols-3 gap-2 sm:gap-3">
                 {#each [
                     { value: 'light', label: 'Light', icon: '☀' },
                     { value: 'dark', label: 'Dark', icon: '☾' },
@@ -94,8 +94,9 @@
                         type="button"
                         aria-pressed={selectedTheme === option.value}
                         onclick={() => changeTheme(option.value as Theme)}
-                        class="flex flex-col items-center gap-2 rounded-xl
-                            border p-4 text-sm font-medium transition
+                        class="flex min-h-24 min-w-0 flex-col items-center justify-center gap-2 rounded-xl
+                            border px-1.5 py-3 text-xs font-medium transition
+                            sm:px-4 sm:py-4 sm:text-sm
                             hover:border-tide
                             focus-visible:outline-2 focus-visible:outline-tide
                             {selectedTheme === option.value
