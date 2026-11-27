@@ -13,8 +13,8 @@ export const load = (async ({ locals, depends }) => {
 	};
 	try {
 		const rows = await notificationService.getNotifications(user);
-		const notifications: NotificationItem[] = rows.map(({ id, title, message, createdAt, readAt, link }) => ({
-			id, title, message, createdAt, readAt, link: safeNotificationLink(link)
+		const notifications: NotificationItem[] = rows.map(({ id, type, title, message, createdAt, readAt, link }) => ({
+			id, type, title, message, createdAt, readAt, link: safeNotificationLink(link)
 		}));
 		return { ...context, notifications, notificationLoadError: null };
 	} catch (error) {

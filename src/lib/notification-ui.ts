@@ -1,8 +1,20 @@
 import type { Notification } from './server/db/schema.ts';
 
-export type NotificationItem = Pick<Notification, 'id' | 'title' | 'message' | 'createdAt' | 'readAt'> & {
+export type NotificationItem = Pick<Notification, 'id' | 'type' | 'title' | 'message' | 'createdAt' | 'readAt'> & {
 	link: string | null;
 };
+
+export type NotificationFilter = 'all' | 'unread' | 'reminders';
+
+export function filterNotifications(
+	notifications: readonly NotificationItem[], filter: NotificationFilter
+): readonly NotificationItem[] {
+	if (filter === 'unread') return notifications.filter((notification) => notification.readAt === null);
+	if (filter === 'reminders') {
+		return notifications.filter((notification) => notification.type === 'application_deadline_reminder');
+	}
+	return notifications;
+}
 
 const UUID = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}';
 const JOB_APPLICATIONS = new RegExp(`^/jobs/${UUID}/applications/?$`, 'i');

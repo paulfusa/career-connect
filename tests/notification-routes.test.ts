@@ -152,8 +152,17 @@ test('inbox: newest 50 retain service order and omit internal recipient/dedupe f
 	assert.equal(inbox.notifications?.length, 50);
 	assert.equal(inbox.notifications?.[0].id, id(52));
 	assert.equal(inbox.notifications?.at(-1)?.id, id(3));
-	assert.deepEqual(Object.keys(inbox.notifications![0]).sort(), ['createdAt', 'id', 'link', 'message', 'readAt', 'title']);
+	assert.deepEqual(Object.keys(inbox.notifications![0]).sort(), ['createdAt', 'id', 'link', 'message', 'readAt', 'title', 'type']);
 	assert.equal((await layoutLoad(event() as never)).notificationUnreadCount, 52);
+});
+
+test('inbox: loader preserves reminder types for client-side filtering', async () => {
+	seed(seeker.id, 1);
+	seed(seeker.id, 2);
+	rows[1].type = 'application_deadline_reminder';
+	const inbox = await inboxLoad(event() as never);
+	assert.deepEqual(inbox.notifications?.map((row) => row.type), ['application_deadline_reminder', 'application_update']);
+	assert.deepEqual(calls.list, [[seeker]]);
 });
 
 test('inbox: empty list and zero count are successful results', async () => {

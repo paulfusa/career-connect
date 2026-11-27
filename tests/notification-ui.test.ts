@@ -6,7 +6,7 @@ import { registerHooks } from 'node:module';
 import { compile } from 'svelte/compiler';
 import { render } from 'svelte/server';
 import { createRawSnippet } from 'svelte';
-import { formatNotificationTime, notificationContextIsCurrent, safeNotificationLink, type NotificationItem } from '../src/lib/notification-ui.ts';
+import { filterNotifications, formatNotificationTime, notificationContextIsCurrent, safeNotificationLink, type NotificationItem } from '../src/lib/notification-ui.ts';
 
 // Compile the real components for SSR using installed Svelte, without starting
 // SvelteKit or importing the application's database/authentication clients.
@@ -42,7 +42,7 @@ const notificationId = '22222222-2222-4222-8222-222222222222';
 const createdAt = new Date('2026-11-12T17:30:00Z');
 const expiresAt = new Date('2099-01-01T00:00:00Z');
 const user = { id: 'seeker-1', name: 'Ada', role: 'job_seeker', image: null };
-const item: NotificationItem = { id: notificationId, title: 'Application update', message: 'Your application is under review.',
+const item: NotificationItem = { id: notificationId, type: 'application_update', title: 'Application update', message: 'Your application is under review.',
 	createdAt, readAt: null, link: '/applications' };
 
 function data(overrides: Record<string, unknown> = {}) {
@@ -52,6 +52,56 @@ function data(overrides: Record<string, unknown> = {}) {
 function inbox(overrides: Record<string, unknown> = {}, form: unknown = null) {
 	return render(Inbox, { props: { data: data(overrides) as never, form: form as never, params: {} } }).body;
 }
+
+const mixedNotifications: readonly NotificationItem[] = Object.freeze([
+	Object.freeze({ ...item, id: 'read-update', readAt: createdAt }),
+	Object.freeze({ ...item, id: 'unread-reminder', type: 'application_deadline_reminder' }),
+	Object.freeze({ ...item, id: 'unknown-type', type: 'unknown', title: 'Reminder', message: 'application_deadline_reminder' }),
+	Object.freeze({ ...item, id: 'read-reminder', type: 'application_deadline_reminder', readAt: createdAt }),
+	Object.freeze({ ...item, id: 'unread-update' })
+]);
+
+test('notification filters: All retains every loaded row, order and identity', () => {
+	assert.strictEqual(filterNotifications(mixedNotifications, 'all'), mixedNotifications);
+});
+
+test('notification filters: Unread includes exactly rows with readAt === null in loaded order', () => {
+	assert.deepEqual(filterNotifications(mixedNotifications, 'unread').map((row) => row.id),
+		['unread-reminder', 'unknown-type', 'unread-update']);
+});
+
+test('notification filters: Reminders includes the existing reminder type regardless of read status', () => {
+	assert.deepEqual(filterNotifications(mixedNotifications, 'reminders').map((row) => row.id),
+		['unread-reminder', 'read-reminder']);
+	for (const type of ['new_application', 'application_update', 'interview_invitation', 'job_offer', 'application_rejected', 'reminder']) {
+		assert.deepEqual(filterNotifications([{ ...item, type }], 'reminders'), []);
+	}
+});
+
+test('notification filters: empty loaded lists and no matching rows return empty lists', () => {
+	for (const filter of ['all', 'unread', 'reminders'] as const) {
+		assert.deepEqual(filterNotifications([], filter), []);
+	}
+	assert.deepEqual(filterNotifications([{ ...item, readAt: createdAt }], 'unread'), []);
+	assert.deepEqual(filterNotifications([item], 'reminders'), []);
+});
+
+test('notification filters: marking read and refreshing recompute from current rows without mutating the loaded list', () => {
+	const refreshed = mixedNotifications.map((row) => row.id === 'unread-reminder' ? { ...row, readAt: createdAt } : row);
+	assert.deepEqual(filterNotifications(refreshed, 'unread').map((row) => row.id), ['unknown-type', 'unread-update']);
+	assert.equal(filterNotifications(refreshed, 'reminders').length, 2);
+	assert.equal(filterNotifications(mixedNotifications, 'unread').length, 3);
+	assert.deepEqual(filterNotifications([item], 'all'), [item]);
+});
+
+test('notification inbox: accessible filter buttons default to All and render all loaded rows', () => {
+	const html = inbox({ notifications: mixedNotifications });
+	assert.match(html, /role="group" aria-label="Filter notifications"/);
+	for (const filter of ['all', 'unread', 'reminders']) {
+		assert.match(html, new RegExp(`id="notification-filter-${filter}"[^>]*type="button"[^>]*aria-pressed="${filter === 'all'}"`));
+	}
+	assert.equal((html.match(/<article/g) ?? []).length, mixedNotifications.length);
+});
 
 test('notification links: supports all current destinations and preserves safe query/fragment', () => {
 	for (const path of ['/applications', '/applications/?status=interview#latest', `/jobs/${jobId}/applications`]) {

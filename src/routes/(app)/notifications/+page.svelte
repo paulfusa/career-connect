@@ -3,11 +3,18 @@
 	import { invalidate } from '$app/navigation';
 	import { tick } from 'svelte';
 	import type { SubmitFunction } from '@sveltejs/kit';
-	import { formatNotificationTime, notificationContextIsCurrent, safeNotificationLink } from '$lib/notification-ui';
+	import { filterNotifications, formatNotificationTime, notificationContextIsCurrent, safeNotificationLink, type NotificationFilter } from '$lib/notification-ui';
 	import { errorBox, glassPanel, secondaryButton, successBox } from '$lib/ui';
 	import type { PageProps } from './$types';
 
 	let { data, form }: PageProps = $props();
+	const filters = [
+		{ value: 'all', label: 'All' },
+		{ value: 'unread', label: 'Unread' },
+		{ value: 'reminders', label: 'Reminders' }
+	] satisfies { value: NotificationFilter; label: string }[];
+	let activeFilter = $state<NotificationFilter>('all');
+	let filteredNotifications = $derived(filterNotifications(data.notifications ?? [], activeFilter));
 	let busy = $state<string | null>(null);
 	let unavailable = $state(false);
 	let clientError = $state<string | null>(null);
@@ -63,7 +70,9 @@
 				if (result.type === 'failure' && result.status >= 500) unavailable = true;
 				if (result.type === 'success') {
 					await tick();
-					document.getElementById(`notification-${id}`)?.focus({ preventScroll: true });
+					const focusTarget = document.getElementById(`notification-${id}`)
+						?? document.getElementById(`notification-filter-${activeFilter}`);
+					focusTarget?.focus({ preventScroll: true });
 				}
 			} catch {
 				unavailable = true;
@@ -107,16 +116,37 @@
 
 	{#if currentContext}
 		<section class="{glassPanel} p-5 sm:p-7" aria-label="Your notifications" aria-busy={busy !== null}>
+			<div role="group" aria-label="Filter notifications" class="mb-5 flex flex-wrap gap-2">
+				{#each filters as filter (filter.value)}
+					<button
+						id="notification-filter-{filter.value}"
+						type="button"
+						aria-pressed={activeFilter === filter.value}
+						onclick={() => { activeFilter = filter.value; }}
+						class="{secondaryButton} min-h-11 aria-pressed:border-tide aria-pressed:bg-tide/10 aria-pressed:text-tide-deep dark:aria-pressed:bg-tide/20 dark:aria-pressed:text-tide"
+					>{filter.label}</button>
+				{/each}
+			</div>
 			{#if busy === 'refresh'}
 				<p role="status" class="text-ink/65">Loading notifications…</p>
 			{:else if unavailable || data.notifications === null}
 				<p role="alert" class={errorBox}>{data.notificationLoadError || 'Notifications are unavailable. Please try refreshing.'}</p>
-			{:else if data.notifications.length === 0}
-				<p class="font-medium">No notifications yet.</p>
-				<p class="mt-2 text-sm text-ink/60">Updates for your account will appear here.</p>
+			{:else if filteredNotifications.length === 0}
+				<div role="status">
+					{#if activeFilter === 'unread'}
+						<p class="font-medium">No unread notifications.</p>
+						<p class="mt-2 text-sm text-ink/60">There are no unread notifications among the latest 50 notifications.</p>
+					{:else if activeFilter === 'reminders'}
+						<p class="font-medium">No reminders.</p>
+						<p class="mt-2 text-sm text-ink/60">There are no reminders among the latest 50 notifications.</p>
+					{:else}
+						<p class="font-medium">No notifications yet.</p>
+						<p class="mt-2 text-sm text-ink/60">Updates for your account will appear here.</p>
+					{/if}
+				</div>
 			{:else}
 				<ul class="space-y-4">
-					{#each data.notifications as notification (notification.id)}
+					{#each filteredNotifications as notification (notification.id)}
 						{@const link = safeNotificationLink(notification.link)}
 						<li>
 							<article
